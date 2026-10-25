@@ -61,7 +61,8 @@ h1,h2,h3,p{margin:0}
 .st-o{background:var(--o-bg);color:var(--o-fg)}
 .st-b{background:var(--b-bg);color:var(--b-fg)}
 .sy{display:inline-block;width:1em;height:1em;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
-.lvdef{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.lvdef{list-style:disc;margin:0;padding:0 0 0 20px;display:flex;flex-direction:column;gap:6px}
+.lvdef li{display:list-item}
 .lvdef li{color:var(--muted);font-size:.9rem}
 .lvdef b{color:var(--ink)}
 .subbox{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
@@ -363,7 +364,7 @@ const LAST_PAGE_MUSHAF=604;
 /* Longueur d'une sourate en pages : de sa première page jusqu'à la page qui précède la sourate suivante. */
 function span(n){ const next=n<114?SUR[n].p:LAST_PAGE_MUSHAF+1; return Math.max(1,next-SUR[n-1].p); }
 function lastPage(n){ return SUR[n-1].p+span(n)-1; }
-/* Baqara et les sourates de 3 pages ou plus se suivent page par page, sauf les juz 28, 29 et 30, suivis sourate par sourate. */
+/* Baqara et les sourates de 3 pages ou plus se suivent page par page, sauf les juzz 28, 29 et 30, suivis sourate par sourate. */
 function modeOf(n){ if(n===2) return 'pages'; if(n>=58) return 'whole'; return span(n)>=3?'pages':'whole'; }
 const JUZ=[
   {id:'juz28',num:28,fr:"Juzz Qad Sami'a",ar:'قد سمع',from:58,to:66},
@@ -796,14 +797,14 @@ function rowItem(it,marks,withRemove){
 }
 function juzRemove(j){
   if(j.id==='juz30') return '';
-  if(confirmJuz===j.id) return `<span class="remask">Retirer ce juz ? <button class="link danger" data-act="juzyes" data-j="${j.id}">Oui</button><button class="link" data-act="juzno">Non</button></span>`;
-  return `<button class="link danger" data-act="juzask" data-j="${j.id}">Retirer ce juz</button>`;
+  if(confirmJuz===j.id) return `<span class="remask">Retirer ce juzz ? <button class="link danger" data-act="juzyes" data-j="${j.id}">Oui</button><button class="link" data-act="juzno">Non</button></span>`;
+  return `<button class="link danger" data-act="juzask" data-j="${j.id}">Retirer ce juzz</button>`;
 }
 function juzBlock(j,items,marks){
   const c=tally(items,marks);
   const rem=juzRemove(j);
   const body=`<ul class="rows">${items.map(it=>rowItem(it,marks,false)).join('')}</ul>
-    <p class="remrow"><button class="link" data-act="alljuz" data-j="${j.id}">Appliquer la couleur à tout le juz</button>${rem?` &nbsp; ${rem}`:''}</p>`;
+    <p class="remrow"><button class="link" data-act="alljuz" data-j="${j.id}">Appliquer la couleur à tout le juzz</button>${rem?` &nbsp; ${rem}`:''}</p>`;
   return accHTML(j.id,esc(j.fr),(c.v+c.o+c.b)+' sourates sur '+items.length,c,items.length,body);
 }
 function suiviHTML(){
@@ -822,7 +823,7 @@ function suiviHTML(){
     <div class="hint"><span>${hint}</span>
     <button class="link" data-act="undo" ${canUndo?'':'disabled'}>Annuler</button></div></div>
     ${flash?`<p class="msg" role="status">${esc(flash)}</p>`:''}
-    <button class="addbtn" data-act="addopen">+ Ajouter une sourate ou un juz</button>`;
+    <button class="addbtn" data-act="addopen">+ Ajouter une sourate ou un juzz</button>`;
   if(fatiha) h+=`<ul class="rows" style="margin-top:14px">${rowItem(fatiha,marks,false)}</ul>`;
   pageSur.forEach(n=>{ h+=pageBlock(n,marks); });
   if(others.length){
@@ -884,7 +885,7 @@ function planHTML(){
     if(oranges.length) secs.push(['tl-o',SYCHK,'r','Passages à consolider','',`<ul class="bl">${oranges.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.r]);
     if(blues.length) secs.push(['tl-b',SYCHK,'p','Nouvelle(s) page(s)','',`<ul class="bl">${blues.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.p]);
     if(!secs.length){
-      h+=`<div class="card"><p>Rien au plan ce jour-là : il n’y a pas assez d’éléments appris pour remplir tous les jours de la boucle, ou ils sont exclus ou résiduels dans « Ma boucle ».</p></div>`;
+      h+=`<div class="card"><p>Rien au plan ce jour-là : il n’y a pas assez d’éléments appris pour remplir tous les jours de la boucle, ou ils sont exclus ou espacés dans « Ma boucle ».</p></div>`;
     } else {
       h+=`<div class="tl">`+secs.map((x,i)=>tlSec(x[0],x[1],x[2],!!x[6],x[3],x[4],x[5],i===secs.length-1)).join('')+`</div>`;
       const fin=dayComplete(pk,selDay,d);
@@ -978,7 +979,7 @@ function reglagesHTML(){
 }
 
 function lvSel(act,attrs,cur){
-  const L=[['p','Prioritaire'],['n','Normal'],['r','Résiduel'],['x','Exclu']];
+  const L=[['p','Prioritaire'],['n','Normal'],['r','Espacé'],['x','Exclu']];
   return `<div class="lv" role="group">`+L.map(c=>`<button data-act="${act}" ${attrs} data-l="${c[0]}" aria-pressed="${cur===c[0]}">${c[1]}</button>`).join('')+`</div>`;
 }
 function surLvRow(n){
@@ -998,7 +999,7 @@ function loadInfo(P,N){
   if(!eff) return '';
   const per=eff/N, txt=per<1?'moins d’une page':'environ '+Math.round(per)+(Math.round(per)>1?' pages':' page');
   const heavy=per>10;
-  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus les passages à consolider.${heavy?' C’est beaucoup : tu peux allonger la boucle ou mettre certaines sourates en résiduel.':''}</p>`;
+  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus les passages à consolider.${heavy?' C’est beaucoup : tu peux allonger la boucle ou mettre certaines sourates en « Espacé ».':''}</p>`;
 }
 function loopHTML(){
   const P=state.profiles[pk], s=state.settings, N=P.loop.n;
@@ -1007,16 +1008,16 @@ function loopHTML(){
   const inJuz=new Set(); full.forEach(j=>juzRange(j).forEach(n=>inJuz.add(n)));
   const pageSur=tr.filter(n=>modeOf(n)==='pages');
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
-  let h=`<section class="card setcard"><h4>Durée de la boucle</h4>
-    <p>Tout ce que tu as appris est repassé en <b>${N} jours</b>. 7 jours est la durée recommandée. Pour la changer, écris un nombre de jours entre 3 et 60.</p>
+  let h=`<section class="card setcard"><h4>Durée de la boucle de révision</h4>
+    <p>Tout ce que tu as appris est repassé en <b>${N} jours</b>.</p>
     <div class="row2"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="60" value="${N}" aria-label="Nombre de jours de la boucle"></div>
     <div class="subbox"><h5>Jour de mon cours (facultatif)</h5>
       <p>Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
       <select id="lcd" class="field" aria-label="Jour de mon cours">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select>
       ${P.loop.cd!=null&&N%7!==0?`<p>Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
     </div>
-    <div class="subbox"><h5>Début de la boucle</h5>
-      <select id="lst" class="field" aria-label="Début de la boucle"><option value="today">Aujourd’hui (jour 1)</option><option value="after"${P.loop.cd==null?' disabled':''}>Le lendemain de mon cours</option></select>
+    <div class="subbox"><h5>Début de la boucle de révision</h5>
+      <select id="lst" class="field" aria-label="Début de la boucle de révision"><option value="today">Aujourd’hui (jour 1)</option><option value="after"${P.loop.cd==null?' disabled':''}>Le lendemain de mon cours</option></select>
     </div>
     <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button><button class="btn" data-act="restartloop">Recommencer ma boucle aujourd’hui</button></div>
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
@@ -1025,14 +1026,14 @@ function loopHTML(){
   <section class="card setcard"><h4>Priorité de chaque sourate</h4>
     <p>Pour chaque sourate de la liste ci-dessous, choisis comment elle revient dans ta boucle :</p>
     <ul class="lvdef">
-      <li><b>Prioritaire</b> : elle fait deux tours dans la boucle, chacun dans l’ordre, et ses pages orange et bleues reviennent plus souvent.</li>
-      <li><b>Normal</b> : elle revient comme d’habitude, une fois par boucle.</li>
-      <li><b>Résiduel</b> : elle ne revient que de temps en temps.</li>
-      <li><b>Exclu</b> : elle ne revient plus du tout.</li>
+      <li><b>Prioritaire</b> : elle fait 2 tours dans la boucle. Les pages orange et bleues reviennent plus souvent.</li>
+      <li><b>Normal</b> : elle fait 1 tour dans la boucle.</li>
+      <li><b>Espacé</b> : elle ne revient qu’une fois toutes les ${s.res} boucles.</li>
+      <li><b>Exclu</b> : la sourate est exclue de la boucle.</li>
     </ul>
-    <div class="subbox"><h5>À quelle fréquence revient une sourate « Résiduel » ?</h5>
+    <div class="subbox"><h5>À quelle fréquence revient une sourate « Espacé » ?</h5>
       <div class="stepper"><span class="lab">Toutes les</span><span class="ctl"><button data-act="freq" data-k="res" data-delta="-1" aria-label="Moins">−</button><output>${s.res} boucles</output><button data-act="freq" data-k="res" data-delta="1" aria-label="Plus">+</button></span></div>
-      <p>Une sourate résiduelle est donc révisée une fois toutes les ${s.res} boucles, soit environ tous les ${s.res*N} jours.</p>
+      <p>Une sourate espacée est donc révisée une fois toutes les ${s.res} boucles, soit environ tous les ${s.res*N} jours.</p>
     </div>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
@@ -1040,7 +1041,7 @@ function loopHTML(){
   if(others.length) h+=lvAcc('Lothers','Autres sourates',others.length+' sourates',others.map(surLvRow).join(''));
   full.forEach(j=>{
     const ns=juzRange(j), lv=ns.map(n=>levelOf(P,n)), uni=lv.every(x=>x===lv[0])?lv[0]:'';
-    const body=`<div class="lvall"><div class="nm">Tout le juz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
+    const body=`<div class="lvall"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
     h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body);
   });
   return h;
@@ -1138,7 +1139,7 @@ function pickRows(q){
 function showPicker(){
   pickQ='';
   const v=document.getElementById('picker');
-  v.innerHTML=`<div class="vtop"><button class="vbtn" data-act="addclose">‹ Fermer</button><span class="t">Ajouter une sourate ou un juz</span></div>
+  v.innerHTML=`<div class="vtop"><button class="vbtn" data-act="addclose">‹ Fermer</button><span class="t">Ajouter une sourate ou un juzz</span></div>
     <div class="pick"><input id="pq" class="field" type="search" placeholder="Chercher par nom ou par numéro" autocomplete="off" aria-label="Chercher une sourate"></div>
     <div class="pbody"><ul class="rows" id="plist">${pickRows('')}</ul></div>`;
   v.hidden=false; document.documentElement.style.overflow='hidden';
@@ -1862,7 +1863,7 @@ function refreshBackup(){}
   });
 })();
 
-const FOOT_BAQ = "Texte coranique (rasm ‘uthmani) : The Noble Qur'an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), recoupé verset par verset avec le texte du projet Tanzil. Pages et juz : quran-meta, mushaf de Médine (riwaya Hafs).", FOOT_AMMA = "Texte coranique (rasm ‘uthmani) : The Noble Qur'an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), même source que pour Al Baqara. Pages et juz : quran-meta, mushaf de Médine (riwaya Hafs). Les fiches de Juzz Amma sont repérées automatiquement (expressions de 4 mots et plus, entre versets de Juzz Amma uniquement) ; le tajwid en couleur n'est disponible que pour les versets des fiches (données quran-tajweed, contrôlées sur le mushaf tajwid).";
+const FOOT_BAQ = "Texte coranique (rasm ‘uthmani) : The Noble Qur'an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), recoupé verset par verset avec le texte du projet Tanzil. Pages et juzz : quran-meta, mushaf de Médine (riwaya Hafs).", FOOT_AMMA = "Texte coranique (rasm ‘uthmani) : The Noble Qur'an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), même source que pour Al Baqara. Pages et juzz : quran-meta, mushaf de Médine (riwaya Hafs). Les fiches de Juzz Amma sont repérées automatiquement (expressions de 4 mots et plus, entre versets de Juzz Amma uniquement) ; le tajwid en couleur n'est disponible que pour les versets des fiches (données quran-tajweed, contrôlées sur le mushaf tajwid).";
 ROOT.getElementById("seg").addEventListener("click", e=>{ const b = e.target.closest("button"); if(!b || b.dataset.s===SEC) return; S.sec = b.dataset.s; save(); $("q").value=""; filter="all"; focusN=null; ROOT.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false")); setSec(S.sec); render(); window.scrollTo(0,0); });
 setSec(SECS[S.sec] ? S.sec : "baqara");
 refreshBackup();
