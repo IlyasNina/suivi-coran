@@ -997,14 +997,15 @@ function backupDue(){
   return Date.now()-ref>BACKUP_DAYS*86400000;
 }
 function installSteps(){
-  return `<ul class="steps"><li><b>iPhone (Safari) :</b> touche le bouton Partager (le carré avec la flèche), puis « Sur l’écran d’accueil ».</li>
-    <li><b>Android (Chrome) :</b> touche les trois points en haut, puis « Ajouter à l’écran d’accueil » ou « Installer l’application ».</li></ul>`;
+  return `<ul class="steps"><li><b>iPhone (Safari) :</b> ouvre la page dans Safari, touche le bouton Partager (le carré avec la flèche), puis « Sur l’écran d’accueil ». <b>Désactive « Ouvrir en tant qu’app web »</b> si tu vois cette option, puis touche « Ajouter ». L’icône ouvrira le site dans Safari : le micro fonctionnera.</li>
+    <li><b>Android (Chrome) :</b> touche les trois points en haut, puis « Ajouter à l’écran d’accueil ». Si Chrome te le propose, choisis « Raccourci ».</li>
+    <li>Garde toujours la même façon de l’ouvrir : ton suivi n’est pas partagé entre le navigateur et une app web.</li></ul>`;
 }
 function noticesHTML(){
   let h='';
   if(backupDue()) h+=`<div class="notice"><p><b>Pense à sauvegarder ton suivi.</b> La dernière sauvegarde date de plus de ${BACKUP_DAYS} jours.</p>
     <div class="row2"><button class="btn primary" data-act="backupfile">Sauvegarder maintenant</button></div></div>`;
-  if(sync!=='online'&&hasData(state)&&!isStandalone()&&!installDismissed()) h+=`<div class="notice"><p><b>Pour ne rien perdre, ajoute l’appli à ton écran d’accueil.</b> Ton suivi est alors protégé contre l’effacement automatique du navigateur.</p>
+  if(sync!=='online'&&hasData(state)&&!isStandalone()&&!installDismissed()) h+=`<div class="notice"><p><b>Ajoute l’appli à ton écran d’accueil pour l’ouvrir en un geste.</b> Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.</p>
     <details class="det"><summary>Comment faire ?</summary>${installSteps()}</details>
     <div class="row2"><button class="btn" data-act="installok">C’est fait</button></div></div>`;
   return h;
@@ -1046,7 +1047,7 @@ function reglagesHTML(){
       ${sync!=='online'&&state.backupAt?`<p class="meta">Dernière sauvegarde : ${new Date(state.backupAt).toLocaleDateString('fr-FR')}</p>`:''}
       ${flash&&tab==='reglages'?`<p class="flash">${esc(flash)}</p>`:''}
     </section>
-    ${sync!=='online'&&!isStandalone()?`<section class="card setcard"><h4>Ajouter à l’écran d’accueil</h4><p>Ton suivi est enregistré dans le navigateur de ce téléphone. Installé sur l’écran d’accueil, il est mieux protégé contre l’effacement automatique.</p>${installSteps()}</section>`:''}
+    ${sync!=='online'&&!isStandalone()?`<section class="card setcard"><h4>Ajouter à l’écran d’accueil</h4><p>Ton suivi est enregistré dans le navigateur de ce téléphone. Un raccourci sur l’écran d’accueil permet de l’ouvrir en un geste ; pense à sauvegarder ton suivi de temps en temps.</p>${installSteps()}</section>`:''}
     <section class="card setcard"><h4>Nom du profil</h4>
       <div class="row2"><input id="rname" class="field" type="text" maxlength="24" value="${name}" aria-label="Prénom" autocomplete="off"><button class="btn" data-act="rename">Enregistrer</button></div>
     </section>
