@@ -5,79 +5,56 @@ body{font:16px/1.5 system-ui,sans-serif;margin:0;padding:20px 16px;background:#f
 h1{font-size:1.2rem;margin:0 0 4px}p{margin:6px 0}.s{color:#5b6b64;font-size:.9rem}
 button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:14px 18px;background:#0e6b5c;color:#fff;width:100%;margin:10px 0;min-height:52px}
 button:disabled{opacity:.5}button.rec{background:#b3261e}
-#out{direction:rtl;font-family:'KFGQPC Hafs','Scheherazade New',serif;font-size:1.6rem;line-height:2.1;background:#fff;border:1px solid #e3dccb;border-radius:12px;padding:12px;min-height:60px;margin-top:8px}
+#out{direction:rtl;font-family:'KFGQPC Hafs','Scheherazade New',serif;font-size:1.5rem;line-height:2.1;background:#fff;border:1px solid #e3dccb;border-radius:12px;padding:12px;min-height:60px;margin-top:8px}
 #log{white-space:pre-wrap;font-size:.8rem;color:#5b6b64;margin-top:10px}
 progress{width:100%}
 </style></head><body>
 <h1>Essai micro — Suivi mouraja’a</h1>
-<p class="s">Page d’essai, séparée de l’appli. Le modèle (environ 131 Mo) se télécharge une fois, puis reste sur le téléphone. Ton audio ne quitte pas l’appareil.</p>
+<p class="s">Page d’essai, séparée de l’appli. Le modèle (environ 19 Mo) se télécharge une fois, puis reste sur le téléphone. Ton audio ne quitte pas l’appareil.</p>
 <button id="load">1. Charger le modèle</button>
-<progress id="pg" value="0" max="100" hidden></progress>
 <button id="rec" disabled>2. Réciter (appuie, récite, réappuie)</button>
-<p class="s">Résultat compris par le modèle :</p>
+<p class="s">Résultat compris par le modèle (sans voyelles) :</p>
 <div id="out" lang="ar"></div>
 <div id="log"></div>
 <script>
 const $=id=>document.getElementById(id), log=(m)=>{$('log').textContent+=m+'\n'};
-const BASE='https://huggingface.co/voidwaveDev/fastconformer-quran/resolve/main/';
-let encS,decS,ID2TOK=[];
+const BASE='https://huggingface.co/Abdou/quran-asr-tiny/resolve/main/';
+let sess,T2=[];
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script '+src));document.head.appendChild(s);});}
-async function getBuf(name,asText,onProg){
-  const url=BASE+name;let cache=null;try{cache=await caches.open('asr-v1');}catch(e){}
+async function getBuf(name,asText){
+  const url=BASE+name;let cache=null;try{cache=await caches.open('asr-tiny-v1');}catch(e){}
   if(cache){const hit=await cache.match(url);if(hit)return asText?hit.text():hit.arrayBuffer();}
-  const r=await fetch(url);
-  if(!cache){return asText?r.text():r.arrayBuffer();}
-  const total=+r.headers.get('content-length')||0;let got=0;
-  const counted=new Response(r.body.pipeThrough(new TransformStream({transform(c,ctl){got+=c.length;if(onProg&&total)onProg(got/total);ctl.enqueue(c);}})));
-  await cache.put(url,counted);
-  const hit=await cache.match(url);return asText?hit.text():hit.arrayBuffer();
+  const r=await fetch(url);if(!cache)return asText?r.text():r.arrayBuffer();
+  await cache.put(url,r);const hit=await cache.match(url);return asText?hit.text():hit.arrayBuffer();
 }
 $('load').onclick=async()=>{
-  $('load').disabled=true;$('pg').hidden=false;const t0=performance.now();
+  $('load').disabled=true;const t0=performance.now();
   try{
-    await loadScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js')
+    await loadScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js');
     ort.env.wasm.numThreads=1;ort.env.wasm.wasmPaths='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/';
     const tok=await getBuf('tokens.txt',true);
-    tok.split('\n').filter(Boolean).forEach(l=>{const i=l.lastIndexOf(' ');ID2TOK[+l.slice(i+1)]=l.slice(0,i);});ID2TOK[1024]='<blk>';
-    const dec=await getBuf('decoder.int8.onnx',false);
-    let enc=await getBuf('encoder.int8.onnx',false,p=>{$('pg').value=Math.round(p*100);});
-    $('pg').value=100;
-    log('Téléchargé, démarrage du modèle…');encS=await ort.InferenceSession.create(new Uint8Array(enc),{executionProviders:['wasm'],graphOptimizationLevel:'basic'});enc=null;
-    decS=await ort.InferenceSession.create(new Uint8Array(dec),{executionProviders:['wasm'],graphOptimizationLevel:'basic'});
+    tok.split('\n').filter(Boolean).forEach(l=>{const i=l.lastIndexOf(' ');T2[+l.slice(i+1)]=l.slice(0,i);});
+    const buf=await getBuf('model.int8.onnx',false);
+    sess=await ort.InferenceSession.create(new Uint8Array(buf),{executionProviders:['wasm'],graphOptimizationLevel:'basic'});
     log('Modèle prêt en '+Math.round((performance.now()-t0)/1000)+' s');
-    $('rec').disabled=false;$('load').textContent='Modèle chargé ✓';$('pg').hidden=true;
+    $('rec').disabled=false;$('load').textContent='Modèle chargé ✓';
   }catch(e){log('Erreur : '+e.message);$('load').disabled=false;}
 };
-/* --- traitement du son (log-mel NeMo) --- */
-const melBank=(()=>{const sr=16000,nfft=512,nm=80,fmax=8000;
-const hz2mel=f=>f<1000?f*3/200:15+Math.log(f/1000)/(Math.log(6.4)/27);
-const mel2hz=m=>m<15?m*200/3:1000*Math.exp((Math.log(6.4)/27)*(m-15));
-const pts=[];const mm=hz2mel(fmax);for(let i=0;i<nm+2;i++)pts.push(mel2hz(mm*i/(nm+1)));
-const bins=nfft/2+1;const W=[];for(let m=0;m<nm;m++){const row=new Float32Array(bins);const lo=pts[m],c=pts[m+1],hi=pts[m+2];
-for(let i=0;i<bins;i++){const f=i*sr/nfft;row[i]=Math.max(0,Math.min((f-lo)/(c-lo),(hi-f)/(hi-c)))*2/(hi-lo);}W.push(row);}return W;})();
 function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]];}}
 for(let len=2;len<=n;len<<=1){const ang=-2*Math.PI/len;const wr=Math.cos(ang),wi=Math.sin(ang);for(let i=0;i<n;i+=len){let cr=1,ci=0;for(let k=0;k<len/2;k++){const a=i+k,b=i+k+len/2;const tr=re[b]*cr-im[b]*ci,ti=re[b]*ci+im[b]*cr;re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;const nr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=nr;}}}}
-function features(x){const N=x.length;const y=new Float32Array(N);y[0]=x[0];for(let i=1;i<N;i++)y[i]=x[i]-0.97*x[i-1];
-const pad=256,hop=160,nfft=512,win=400;const T=Math.floor(N/hop)+1;
-const ext=new Float32Array(N+2*pad);for(let i=0;i<N;i++)ext[pad+i]=y[i];
-for(let i=0;i<pad;i++){ext[pad-1-i]=y[Math.min(i+1,N-1)];ext[pad+N+i]=y[Math.max(N-2-i,0)];}
-const w=new Float32Array(nfft);for(let n=0;n<win;n++)w[56+n]=0.5-0.5*Math.cos(2*Math.PI*n/(win-1));
-const F=new Float32Array(80*T);const re=new Float64Array(nfft),im=new Float64Array(nfft);
-for(let t=0;t<T;t++){for(let i=0;i<nfft;i++){re[i]=ext[t*hop+i]*w[i];im[i]=0;}fft(re,im);
-const p=new Float32Array(257);for(let k=0;k<257;k++)p[k]=re[k]*re[k]+im[k]*im[k];
-for(let m=0;m<80;m++){let s=0;const row=melBank[m];for(let k=0;k<257;k++)s+=row[k]*p[k];F[m*T+t]=Math.log(s+Math.pow(2,-24));}}
-const L=Math.floor(N/hop);
-for(let m=0;m<80;m++){let mean=0;for(let t=0;t<L;t++)mean+=F[m*T+t];mean/=L;let v=0;for(let t=0;t<L;t++){const d=F[m*T+t]-mean;v+=d*d;}const sd=Math.sqrt(v/(L-1))+1e-5;for(let t=0;t<T;t++)F[m*T+t]=(F[m*T+t]-mean)/sd;}
-return {F,T,L};}
-async function transcribe(pcm){const t0=performance.now();const {F,T,L}=features(pcm);
-const e=await encS.run({audio_signal:new ort.Tensor('float32',F,[1,80,T]),length:new ort.Tensor('int64',BigInt64Array.from([BigInt(L)]),[1])});
-const out=e.outputs;const D=out.dims[1],TT=out.dims[2];const encLen=Number(e.encoded_lengths.data[0]);const ed=out.data;
-let s1=new Float32Array(640),s2=new Float32Array(640),last=1024;const ids=[];
-for(let t=0;t<Math.min(encLen,TT);t++){const fr=new Float32Array(D);for(let d=0;d<D;d++)fr[d]=ed[d*TT+t];
-for(let k=0;k<3;k++){const r=await decS.run({encoder_outputs:new ort.Tensor('float32',fr,[1,D,1]),targets:new ort.Tensor('int32',Int32Array.from([last]),[1,1]),target_length:new ort.Tensor('int32',Int32Array.from([1]),[1]),input_states_1:new ort.Tensor('float32',s1,[1,1,640]),input_states_2:new ort.Tensor('float32',s2,[1,1,640])});
-const lg=r.outputs.data;let bi=0,bv=-1e9;for(let i=0;i<lg.length;i++)if(lg[i]>bv){bv=lg[i];bi=i;}
-if(bi===1024)break;ids.push(bi);last=bi;s1=r.output_states_1.data;s2=r.output_states_2.data;}}
-return {text:ids.map(i=>ID2TOK[i]).join('').replace(/▁/g,' ').trim(),ms:Math.round(performance.now()-t0),sec:(pcm.length/16000)};}
+const kBanks=(()=>{const mel=f=>1127*Math.log(1+f/700);const lowM=mel(20),highM=mel(8000-400),delta=(highM-lowM)/81,w=16000/512;const B=[];for(let b=0;b<80;b++){const l=lowM+b*delta,c=lowM+(b+1)*delta,r=lowM+(b+2)*delta;const row=new Float32Array(256);for(let i=0;i<256;i++){const m=mel(w*i);if(l<m&&m<r)row[i]=m<=c?(m-l)/(c-l):(r-m)/(r-c);}B.push(row);}return B;})();
+const kWin=(()=>{const w=new Float32Array(400);for(let n=0;n<400;n++)w[n]=Math.pow(0.5-0.5*Math.cos(2*Math.PI*n/399),0.85);return w;})();
+function kfbank(x){const N=x.length;const T=Math.floor((N+80)/160);const F=new Float32Array(T*80);const re=new Float64Array(512),im=new Float64Array(512);const fr=new Float64Array(400);const eps=1.1920929e-7;
+for(let t=0;t<T;t++){let mean=0;for(let j=0;j<400;j++){let i=t*160+80-200+j;if(i<0)i=-i-1;if(i>=N)i=2*N-1-i;i=Math.max(0,Math.min(N-1,i));fr[j]=x[i];mean+=fr[j];}mean/=400;for(let j=0;j<400;j++)fr[j]-=mean;
+re.fill(0);im.fill(0);re[0]=fr[0]*(1-0.97)*kWin[0];for(let j=1;j<400;j++)re[j]=(fr[j]-0.97*fr[j-1])*kWin[j];
+fft(re,im);const p=new Float32Array(256);for(let k=0;k<256;k++)p[k]=re[k]*re[k]+im[k]*im[k];
+for(let m=0;m<80;m++){let s=0;const row=kBanks[m];for(let k=0;k<256;k++)s+=row[k]*p[k];F[t*80+m]=Math.log(Math.max(s,eps));}}
+return {F,T};}
+async function transcribe(pcm){const t0=performance.now();const {F,T}=kfbank(pcm);
+const o=await sess.run({x:new ort.Tensor('float32',F,[1,T,80]),x_lens:new ort.Tensor('int64',BigInt64Array.from([BigInt(T)]),[1])});
+const lp=o.log_probs;const TT=lp.dims[1],V=lp.dims[2];const len=Number(o.log_probs_len.data[0]);const d=lp.data;let prev=-1;const out=[];
+for(let t=0;t<Math.min(len,TT);t++){let bi=0,bv=-1e9;for(let v=0;v<V;v++){const q=d[t*V+v];if(q>bv){bv=q;bi=v;}}if(bi!==prev&&bi!==0)out.push(T2[bi]);prev=bi;}
+return {text:out.join('').replace(/▁/g,' ').trim(),ms:Math.round(performance.now()-t0),sec:pcm.length/16000};}
 /* --- micro --- */
 let mr=null,chunks=[],stream=null,timer=null;
 $('rec').onclick=async()=>{
