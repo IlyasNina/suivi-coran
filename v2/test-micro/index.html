@@ -20,7 +20,7 @@ progress{width:100%}
 <script>
 const $=id=>document.getElementById(id), log=(m)=>{$('log').textContent+=m+'\n'};
 const BASE='https://huggingface.co/voidwaveDev/fastconformer-quran/resolve/main/';
-let encS,decS,ID2TOK=[],ort;
+let encS,decS,ID2TOK=[];
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('script '+src));document.head.appendChild(s);});}
 async function getBuf(name,asText,onProg){
   const url=BASE+name;let cache=null;try{cache=await caches.open('asr-v1');const hit=await cache.match(url);if(hit)return asText?hit.text():hit.arrayBuffer();}catch(e){}
@@ -32,7 +32,7 @@ async function getBuf(name,asText,onProg){
 $('load').onclick=async()=>{
   $('load').disabled=true;$('pg').hidden=false;const t0=performance.now();
   try{
-    await loadScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js');ort=window.ort;
+    await loadScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js')
     ort.env.wasm.wasmPaths='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/';
     const tok=await getBuf('tokens.txt',true);
     tok.split('\n').filter(Boolean).forEach(l=>{const i=l.lastIndexOf(' ');ID2TOK[+l.slice(i+1)]=l.slice(0,i);});ID2TOK[1024]='<blk>';
