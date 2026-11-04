@@ -1,4 +1,20 @@
-<!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>
+.tab .emo{font-size:22px;line-height:24px;height:24px}
+.tst h1{margin:6px 0 4px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.tl{font-size:.88rem;color:var(--muted);font-weight:700;margin:10px 0 6px}.tl:first-child{margin-top:0}
+.tchips{display:flex;gap:8px;flex-wrap:wrap}.tchip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:40px;color:var(--ink)}
+.tchip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tsel{width:100%;box-sizing:border-box;margin:10px 0;border:1.5px solid var(--line);border-radius:12px;padding:10px;font:inherit;min-height:44px;background:var(--surface);color:var(--ink)}
+.trow{display:flex;gap:10px}.trow .btn{flex:1}.trow .tsel{margin:4px 0}.tfull{width:100%;margin:12px 0 4px}
+.tv{font-family:'KFGQPCHafs','Scheherazade New',serif;font-size:1.7rem;line-height:2.2;text-align:right}
+.tres .tw{display:inline-block;padding:0 6px;border-radius:8px;margin:2px 1px;cursor:pointer}
+.tw.ok{background:rgba(14,107,92,.18)}.tw.bad{background:rgba(190,40,40,.18)}.tw.miss{background:rgba(220,140,20,.2);outline:1.5px dashed rgba(220,140,20,.7)}
+.tw small{display:block;font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.2;color:var(--muted);text-align:center}
+.tn{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:50%;padding:0 5px;margin:0 3px}
+.tleg,.tmsg,.tnote,.tstat{font-size:.85rem;color:var(--muted);margin:8px 0}.tmsg{color:var(--ink)}.tlinks{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
+.trec{background:#B3261E!important;border-color:#B3261E!important}
+</style>
+</head><body>
 <title>Suivi mouraja’a</title>
 <meta name="apple-mobile-web-app-title" content="Suivi mouraja’a">
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -291,7 +307,7 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 /* Navigation du bas */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);
   padding:6px max(16px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px))}
-.nav .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.nav .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;border-radius:12px;min-height:54px;padding:6px 0;font-size:.78rem;font-weight:700;color:var(--muted)}
 .tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .tab[aria-selected=true]{color:var(--accent);background:var(--soft)}
@@ -838,6 +854,7 @@ function navHTML(){
     ${t('suivi','Suivi','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M4 12h2M4 18h2M10 6h10M10 12h10M10 18h10"/></svg>')}
     ${t('plan',"Mouraja’a",'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>')}
     ${t('quran','Coran','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6c-2-1.6-5-2-8-1.5v13c3-.5 6-.1 8 1.5 2-1.6 5-2 8-1.5v-13C17 4 14 4.4 12 6z"/><path d="M12 6v13"/></svg>')}
+    ${t('test','Test','<span class="emo" aria-hidden="true">🧠</span>')}
   </div>`;
 }
 
@@ -1145,6 +1162,7 @@ function render(){
   qbackEl.hidden=(main!=='muta');
   if(main==='muta'){ app.hidden=true; mutaHost.hidden=false; ensureMuta(); }
   else if(main==='quran'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=quranHTML(); afterQuran(); }
+  else if(main==='test'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=testHTML()+creditHTML(); }
   else { mutaHost.hidden=true; app.hidden=false; app.innerHTML=(screen==='home'?homeHTML():profileHTML())+creditHTML(); }
   navEl.innerHTML=navHTML();
   window.scrollTo(0,y);
@@ -1296,7 +1314,7 @@ const handlers={
   open(el){ go(()=>{ pk=el.dataset.pk; screen='profile'; tab=(main==='plan')?'plan':'suivi'; history=[]; resetUI(); selDay=todayWd(); openAcc=new Set(state.profiles[pk].extra.length?[]:['juz30']); }); },
   acc(el){ const k=el.dataset.k; if(openAcc.has(k)) openAcc.delete(k); else openAcc.add(k); render(); },
   back(){ hideViewer(); hidePicker(); hideCreator(); go(()=>{ if(tab==='reglages'&&screen==='profile'){ tab='suivi'; resetUI(); return; } if(tab==='loop'&&screen==='profile'){ tab='plan'; resetUI(); return; } screen='home'; history=[]; resetUI(); }); },
-  tab(el){ go(()=>{ const t=el.dataset.tab; resetUI(); if(t==='quran'){ qPop=!qPop; return; } qPop=false; if(t==='plan'){ main='plan'; tab='plan'; } else if(t==='reglages'){ main='suivi'; tab='reglages'; } else { main='suivi'; tab='suivi'; } }); },
+  tab(el){ go(()=>{ const t=el.dataset.tab; resetUI(); if(t==='quran'){ qPop=!qPop; return; } qPop=false; if(t==='test'){ main='test'; return; } if(t==='plan'){ main='plan'; tab='plan'; } else if(t==='reglages'){ main='suivi'; tab='reglages'; } else { main='suivi'; tab='suivi'; } }); },
   brush(el){ brush=el.dataset.st; render(); },
   loop(){ go(()=>{ tab='loop'; resetUI(); }); },
   setloop(){
@@ -1476,6 +1494,182 @@ const handlers={
     save(); render();
   }
 };
+/* ---------- Onglet Test 🧠 : le verset est donné, tu récites la suite ---------- */
+const T_AYAH=QDATA.flat();
+const T_MIC="<svg viewBox='0 0 32 32' aria-hidden='true' style='width:1.2em;height:1.2em;vertical-align:-.25em;fill:currentColor;stroke:currentColor;stroke-width:1.3;stroke-linejoin:round'><path d='M16.003 22.377c3.231 0 5.851-2.619 5.851-5.851v-10.639c0-3.231-2.62-5.85-5.851-5.85s-5.851 2.619-5.851 5.85v10.639c0 3.231 2.62 5.851 5.851 5.851zM11.216 5.888c0-2.639 2.147-4.786 4.787-4.786s4.787 2.147 4.787 4.786v10.639c0 2.64-2.147 4.787-4.787 4.787s-4.787-2.147-4.787-4.787v-10.639z'/><path d='M23.978 11.207v5.319c0 4.399-3.579 7.978-7.978 7.978s-7.978-3.579-7.978-7.978v-5.319h-1.064v5.319c0 4.83 3.81 8.776 8.581 9.018h-0.068v5.354h-4.79v1.064h10.637v-1.064h-4.784v-5.354h-0.073c4.771-0.243 8.581-4.189 8.581-9.018v-5.319h-1.064z'/></svg>";
+const TS={step:'setup',kind:'sur',sur:2,juz:1,pf:'',pt:'',id:0,end:0,showS:false,mic:'idle',msg:'',words:null,extras:[],heard:'',nq:0,good:0,bad:0};
+const TRANGE={}; 
+function tSurRange(s){ const a=sFirst[s-1]; return [a,a+QDATA[s-1].length-1]; }
+function tScope(){
+  if(TS.kind==='sur') return tSurRange(TS.sur);
+  if(TS.kind==='juz') return [QJUZ[TS.juz], TS.juz<30?QJUZ[TS.juz+1]-1:6236];
+  const [a,b]=tSurRange(TS.sur), p0=SUR[TS.sur-1].p, p1=lastPage(TS.sur);
+  const pf=Math.min(p1,Math.max(p0,parseInt(TS.pf,10)||p0)), pt=Math.min(p1,Math.max(pf,parseInt(TS.pt,10)||p1));
+  return [Math.max(a,QPAGE[pf]), Math.min(b, pt<604?QPAGE[pt+1]-1:6236)];
+}
+function tEnd(id){
+  const s=surOfAyah(id), se=tSurRange(s)[1];
+  if(modeOf(s)==='pages'){ const p=pageOfAyah(id); return Math.min(se, p<604?QPAGE[p+1]-1:6236); }
+  return se;
+}
+function tPick(){
+  const [lo,hi]=tScope(); const cand=[];
+  for(let i=lo;i<=hi;i++) if(tEnd(i)>i) cand.push(i);
+  if(!cand.length) return false;
+  let id; do{ id=cand[Math.floor(Math.random()*cand.length)]; }while(cand.length>1&&id===TS.id);
+  TS.id=id; TS.end=tEnd(id); TS.showS=false; TS.words=null; TS.extras=[]; TS.heard=''; TS.msg=''; TS.nq++; TS.step='ask'; return true;
+}
+function tNorm(w){
+  return w.replace(/آ/g,'ءا').replace(/[أإٱ]/g,'ا').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ة/g,'ه').replace(/ى/g,'ي')
+    .replace(/[ـً-ٰٟۖ-ۭ࣓-ࣿ‌‍]/g,'').replace(/[^ء-ي]/g,'');
+}
+function tExpected(){
+  const out=[]; for(let i=TS.id+1;i<=TS.end;i++){ const s=surOfAyah(i), n=i-sFirst[s-1]+1;
+    T_AYAH[i-1].split(/\s+/).forEach(w=>{ const nw=tNorm(w); if(nw) out.push({w,n:nw,v:0}); });
+    if(out.length) out[out.length-1].v=n; }
+  return out;
+}
+function tLev(a,b){ const m=a.length,n=b.length; if(!m) return n; if(!n) return m; let pr=[]; for(let j=0;j<=n;j++) pr[j]=j;
+  for(let i=1;i<=m;i++){ const cu=[i]; for(let j=1;j<=n;j++) cu[j]=Math.min(pr[j]+1,cu[j-1]+1,pr[j-1]+(a[i-1]===b[j-1]?0:1)); pr=cu; } return pr[n]; }
+function tAlign(E,R){
+  const m=E.length,n=R.length, D=[],B=[]; for(let i=0;i<=m;i++){ D.push(new Float32Array(n+1)); B.push(new Uint8Array(n+1)); }
+  for(let i=1;i<=m;i++){ D[i][0]=i; B[i][0]=1; } for(let j=1;j<=n;j++){ D[0][j]=j; B[0][j]=2; }
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++){
+    const c=tLev(E[i-1].n,R[j-1])/Math.max(E[i-1].n.length,R[j-1].length,1);
+    const sub=D[i-1][j-1]+(c<=0.34?c*0.5:1), del=D[i-1][j]+1, ins=D[i][j-1]+1;
+    if(sub<=del&&sub<=ins){ D[i][j]=sub; B[i][j]=0; } else if(del<=ins){ D[i][j]=del; B[i][j]=1; } else { D[i][j]=ins; B[i][j]=2; }
+  }
+  const st=new Array(m).fill('miss'), hr=new Array(m).fill(''), ex=[]; let i=m,j=n;
+  while(i>0||j>0){ const b=(i>0&&j>0)?B[i][j]:(i>0?1:2);
+    if(b===0){ const c=tLev(E[i-1].n,R[j-1])/Math.max(E[i-1].n.length,R[j-1].length,1); st[i-1]=c<=0.34?'ok':'bad'; hr[i-1]=R[j-1]; i--; j--; }
+    else if(b===1){ st[i-1]='miss'; i--; } else { ex.unshift(R[j-1]); j--; } }
+  return {st,hr,ex};
+}
+/* modèle de reconnaissance vocale (quran-asr-tiny, MIT), exécuté sur le téléphone */
+const T_BASE='https://huggingface.co/Abdou/quran-asr-tiny/resolve/main/';
+let tSess=null, tTok=[], tLoading=null;
+function tScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=()=>rej(new Error('Impossible de charger '+src)); document.head.appendChild(s); }); }
+async function tGet(name,asText){
+  const url=T_BASE+name; let cache=null; try{ cache=await caches.open('asr-tiny-v1'); }catch(e){}
+  if(cache){ const hit=await cache.match(url); if(hit) return asText?hit.text():hit.arrayBuffer(); }
+  const r=await fetch(url); if(!r.ok) throw new Error('Téléchargement impossible ('+r.status+')'); if(!cache) return asText?r.text():r.arrayBuffer();
+  await cache.put(url,r); const hit=await cache.match(url); return asText?hit.text():hit.arrayBuffer();
+}
+function tLoadModel(){
+  if(tSess) return Promise.resolve();
+  if(!tLoading) tLoading=(async()=>{
+    await tScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js');
+    window.ort.env.wasm.numThreads=1; window.ort.env.wasm.wasmPaths='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/';
+    (await tGet('tokens.txt',true)).split('\n').filter(Boolean).forEach(l=>{ const i=l.lastIndexOf(' '); tTok[+l.slice(i+1)]=l.slice(0,i); });
+    const buf=await tGet('model.int8.onnx',false);
+    tSess=await window.ort.InferenceSession.create(new Uint8Array(buf),{executionProviders:['wasm'],graphOptimizationLevel:'basic'});
+  })().catch(e=>{ tLoading=null; throw e; });
+  return tLoading;
+}
+function tFft(re,im){ const n=re.length; for(let i=1,j=0;i<n;i++){ let b=n>>1; for(;j&b;b>>=1) j^=b; j^=b; if(i<j){ [re[i],re[j]]=[re[j],re[i]]; [im[i],im[j]]=[im[j],im[i]]; } }
+  for(let len=2;len<=n;len<<=1){ const ang=-2*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
+    for(let i=0;i<n;i+=len){ let cr=1,ci=0; for(let k=0;k<len/2;k++){ const a=i+k,b=i+k+len/2, tr=re[b]*cr-im[b]*ci, ti=re[b]*ci+im[b]*cr; re[b]=re[a]-tr; im[b]=im[a]-ti; re[a]+=tr; im[a]+=ti; const nr=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=nr; } } } }
+const tBanks=(()=>{ const mel=f=>1127*Math.log(1+f/700), lo=mel(20), hi=mel(7600), d=(hi-lo)/81, w=16000/512, B=[];
+  for(let b=0;b<80;b++){ const l=lo+b*d, c=lo+(b+1)*d, r=lo+(b+2)*d, row=new Float32Array(256); for(let i=0;i<256;i++){ const m=mel(w*i); if(l<m&&m<r) row[i]=m<=c?(m-l)/(c-l):(r-m)/(r-c); } B.push(row); } return B; })();
+const tWin=(()=>{ const w=new Float32Array(400); for(let n=0;n<400;n++) w[n]=Math.pow(0.5-0.5*Math.cos(2*Math.PI*n/399),0.85); return w; })();
+function tFbank(x){ const N=x.length, T=Math.floor((N+80)/160), F=new Float32Array(T*80), re=new Float64Array(512), im=new Float64Array(512), fr=new Float64Array(400), eps=1.1920929e-7;
+  for(let t=0;t<T;t++){ let mean=0; for(let j=0;j<400;j++){ let i=t*160+80-200+j; if(i<0) i=-i-1; if(i>=N) i=2*N-1-i; i=Math.max(0,Math.min(N-1,i)); fr[j]=x[i]; mean+=fr[j]; } mean/=400; for(let j=0;j<400;j++) fr[j]-=mean;
+    re.fill(0); im.fill(0); re[0]=fr[0]*(1-0.97)*tWin[0]; for(let j=1;j<400;j++) re[j]=(fr[j]-0.97*fr[j-1])*tWin[j];
+    tFft(re,im); const p=new Float32Array(256); for(let k=0;k<256;k++) p[k]=re[k]*re[k]+im[k]*im[k];
+    for(let m=0;m<80;m++){ let s=0; const row=tBanks[m]; for(let k=0;k<256;k++) s+=row[k]*p[k]; F[t*80+m]=Math.log(Math.max(s,eps)); } }
+  return {F,T}; }
+async function tRecognize(pcm){
+  const {F,T}=tFbank(pcm);
+  const o=await tSess.run({x:new window.ort.Tensor('float32',F,[1,T,80]),x_lens:new window.ort.Tensor('int64',BigInt64Array.from([BigInt(T)]),[1])});
+  const lp=o.log_probs, TT=lp.dims[1], V=lp.dims[2], len=Number(o.log_probs_len.data[0]), d=lp.data; let prev=-1; const out=[];
+  for(let t=0;t<Math.min(len,TT);t++){ let bi=0,bv=-1e9; for(let v=0;v<V;v++){ const q=d[t*V+v]; if(q>bv){ bv=q; bi=v; } } if(bi!==prev&&bi!==0) out.push(tTok[bi]); prev=bi; }
+  return out.join('').replace(/▁/g,' ').trim();
+}
+/* coupe l'enregistrement long en morceaux de 25 s environ, au moment le plus silencieux */
+function tSplit(pcm){
+  const sr=16000, seg=25*sr, win=sr/10; const cuts=[0]; let pos=0;
+  while(pcm.length-pos>seg*1.3){ let best=pos+seg, bv=1e9; for(let c=pos+seg-5*sr;c<=pos+seg+3*sr;c+=win){ let e=0; for(let k=0;k<win;k++){ const v=pcm[c+k]||0; e+=v*v; } if(e<bv){ bv=e; best=c; } } cuts.push(best); pos=best; }
+  cuts.push(pcm.length); const parts=[]; for(let i=0;i<cuts.length-1;i++) parts.push(pcm.subarray(cuts[i],cuts[i+1])); return parts;
+}
+let tMR=null, tStream=null, tChunks=[], tTimer=null;
+async function tToggleRec(){
+  if(TS.mic==='rec'){ if(tMR&&tMR.state==='recording') tMR.stop(); return; }
+  if(TS.mic==='loading'||TS.mic==='busy') return;
+  try{ tStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true}}); }
+  catch(e){ TS.msg='Le micro est bloqué. Ouvre l’appli dans Safari (pas dans une fenêtre intégrée) et autorise le micro.'; render(); return; }
+  TS.mic='loading'; TS.msg='Préparation du modèle de reconnaissance (19 Mo, une seule fois)…'; render();
+  try{ await tLoadModel(); }
+  catch(e){ tStream.getTracks().forEach(t=>t.stop()); TS.mic='idle'; TS.msg='Le modèle n’a pas pu être chargé : '+e.message+'. Vérifie ta connexion.'; render(); return; }
+  tChunks=[]; tMR=new MediaRecorder(tStream); tMR.ondataavailable=e=>{ if(e.data&&e.data.size) tChunks.push(e.data); };
+  tMR.onstop=async()=>{
+    clearTimeout(tTimer); tStream.getTracks().forEach(t=>t.stop()); TS.mic='busy'; TS.msg='Analyse de ta récitation…'; render();
+    try{
+      const ab=await new Blob(tChunks,{type:tMR.mimeType}).arrayBuffer(); const ac=new (window.AudioContext||window.webkitAudioContext)(); const buf=await ac.decodeAudioData(ab);
+      const oc=new OfflineAudioContext(1,Math.ceil(buf.duration*16000),16000); const s=oc.createBufferSource(); s.buffer=buf; s.connect(oc.destination); s.start();
+      const pcm=(await oc.startRendering()).getChannelData(0); let text=''; for(const part of tSplit(pcm)){ const t=await tRecognize(part); if(t) text+=(text?' ':'')+t; }
+      TS.heard=text; const E=tExpected(), R=text.split(/\s+/).map(tNorm).filter(Boolean), A=tAlign(E,R);
+      TS.words=E.map((e,i)=>({w:e.w,v:e.v,st:A.st[i],h:A.hr[i]})); TS.extras=A.ex; TS.step='result'; TS.msg='';
+    }catch(e){ TS.msg='Analyse impossible : '+e.message; }
+    TS.mic='idle'; render(); window.scrollTo(0,0);
+  };
+  tMR.start(); TS.mic='rec'; TS.msg='Récite la suite du verset, puis touche « Arrêter ».'; render();
+  tTimer=setTimeout(()=>{ if(tMR&&tMR.state==='recording') tMR.stop(); },180000);
+}
+function tCount(){ const w=TS.words||[]; const ok=w.filter(x=>x.st==='ok').length; return {ok,n:w.length}; }
+function testHTML(){
+  const sels=(id,n,lab)=>`<select id="${id}" class="tsel">${Array.from({length:n},(_,i)=>`<option value="${i+1}"${(id==='tjuz'?TS.juz:TS.sur)===i+1?' selected':''}>${lab(i+1)}</option>`).join('')}</select>`;
+  const chip=(k,l)=>`<button class="tchip" data-act="tkind" data-k="${k}" aria-pressed="${TS.kind===k}">${l}</button>`;
+  if(TS.step==='setup'){
+    const p0=SUR[TS.sur-1].p,p1=lastPage(TS.sur);
+    return `<div class="tst"><h1>Test 🧠</h1><p class="lead">Je te donne un verset, tu récites la suite.</p>
+    <div class="tcard"><p class="tl">Que veux-tu réviser ?</p><div class="tchips">${chip('sur','Une sourate')}${chip('juz','Un juzz')}${chip('pages','Des pages')}</div>
+    ${TS.kind==='juz'?sels('tjuz',30,n=>'Juzz '+n):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
+    ${TS.kind==='pages'?`<p class="tl">De la page… à la page… (pages ${p0} à ${p1})</p><div class="trow"><input id="tpf" class="tsel" inputmode="numeric" placeholder="${p0}" value="${esc(TS.pf)}"><input id="tpt" class="tsel" inputmode="numeric" placeholder="${p1}" value="${esc(TS.pt)}"></div>`:''}
+    <button class="btn primary tfull" data-act="tstart">Commencer</button>
+    ${TS.msg?`<p class="tmsg">${esc(TS.msg)}</p>`:''}</div>
+    <p class="tnote">Le micro marche dans Safari. Le modèle de reconnaissance (19 Mo) se télécharge une fois, puis reste sur ton téléphone ; ton audio ne le quitte pas. Modèle : quran-asr-tiny (licence MIT).</p></div>`;
+  }
+  const s=surOfAyah(TS.id), p=pageOfAyah(TS.id), endTxt=modeOf(s)==='pages'?'jusqu’à la fin de la page '+pageOfAyah(TS.end):'jusqu’à la fin de la sourate';
+  const stats=`<p class="tstat">Question ${TS.nq} · ✓ ${TS.good} · ↻ ${TS.bad}</p>`;
+  if(TS.step==='ask'){
+    const micLab=TS.mic==='rec'?'■ Arrêter':TS.mic==='loading'?'Préparation…':TS.mic==='busy'?'Analyse…':T_MIC+' Réciter';
+    return `<div class="tst"><h1>Test 🧠</h1>${stats}
+    <div class="tcard"><p class="tl">Verset de départ</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div>
+    ${TS.showS?`<p class="tl">${esc(SUR[s-1].fr)} · verset ${TS.id-sFirst[s-1]+1}</p>`:`<button class="link" data-act="tsurah">Voir la sourate</button>`}
+    <p class="tl">Récite la suite ${endTxt}.</p>
+    <button class="btn primary tfull${TS.mic==='rec'?' trec':''}" data-act="trec"${TS.mic==='loading'||TS.mic==='busy'?' disabled':''}>${micLab}</button>
+    ${TS.msg?`<p class="tmsg">${TS.msg}</p>`:''}
+    <div class="tlinks"><button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button><button class="link" data-act="tsetup">Changer de choix</button></div></div></div>`;
+  }
+  const c=tCount(), manual=!TS.heard;
+  const ws=TS.words.map((x,i)=>`<span class="tw ${x.st}" data-act="tword" data-i="${i}">${esc(x.w)}${x.st==='bad'&&x.h&&!manual?`<small>${esc(x.h)}</small>`:''}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
+  return `<div class="tst"><h1>Test 🧠</h1>${stats}
+  <div class="tcard"><p class="tl">${esc(SUR[s-1].fr)} · verset ${TS.id-sFirst[s-1]+1}</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div></div>
+  <div class="tcard"><p class="tl">${manual?'La suite — corrige-toi toi-même':`Résultat : ${c.ok} mots justes sur ${c.n}`}</p><div class="tv tres" lang="ar" dir="rtl">${ws}</div>
+  <p class="tleg">${manual?'Touche un mot pour le marquer juste ou faux.':'<span class="tw ok">juste</span> <span class="tw bad">différent</span> <span class="tw miss">oublié</span> · touche un mot pour corriger la reconnaissance.'}</p>
+  ${TS.extras.length&&!manual?`<p class="tleg">Mots en plus compris par le micro : ${esc(TS.extras.join(' '))}</p>`:''}</div>
+  <div class="trow"><button class="btn primary" data-act="tgood">Bon ✓</button><button class="btn" data-act="tbad">À revoir ↻</button></div>
+  <div class="tlinks"><button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button><button class="link" data-act="tsetup">Changer de choix</button></div></div>`;
+}
+Object.assign(handlers,{
+  tkind(el){ TS.kind=el.dataset.k; TS.pf=''; TS.pt=''; render(); },
+  tstart(){ if(!tPick()) TS.msg='Aucun verset ne convient dans ce choix. Élargis-le.'; else TS.msg=''; render(); window.scrollTo(0,0); },
+  tsurah(){ TS.showS=true; render(); },
+  trec(){ tToggleRec(); },
+  treveal(){ const E=tExpected(); TS.words=E.map(e=>({w:e.w,v:e.v,st:'neu',h:''})); TS.extras=[]; TS.heard=''; TS.step='result'; render(); window.scrollTo(0,0); },
+  tnext(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); TS.mic='idle'; } tPick(); render(); },
+  tsetup(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); } TS.mic='idle'; TS.step='setup'; TS.msg=''; render(); },
+  tword(el){ const w=TS.words[+el.dataset.i]; if(!w) return; w.st=(w.st==='ok')?'bad':'ok'; if(!TS.heard) w.st=(w.st==='ok')?'ok':'bad'; render(); },
+  tgood(){ TS.good++; tPick(); render(); window.scrollTo(0,0); },
+  tbad(){ TS.bad++; tPick(); render(); window.scrollTo(0,0); }
+});
+document.addEventListener('change',e=>{
+  const id=e.target&&e.target.id;
+  if(id==='tsur'){ TS.sur=+e.target.value; TS.pf=''; TS.pt=''; if(TS.kind==='pages') render(); }
+  else if(id==='tjuz') TS.juz=+e.target.value;
+  else if(id==='tpf') TS.pf=e.target.value; else if(id==='tpt') TS.pt=e.target.value;
+});
+
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]'); if(!el||el.disabled) return;
   const h=handlers[el.dataset.act]; if(h) h(el);
