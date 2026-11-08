@@ -1,6 +1,6 @@
 <!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>
 
-.tst h1{margin:6px 0 4px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.tst h1{margin:6px 0 4px}.tbackbtn{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;margin:2px 0 6px;min-height:36px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
 .tl{font-size:.88rem;color:var(--muted);font-weight:700;margin:10px 0 6px}.tl:first-child{margin-top:0}
 .tchips{display:flex;gap:8px;flex-wrap:wrap}.tchip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:40px;color:var(--ink)}
 .tchip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -1630,11 +1630,12 @@ async function tToggleRec(){
 }
 function tCount(){ const w=TS.words||[]; const ok=w.filter(x=>x.st==='ok').length; return {ok,n:w.length}; }
 function testHTML(){
+  const backBtn=(TS.step!=='setup'&&TS.hist.length)?'<button class="tbackbtn" data-act="tprev">‹ Revenir</button>':'';
   const sels=(id,n,lab)=>`<select id="${id}" class="tsel">${Array.from({length:n},(_,i)=>`<option value="${i+1}"${(id==='tjuz'?TS.juz:TS.sur)===i+1?' selected':''}>${lab(i+1)}</option>`).join('')}</select>`;
   const chip=(k,l)=>`<button class="tchip" data-act="tkind" data-k="${k}" aria-pressed="${TS.kind===k}">${l}</button>`;
   if(TS.step==='setup'){
     const p0=SUR[TS.sur-1].p,p1=lastPage(TS.sur);
-    return `<div class="tst"><h1>Test</h1><p class="lead">Je te donne un verset, tu récites la suite.</p>
+    return `<div class="tst"><h1>Test</h1>${backBtn}<p class="lead">Je te donne un verset, tu récites la suite.</p>
     <div class="tcard"><p class="tl">Que veux-tu réviser ?</p><div class="tchips">${chip('sur','Une sourate')}${chip('juz','Un juzz')}${chip('pages','Des pages')}</div>
     ${TS.kind==='juz'?sels('tjuz',30,n=>'Juzz '+n):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
     ${TS.kind==='pages'?`<p class="tl">De la page… à la page… (pages ${p0} à ${p1})</p><div class="trow"><input id="tpf" class="tsel" inputmode="numeric" placeholder="${p0}" value="${esc(TS.pf)}"><input id="tpt" class="tsel" inputmode="numeric" placeholder="${p1}" value="${esc(TS.pt)}"></div>`:''}
@@ -1645,20 +1646,20 @@ function testHTML(){
   const s=surOfAyah(TS.id), p=pageOfAyah(TS.id), endTxt=modeOf(s)==='pages'?'jusqu’à la fin de la page '+pageOfAyah(TS.end):'jusqu’à la fin de la sourate';
   if(TS.step==='ask'){
     const micLab=TS.mic==='rec'?'■ Arrêter':TS.mic==='loading'?'Préparation…':TS.mic==='busy'?'Analyse…':T_MIC+' Réciter';
-    return `<div class="tst"><h1>Test</h1>
-    <div class="tcard"><p class="tl">Verset de départ</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div>
+    return `<div class="tst"><h1>Test</h1>${backBtn}
+    <div class="tcard"><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div>
     <button class="btn primary tfull${TS.mic==='rec'?' trec':''}" data-act="trec"${TS.mic==='loading'||TS.mic==='busy'?' disabled':''}>${micLab}</button>
     ${TS.msg?`<p class="tmsg">${TS.msg}</p>`:''}
-    <div class="tlinks">${TS.hist.length?'<button class="link" data-act="tprev">‹ Précédent</button>':''}<button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button><button class="link" data-act="tsetup">Changer de choix</button></div></div></div>`;
+    <div class="tlinks"><button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button><button class="link" data-act="tsetup">Changer de choix</button></div></div></div>`;
   }
   const c=tCount(), manual=!TS.heard;
   const ws=TS.words.map((x,i)=>`<span class="tw">${esc(x.w)}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
-  return `<div class="tst"><h1>Test</h1>
+  return `<div class="tst"><h1>Test</h1>${backBtn}
   <div class="tcard"><p class="tl">${esc(SUR[s-1].fr)} · verset ${TS.id-sFirst[s-1]+1}</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div></div>
   <div class="tcard"><p class="tl">La suite</p><div class="tv tres" lang="ar" dir="rtl">${ws}</div>
   ${TS.extras.length&&!manual?`<p class="tleg">Mots en plus compris par le micro : ${esc(TS.extras.join(' '))}</p>`:''}</div>
   <div class="trow"><button class="btn primary" data-act="tgood">Bon ✓</button><button class="btn" data-act="tbad">À revoir ↻</button></div>
-  <div class="tlinks">${TS.hist.length?'<button class="link" data-act="tprev">‹ Précédent</button>':''}<button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button><button class="link" data-act="tsetup">Changer de choix</button></div></div>`;
+  <div class="tlinks"><button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button><button class="link" data-act="tsetup">Changer de choix</button></div></div>`;
 }
 Object.assign(handlers,{
   tkind(el){ TS.kind=el.dataset.k; TS.pf=''; TS.pt=''; render(); },
