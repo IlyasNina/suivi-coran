@@ -1,6 +1,6 @@
 <!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>
 
-.tst h1{margin:6px 0 4px}.tbackbtn{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;margin:2px 0 6px;min-height:36px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.tst h1{margin:6px 0 4px}.tbackbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:24;stroke-linecap:round;stroke-linejoin:round}.tbackbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;margin:2px 0 6px;min-height:36px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
 .tl{font-size:.88rem;color:var(--muted);font-weight:700;margin:10px 0 6px}.tl:first-child{margin-top:0}
 .tchips{display:flex;gap:8px;flex-wrap:wrap}.tchip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:40px;color:var(--ink)}
 .tchip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -1637,7 +1637,7 @@ async function tToggleRec(){
 }
 function tCount(){ const w=TS.words||[]; const ok=w.filter(x=>x.st==='ok').length; return {ok,n:w.length}; }
 function testHTML(){
-  const backBtn=(TS.step!=='setup')?'<button class="tbackbtn" data-act="tprev">‹ Revenir</button>':'';
+  const backBtn=(TS.step!=='setup')?'<button class="tbackbtn" data-act="tprev"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="246"/><polyline points="333.82 100.37 178.18 256 333.82 411.63"/></svg>Revenir</button>':'';
   const sels=(id,n,lab)=>`<select id="${id}" class="tsel">${Array.from({length:n},(_,i)=>`<option value="${i+1}"${(id==='tjuz'?TS.juz:TS.sur)===i+1?' selected':''}>${lab(i+1)}</option>`).join('')}</select>`;
   const chip=(k,l)=>`<button class="tchip" data-act="tkind" data-k="${k}" aria-pressed="${TS.kind===k}">${l}</button>`;
   if(TS.step==='setup'){
