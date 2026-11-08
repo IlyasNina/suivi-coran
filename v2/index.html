@@ -1677,8 +1677,7 @@ Object.assign(handlers,{
   tnext(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); TS.mic='idle'; } tPick(); render(); },
   tprev(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); }
     TS.mic='idle'; TS.msg='';
-    if(!TS.hist.length){ TS.step='setup'; render(); window.scrollTo(0,0); return; }
-    const h=TS.hist.pop(); TS.id=h.id; TS.end=h.end; TS.step=h.step; TS.words=h.words; TS.extras=h.extras; TS.heard=h.heard; TS.showS=false; render(); window.scrollTo(0,0); },
+    TS.hist=[]; TS.step='setup'; TS.showS=false; render(); window.scrollTo(0,0); },
   tsetup(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); } TS.mic='idle'; TS.step='setup'; TS.msg=''; render(); },
   tword(el){ const w=TS.words[+el.dataset.i]; if(!w) return; w.st=(w.st==='ok')?'bad':'ok'; if(!TS.heard) w.st=(w.st==='ok')?'ok':'bad'; render(); },
   fragok(el){ const id=el.dataset.id, P=state.profiles[pk]; if(!P) return; P.marks[id]='o'; delete P.fresh[id]; const o=terrLoad(); delete o[id]; terrSave(o); save(); render(); },
