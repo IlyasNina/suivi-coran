@@ -1506,8 +1506,8 @@ function fragHTML(){
   const o=terrLoad(), marks=state.profiles[pk].marks;
   const L=itemsFor(pk).filter(it=>{ const r=o[it.id]; return r&&r.e>=TERR_MIN&&r.e>r.g&&marks[it.id]!=='o'; });
   if(!L.length) return '';
-  return `<div class="notice"><p><b>Fragile au test ?</b> Les erreurs reviennent souvent sur ${L.length>1?'ces passages':'ce passage'} :</p>
-    ${L.map(it=>`<div class="row2" style="align-items:center;justify-content:space-between;gap:8px"><span>${esc(itemLabel(it))} · ${o[it.id].e} erreurs</span><span><button class="btn primary" data-act="fragok" data-id="${it.id}">Marquer fragile</button> <button class="link" data-act="fragno" data-id="${it.id}">Ignorer</button></span></div>`).join('')}</div>`;
+  return `<div class="notice"><p><b>${L.length>1?'Pages à marquer comme fragiles ?':'Page à marquer comme fragile ?'}</b><br>Au test, tu as souvent eu faux sur ${L.length>1?'ces passages':'ce passage'} :</p>
+    ${L.map(it=>`<div class="row2" style="align-items:center;justify-content:space-between;gap:8px"><span>${esc(itemLabel(it))} · ${o[it.id].e} fois faux</span><span><button class="btn primary" data-act="fragok" data-id="${it.id}">Marquer fragile</button> <button class="link" data-act="fragno" data-id="${it.id}">Ignorer</button></span></div>`).join('')}</div>`;
 }
 const TS={step:'setup',kind:'sur',sur:2,juz:1,pf:'',pt:'',id:0,end:0,showS:false,mic:'idle',msg:'',words:null,extras:[],heard:'',nq:0,good:0,bad:0};
 const TRANGE={}; 
