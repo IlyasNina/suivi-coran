@@ -1572,11 +1572,17 @@ async function tGet(name,asText){
 function tLoadModel(){
   if(tSess) return Promise.resolve();
   if(!tLoading) tLoading=(async()=>{
-    await tScript('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.min.js');
-    window.ort.env.wasm.numThreads=1; window.ort.env.wasm.wasmPaths='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/';
+    const bases=['https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/','https://unpkg.com/onnxruntime-web@1.30.0/dist/'];
+    if(!window.ort){ let err; for(const b of bases){ try{ await tScript(b+'ort.min.js'); err=null; break; }catch(e){ err=e; } } if(err) throw err; }
+    window.ort.env.wasm.numThreads=1; window.ort.env.wasm.proxy=false;
     (await tGet('tokens.txt',true)).split('\n').filter(Boolean).forEach(l=>{ const i=l.lastIndexOf(' '); tTok[+l.slice(i+1)]=l.slice(0,i); });
     const buf=await tGet('model.int8.onnx',false);
-    tSess=await window.ort.InferenceSession.create(new Uint8Array(buf),{executionProviders:['wasm'],graphOptimizationLevel:'basic'});
+    let last;
+    for(const b of bases){
+      try{ window.ort.env.wasm.wasmPaths=b; tSess=await window.ort.InferenceSession.create(new Uint8Array(buf),{executionProviders:['wasm'],graphOptimizationLevel:'basic'}); return; }
+      catch(e){ last=e; }
+    }
+    throw last;
   })().catch(e=>{ tLoading=null; throw e; });
   return tLoading;
 }
