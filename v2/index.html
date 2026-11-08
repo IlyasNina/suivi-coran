@@ -476,7 +476,7 @@ const AV_NAME={femme:'Femme',fille:'Fille',homme:'Homme',garcon:'Garçon'};
 function avAlt(k){ const a=k.split('-'); return AV_NAME[a[0]]+(a[1]==='f'?', peau foncée':', peau claire'); }
 function avImg(k,cls){ return AVATARS[k]?'<img class="'+(cls||'av')+'" src="'+AVATARS[k]+'" alt="" width="56" height="56">':''; }
 const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>', SYCRS='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Pas acquis',sym:SYCRS},b:{label:'Nouveau',sym:''},n:{label:'Pas appris',sym:'–'}};
+const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:''},n:{label:'Pas appris',sym:'–'}};
 const BRUSH_ORDER=['v','o','b','n'];
 const LOOP_START='2024-01-01';   // un lundi : repère fixe des boucles
 const DAYS_LONG=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
@@ -1053,7 +1053,7 @@ function reglagesHTML(){
   if(!backupText) backupText=exportText();
   return `<section class="card setcard"><h4>Fréquence de révision</h4>
       <p>Nombre de passages par semaine, avec la révision dans l’ordre comprise. Un élément vert est relu une fois. Une page orange ou bleue est revue plus souvent. Une page bleue (nouvelle) revient tous les jours jusqu’à ce qu’elle passe en vert toute seule, après le délai ci-dessous.</p>
-      ${step('fo','Pas acquis (orange)','st-o',s.fo)}
+      ${step('fo','Fragile (orange)','st-o',s.fo)}
       ${step('fd','Le bleu devient vert après','st-b',s.fd,' jours')}
     </section>
     <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
@@ -1363,7 +1363,7 @@ const handlers={
     const lo=Math.min(a,b), hi=Math.max(a,b), ids=[];
     for(let p=lo;p<=hi;p++) ids.push('b'+p);
     const cnt=paint(ids);
-    flash=cnt?('Pages '+lo+' à '+hi+' : '+ST[brush].label.toLowerCase()+'.'):'Ces pages avaient déjà cette couleur.';
+    flash=cnt?('Pages '+lo+' à '+hi+' : '+ST[brush].label.toLowerCase()+(brush==='o'?'s':'')+'.'):'Ces pages avaient déjà cette couleur.';
     render();
   },
   alljuz(el){ const j=JUZ.find(x=>x.id===el.dataset.j); if(!j) return; flash=''; paint(itemsFor(pk).filter(i=>i.kind==='s'&&i.n>=j.from&&i.n<=j.to).map(i=>i.id)); render(); },
