@@ -8,7 +8,7 @@
 .trow{display:flex;gap:10px}.trow .btn{flex:1}.trow .tsel{margin:4px 0}.tfull{width:100%;margin:12px 0 4px}
 .tv{font-family:'KFGQPCHafs','Scheherazade New',serif;font-size:1.7rem;line-height:2.2;text-align:right}
 .tres .tw{display:inline-block;padding:0 6px;border-radius:8px;margin:2px 1px;cursor:pointer}
-.tw.ok{color:#0E6B5C}.tw.bad{color:#C62828}.tw.miss{color:#D98200}
+.tw.ok{color:#5BAA1E}.tw.bad,.tw.miss{color:#C62828}
 .tw small{display:block;font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.2;color:var(--muted);text-align:center}
 .tn{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:50%;padding:0 5px;margin:0 3px}
 .tleg,.tmsg,.tnote,.tstat{font-size:.85rem;color:var(--muted);margin:8px 0}.tmsg{color:var(--ink)}.tlinks{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
@@ -1657,8 +1657,8 @@ function testHTML(){
   const ws=TS.words.map((x,i)=>`<span class="tw ${x.st}" data-act="tword" data-i="${i}">${esc(x.w)}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
   return `<div class="tst"><h1>Test <span class="tbrain"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.5V19.5"/><path d="M12 5.5a2.7 2.7 0 0 0-5.2-.9 3 3 0 0 0-2.3 3.9 3.2 3.2 0 0 0-.6 4.5 3.1 3.1 0 0 0 1.5 4.2A3 3 0 0 0 12 17.8"/><path d="M12 5.5a2.7 2.7 0 0 1 5.2-.9 3 3 0 0 1 2.3 3.9 3.2 3.2 0 0 1 .6 4.5 3.1 3.1 0 0 1-1.5 4.2A3 3 0 0 1 12 17.8"/><path d="M8 10.2a2.6 2.6 0 0 0 2.4 1.4M16 10.2a2.6 2.6 0 0 1-2.4 1.4M7.4 15a2.5 2.5 0 0 1 2.2-2M16.6 15a2.5 2.5 0 0 0-2.2-2"/></svg></span></h1>${stats}
   <div class="tcard"><p class="tl">${esc(SUR[s-1].fr)} · verset ${TS.id-sFirst[s-1]+1}</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div></div>
-  <div class="tcard"><p class="tl">${manual?'La suite — corrige-toi toi-même':'Résultat'}</p><div class="tv tres" lang="ar" dir="rtl">${ws}</div>
-  <p class="tleg">${manual?'Touche un mot pour le marquer juste ou faux.':'<span class="tw ok">juste</span> <span class="tw bad">différent</span> <span class="tw miss">oublié</span> · touche un mot pour corriger la reconnaissance.'}</p>
+  <div class="tcard">${manual?'<p class="tl">La suite — corrige-toi toi-même</p>':''}<div class="tv tres" lang="ar" dir="rtl">${ws}</div>
+  <p class="tleg">${manual?'Touche un mot pour le marquer juste ou faux.':'<span class="tw ok">juste</span> <span class="tw bad">faux</span> · touche un mot pour corriger.'}</p>
   ${TS.extras.length&&!manual?`<p class="tleg">Mots en plus compris par le micro : ${esc(TS.extras.join(' '))}</p>`:''}</div>
   <div class="trow"><button class="btn primary" data-act="tgood">Bon ✓</button><button class="btn" data-act="tbad">À revoir ↻</button></div>
   <div class="tlinks"><button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button><button class="link" data-act="tsetup">Changer de choix</button></div></div>`;
