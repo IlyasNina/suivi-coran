@@ -7,7 +7,7 @@
 .tsel{width:100%;box-sizing:border-box;margin:10px 0;border:1.5px solid var(--line);border-radius:12px;padding:10px;font:inherit;min-height:44px;background:var(--surface);color:var(--ink)}
 .trow{display:flex;gap:10px}.trow .btn{flex:1}.trow .tsel{margin:4px 0}.tfull{width:100%;margin:12px 0 4px}
 .tv{font-family:'KFGQPCHafs','Scheherazade New',serif;font-size:1.7rem;line-height:2.2;text-align:right}
-.tres .tw{display:inline-block;padding:0 6px;margin:2px 1px}
+.tres .tw{display:inline-block;padding:0 6px;margin:2px 1px}.tw.ok{color:#5BAA1E}.tw.bad,.tw.miss{color:#C62828}
 
 .tw small{display:block;font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.2;color:var(--muted);text-align:center}
 .tn{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:50%;padding:0 5px;margin:0 3px}
@@ -1620,7 +1620,7 @@ async function tToggleRec(){
       const ab=await new Blob(tChunks,{type:tMR.mimeType}).arrayBuffer(); const ac=new (window.AudioContext||window.webkitAudioContext)(); const buf=await ac.decodeAudioData(ab);
       const oc=new OfflineAudioContext(1,Math.ceil(buf.duration*16000),16000); const s=oc.createBufferSource(); s.buffer=buf; s.connect(oc.destination); s.start();
       const pcm=(await oc.startRendering()).getChannelData(0); let text=''; for(const part of tSplit(pcm)){ const t=await tRecognize(part); if(t) text+=(text?' ':'')+t; }
-      TS.heard=text; const E=tExpected(), R=text.split(/\s+/).map(tNorm).filter(Boolean), A=tAlign(E,R);
+      TS.heard=text||' '; const E=tExpected(), R=text.split(/\s+/).map(tNorm).filter(Boolean), A=tAlign(E,R);
       TS.words=E.map((e,i)=>({w:e.w,v:e.v,st:A.st[i],h:A.hr[i]})); TS.extras=A.ex; TS.step='result'; TS.msg='';
     }catch(e){ TS.msg='Analyse impossible : '+e.message; }
     TS.mic='idle'; render(); window.scrollTo(0,0);
@@ -1653,10 +1653,10 @@ function testHTML(){
     <div class="tlinks"><button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button><button class="link" data-act="tsetup">Changer de choix</button></div></div></div>`;
   }
   const c=tCount(), manual=!TS.heard;
-  const ws=TS.words.map((x,i)=>`<span class="tw">${esc(x.w)}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
+  const ws=TS.words.map((x,i)=>`<span class="tw${manual?'':' '+x.st}">${esc(x.w)}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
   return `<div class="tst"><h1>Test</h1>${backBtn}
   <div class="tcard"><p class="tl">${esc(SUR[s-1].fr)} · verset ${TS.id-sFirst[s-1]+1}</p><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div></div>
-  <div class="tcard"><p class="tl">La suite</p><div class="tv tres" lang="ar" dir="rtl">${ws}</div>
+  <div class="tcard">${manual?'<p class="tl">La suite</p>':''}<div class="tv tres" lang="ar" dir="rtl">${ws}</div>
   ${TS.extras.length&&!manual?`<p class="tleg">Mots en plus compris par le micro : ${esc(TS.extras.join(' '))}</p>`:''}</div>
   <div class="trow"><button class="btn primary" data-act="tgood">Bon ✓</button><button class="btn" data-act="tbad">À revoir ↻</button></div>
   <div class="tlinks"><button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button><button class="link" data-act="tsetup">Changer de choix</button></div></div>`;
