@@ -994,9 +994,9 @@ function planHTML(){
   } else {
     const d=plan[selDay], dn=doneOf(pk,selDay);
     const sc=daySecs(pk,d), oranges=sc.oranges, blues=sc.blues, secs=[];
-    if(d.block.length) secs.push(['tl-v',SYCHK,'b','Révision du jour','',bulletLines(d.block),dn.b]);
-    if(oranges.length) secs.push(['tl-o',SYCHK,'r','Passages à consolider','',`<ul class="bl">${oranges.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.r]);
-    if(blues.length) secs.push(['tl-b',SYCHK,'p','Nouvelle(s) page(s)','',`<ul class="bl">${blues.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.p]);
+    if(d.block.length) secs.push(['tl-v',SYCHK,'b','Révision qadima','',bulletLines(d.block),dn.b]);
+    if(oranges.length) secs.push(['tl-o',SYCHK,'r','Pages fragiles','',`<ul class="bl">${oranges.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.r]);
+    if(blues.length) secs.push(['tl-b',SYCHK,'p','Révision jadida','',`<ul class="bl">${blues.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.p]);
     if(!secs.length){
       // rien à afficher ce jour-là
     } else {
@@ -1108,7 +1108,7 @@ function loadInfo(P,N){
   if(!eff) return '';
   const per=eff/N, txt=per<1?'moins d’une page':'environ '+Math.round(per)+(Math.round(per)>1?' pages':' page');
   const heavy=per>10;
-  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus les passages à consolider.${heavy?' C’est beaucoup : tu peux allonger la boucle ou espacer certaines sourates.':''}</p>`;
+  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus tes pages fragiles.${heavy?' C’est beaucoup : tu peux allonger la boucle ou espacer certaines sourates.':''}</p>`;
 }
 function freqColorsHTML(){
   const s=state.settings;
