@@ -11,8 +11,8 @@
 
 .tw small{display:block;font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.2;color:var(--muted);text-align:center}
 .tn{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:50%;padding:0 5px;margin:0 3px}
-.tleg,.tmsg,.tnote,.tstat{font-size:.85rem;color:var(--muted);margin:8px 0}.tmsg{color:var(--ink)}.tlinks{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
-.trec{background:#B3261E!important;border-color:#B3261E!important}.taud{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent)}
+.tleg,.tmsg,.tnote,.tstat{font-size:.85rem;color:var(--muted);margin:8px 0}.tmsg{color:var(--ink)}.tlinks{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}.tlinks.tc{justify-content:center;margin-top:12px}
+.trec{background:#B3261E!important;border-color:#B3261E!important}.taudw{display:flex;justify-content:center;margin:10px 0 2px}.btn.taud{width:46px;height:46px;min-height:46px;padding:0;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--accent)}.btn.taud svg{flex:none;width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.btn.taud[aria-busy=true]{opacity:.6}
 </style>
 </head><body>
 <title>Suivi mouraja’a</title>
@@ -1645,14 +1645,14 @@ function tCount(){ const w=TS.words||[]; const ok=w.filter(x=>x.st==='ok').lengt
 /* audio du verset posé : Ali Al-Hudhayfi, vitesse fixe 1,5×, jamais lancé tout seul */
 const T_RATE=1.5;
 var tAud=null, tAudFor=0, tAudSt='idle', tAudI=0;
-const T_PLAY="<svg viewBox='0 0 24 24' aria-hidden='true' style='width:1.1em;height:1.1em;fill:currentColor'><path d='M7 4.5v15l13-7.5z'/></svg>";
-const T_PAUSE="<svg viewBox='0 0 24 24' aria-hidden='true' style='width:1.1em;height:1.1em;fill:currentColor'><rect x='6' y='4.5' width='4' height='15' rx='1'/><rect x='14' y='4.5' width='4' height='15' rx='1'/></svg>";
+const T_PLAY="<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 5.5v13l11-6.5z'/></svg>";
+const T_PAUSE="<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='6.5' y='5' width='4' height='14' rx='1.2'/><rect x='13.5' y='5' width='4' height='14' rx='1.2'/></svg>";
 function tAudSrc(id){
   const s=surOfAyah(id), n=id-sFirst[s-1]+1, c=String(s).padStart(3,'0')+String(n).padStart(3,'0');
   return ['https://everyayah.com/data/Hudhaify_128kbps/'+c+'.mp3','https://everyayah.com/data/Hudhaify_64kbps/'+c+'.mp3','https://cdn.islamic.network/quran/audio/128/ar.hudhaify/'+id+'.mp3'];
 }
-function tAudLabel(){ return tAudSt==='play'?T_PAUSE+' Pause':tAudSt==='load'?T_PLAY+' Chargement…':T_PLAY+' Écouter'; }
-function tAudUI(){ const b=document.querySelector('[data-act="taud"]'); if(b) b.innerHTML=tAudLabel(); }
+function tAudLabel(){ return tAudSt==='play'?T_PAUSE:T_PLAY; }
+function tAudUI(){ const b=document.querySelector('[data-act="taud"]'); if(b){ b.innerHTML=tAudLabel(); b.setAttribute('aria-label',tAudSt==='play'?'Mettre en pause':'Écouter le verset'); b.setAttribute('aria-busy',tAudSt==='load'?'true':'false'); } }
 function tSetRate(){ try{ tAud.defaultPlaybackRate=T_RATE; tAud.playbackRate=T_RATE; }catch(e){} }
 function tAudInit(){
   if(tAud) return;
@@ -1686,7 +1686,7 @@ function tAudPlay(){
   if(p&&p.catch) p.catch(e=>{ if(e&&e.name==='NotAllowedError'){ tAudSt='idle'; tAudUI(); } });
 }
 function testHTML(){
-  const backBtn=(TS.step!=='setup')?'<button class="tbackbtn" data-act="tprev"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="246"/><polyline points="333.82 100.37 178.18 256 333.82 411.63"/></svg>Revenir</button>':'';
+  const backBtn=(TS.step!=='setup')?'<button class="tbackbtn" data-act="tprev"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="246"/><polyline points="333.82 100.37 178.18 256 333.82 411.63"/></svg>Retour</button>':'';
   const sels=(id,n,lab)=>`<select id="${id}" class="tsel">${Array.from({length:n},(_,i)=>`<option value="${i+1}"${(id==='tjuz'?TS.juz:TS.sur)===i+1?' selected':''}>${lab(i+1)}</option>`).join('')}</select>`;
   const chip=(k,l)=>`<button class="tchip" data-act="tkind" data-k="${k}" aria-pressed="${TS.kind===k}">${l}</button>`;
   if(TS.step==='setup'){
@@ -1704,10 +1704,10 @@ function testHTML(){
     const micLab=TS.mic==='rec'?'■ Arrêter':TS.mic==='loading'?'Préparation…':TS.mic==='busy'?'Analyse…':T_MIC+' Réciter';
     return `<div class="tst"><h1>Test</h1>${backBtn}
     <div class="tcard"><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div>
-    <button class="btn tfull taud" data-act="taud" aria-label="Écouter le verset">${tAudLabel()}</button>
+    <div class="taudw"><button class="btn taud" data-act="taud" aria-label="${tAudSt==='play'?'Mettre en pause':'Écouter le verset'}">${tAudLabel()}</button></div>
     <button class="btn primary tfull${TS.mic==='rec'?' trec':''}" data-act="trec"${TS.mic==='loading'||TS.mic==='busy'?' disabled':''}>${micLab}</button>
     ${TS.msg?`<p class="tmsg">${TS.msg}</p>`:''}
-    <div class="tlinks"><button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button></div></div></div>`;
+    <div class="tlinks tc"><button class="link" data-act="tnext">Autre verset</button></div></div></div>`;
   }
   const c=tCount(), manual=!TS.heard;
   const ws=TS.words.map((x,i)=>`<span class="tw${manual?'':' '+x.st}">${esc(x.w)}</span>${x.v?`<span class="tn">${x.v}</span>`:''}`).join(' ');
@@ -1724,7 +1724,6 @@ Object.assign(handlers,{
   tsurah(){ TS.showS=true; render(); },
   taud(){ if(tAud&&tAudFor===TS.id&&tAudSt!=='err'&&!tAud.paused){ tAud.pause(); return; } tAudPlay(); },
   trec(){ tAudStop(); tAudUI(); tToggleRec(); },
-  treveal(){ tPush(); const E=tExpected(); TS.words=E.map(e=>({w:e.w,v:e.v,st:'neu',h:''})); TS.extras=[]; TS.heard=''; TS.step='result'; render(); window.scrollTo(0,0); },
   tnext(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); TS.mic='idle'; } tPick(); render(); },
   tprev(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); }
     TS.mic='idle'; TS.msg='';
