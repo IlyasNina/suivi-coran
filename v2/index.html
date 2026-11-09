@@ -102,6 +102,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .fq output{min-width:84px;text-align:center;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
 .fq output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
 .fq .exb{min-height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:0 12px;font-size:.82rem;font-weight:600}
+.lvrow.ex,.lvall.ex{background:rgba(120,120,110,.12)!important}.lvrow.ex .nm,.lvall.ex .nm,.lvrow.ex .fq .ctl,.lvall.ex .fq .ctl{opacity:.4}
 .fq .exb[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .fb{padding:12px 0;border-top:1px solid var(--line)}.fb:first-of-type{border-top:0;padding-top:4px}.fb .h{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:2px}.fb p{margin:0 0 8px}.fb .stepper .ctl output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
 .lvall{padding:0 0 10px}
@@ -1092,7 +1093,7 @@ function lvSel(act,attrs,cur){
 }
 function surLvRow(n){
   const s=SUR[n-1], cur=levelOf(state.profiles[pk],n);
-  return `<div class="lvrow"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}</div>`;
+  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}</div>`;
 }
 function lvAcc(key,title,sub,body){
   const open=openAcc.has(key);
@@ -1149,7 +1150,7 @@ function loopHTML(){
   if(others.length) h+=lvAcc('Lothers','Autres sourates',others.length+' sourates',others.map(surLvRow).join(''));
   full.forEach(j=>{
     const ns=juzRange(j), lv=ns.map(n=>levelOf(P,n)), uni=lv.every(x=>x===lv[0])?lv[0]:'';
-    const body=`<div class="lvall"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
+    const body=`<div class="lvall${uni==='x'?' ex':''}"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
     h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body);
   });
   return h;
