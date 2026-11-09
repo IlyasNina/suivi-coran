@@ -719,16 +719,19 @@ function buildCycle(pk,k){
   const groups={}; L.forEach(it=>{ (groups[gkey(it)]=groups[gkey(it)]||[]).push(it); });
   const daysOf={};
   Object.keys(groups).forEach(g=>{
-    const arr=groups[g];
-    /* une sourate réglée sur N passages fait N tours dans la boucle, chacun dans l'ordre */
+    const arr=groups[g].filter(it=>marks[it.id]==='v'); if(!arr.length) return;
+    /* une sourate réglée sur N passages fait N tours : chaque tour a sa propre tranche de jours et se fait en entier, dans l'ordre */
     const kmax=Math.max.apply(null,arr.map(it=>levelLaps(levelOf(P,it.sn))));
-    let seq=arr.slice(); for(let j=2;j<=kmax;j++) seq=seq.concat(arr.filter(it=>levelLaps(levelOf(P,it.sn))>=j));
-    const Wg=seq.reduce((a,it)=>a+itemW(it),0); let cum=0;
-    seq.forEach(it=>{
-      const w=itemW(it), d=clamp(Math.floor((cum+w/2)/Wg*m),0,m-1);
-      if(!days[d].block.some(x=>x.id===it.id)){ days[d].block.push(it); (daysOf[it.id]=daysOf[it.id]||[]).push(d); }
-      cum+=w;
-    });
+    for(let j=0;j<kmax;j++){
+      const lap=arr.filter(it=>levelLaps(levelOf(P,it.sn))>j); if(!lap.length) continue;
+      const a0=Math.floor(j*m/kmax), a1=Math.max(a0+1,Math.floor((j+1)*m/kmax)), len=Math.min(a1,m)-a0;
+      const Wg=lap.reduce((a,it)=>a+itemW(it),0); let cum=0;
+      lap.forEach(it=>{
+        const w=itemW(it), d=Math.min(m-1,a0)+clamp(Math.floor((cum+w/2)/Wg*len),0,Math.max(0,len-1));
+        if(!days[d].block.some(x=>x.id===it.id)){ days[d].block.push(it); (daysOf[it.id]=daysOf[it.id]||[]).push(d); }
+        cum+=w;
+      });
+    }
   });
   const Wtot=L.reduce((a,it)=>a+itemW(it)*levelLaps(levelOf(P,it.sn)),0), cap=Math.max(4,Math.ceil(Wtot/m*0.75));
   const rload=new Array(m).fill(0);
