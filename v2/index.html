@@ -376,7 +376,7 @@ body.qwhite{padding-block:0 84px}
 .qbism{display:flex;align-items:center;justify-content:center;color:#111;white-space:nowrap}
 .qmeas{position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;font-family:var(--f-ar);font-size:100px;direction:rtl}
 .qmeas span{display:inline-block}
-.qhead{flex:1;min-width:0;text-align:center;font-size:.8rem;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qhead{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.2;color:#767676}.qhead b{font-size:.75rem;font-weight:400;white-space:nowrap}.qhead span{max-width:100%;font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body.qwhite{background:#fff;color:#111}
 body.qwhite::before{background:#fff}
 body.qwhite .top{background:#fff;border-color:#ececec}
@@ -1873,7 +1873,7 @@ function quranHTML(){
   if(qv==='read'){
     const p=qp, first=QPAGE[p], s1=surOfAyah(first);
     return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button>
-      <div class="qhead">${esc(SUR[s1-1].fr)}, Juz ${juzOfAyah(first)}, Hizb ${hizbOfAyah(first)}, Page ${p}</div>
+      <div class="qhead"><b>Page ${p}</b><span>${esc(SUR[s1-1].fr)}</span></div>
       <div class="qtools"><select id="qmode" class="qsel" aria-label="Version du mushaf">${Object.keys(QVERS).map(k=>`<option value="${k}"${k===qVer?' selected':''}>${QVERS[k][0]}</option>`).join('')}</select><button class="vbtn" data-act="qlist" aria-label="Liste des sourates et aller à une page">☰</button></div></header>
       <div class="qpage${qTaj()?' qtaj':''}${qImg()?' qimg':''}" id="qtext" lang="ar" dir="rtl">${qImg()?`<img class="qpic" alt="Page ${p}" src="${qImgUrl(p,0)}" data-k="0" onerror="qImgErr(this)">`:''}</div><div id="qmeas" class="qmeas" lang="ar" dir="rtl" aria-hidden="true"></div>`;
   }
