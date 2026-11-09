@@ -1114,7 +1114,6 @@ function freqColorsHTML(){
   const s=state.settings;
   const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
   return `<section class="card setcard"><h4>Fréquence selon la couleur</h4>
-      <div class="fb"><div class="h"><i class="dot st-v"></i>Acquis</div><p>Relu selon le réglage de chaque sourate ou juzz, plus bas. Au départ : 1 fois par boucle.</p></div>
       <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
       <div class="fb"><div class="h"><i class="dot st-b"></i>Nouveau</div><p>Revu chaque jour. Au bout de combien de jours passe-t-il en vert ?</p>${st2('fd',s.fd,'jours')}</div>
     </section>`;
