@@ -1064,13 +1064,7 @@ function reglagesHTML(){
     <span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins pour ${label}">−</button><output>${val}${unit||' / sem.'}</output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus pour ${label}">+</button></span></div>`;
   const syncTxt=sync==='online'?'Tes données sont enregistrées sur ce téléphone et aussi en ligne, liées à ton compte Claude.':'Tes données sont enregistrées sur ce téléphone, dans ce navigateur.';
   if(!backupText) backupText=exportText();
-  const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
-  return `<section class="card setcard"><h4>Fréquence de révision</h4>
-      <div class="fb"><div class="h"><i class="dot st-v"></i>Acquis</div><p>Relu selon le réglage de chaque sourate ou juzz, dans « Ma boucle ». Au départ : 1 fois par boucle.</p></div>
-      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
-      <div class="fb"><div class="h"><i class="dot st-b"></i>Nouveau</div><p>Revu chaque jour. Au bout de combien de jours passe-t-il en vert ?</p>${st2('fd',s.fd,'jours')}</div>
-    </section>
-    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
+  return `    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
       ${sync!=='online'?`<div class="row2"><button class="btn primary" data-act="backupfile">Sauvegarder (envoyer un fichier)</button><button class="btn" data-act="restorepick">Restaurer depuis un fichier</button></div>
       <input id="bkfile" type="file" accept=".json,application/json,text/plain" hidden>`:''}
       <details class="det"><summary>Utiliser un code à copier</summary>
@@ -1116,6 +1110,15 @@ function loadInfo(P,N){
   const heavy=per>10;
   return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus les passages à consolider.${heavy?' C’est beaucoup : tu peux allonger la boucle ou espacer certaines sourates.':''}</p>`;
 }
+function freqColorsHTML(){
+  const s=state.settings;
+  const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
+  return `<section class="card setcard"><h4>Fréquence selon la couleur</h4>
+      <div class="fb"><div class="h"><i class="dot st-v"></i>Acquis</div><p>Relu selon le réglage de chaque sourate ou juzz, plus bas. Au départ : 1 fois par boucle.</p></div>
+      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
+      <div class="fb"><div class="h"><i class="dot st-b"></i>Nouveau</div><p>Revu chaque jour. Au bout de combien de jours passe-t-il en vert ?</p>${st2('fd',s.fd,'jours')}</div>
+    </section>`;
+}
 function loopHTML(){
   const P=state.profiles[pk], s=state.settings, N=P.loop.n;
   const tr=trackedFor(pk,P.extra), trSet=new Set(tr);
@@ -1138,6 +1141,7 @@ function loopHTML(){
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
     ${loadInfo(P,N)}
   </section>
+  ${freqColorsHTML()}
   <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
     <p>Pour chaque sourate ou juzz, choisis combien de fois il revient dans ta boucle. Au départ, tout revient 1 fois.</p>
     <p>Appuie sur <b>+</b> pour le revoir plus souvent, sur <b>−</b> pour l’espacer (par exemple 1 fois toutes les 2 boucles). <b>Exclu</b> le retire de la boucle.</p>
