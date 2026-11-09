@@ -320,10 +320,6 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 .vbtn{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;min-height:44px;min-width:44px;padding:0 12px;font-weight:700}
 .vbtn:disabled{opacity:.4;cursor:not-allowed}
 .vbody{flex:1;overflow:auto;background:#d9d3c0;display:flex;justify-content:center;padding:10px 0}
-.pgbox{position:relative;width:100%;max-width:720px;aspect-ratio:650/882;overflow:hidden;background:#fff;align-self:flex-start}
-.pgbox::before{content:"Chargement de la page…";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#555;font-size:.9rem;text-align:center;padding:20px}
-.pgbox.err::before{content:"Cette page ne s’affiche pas. Vérifie ta connexion."}
-.pgbox img{position:absolute;left:0;top:0;width:200%;max-width:none;height:auto;display:block}
 .vbottom{border-top:1px solid var(--line);background:var(--surface);padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .vbottom .brushes{max-width:640px;margin:0 auto}
 .pick{padding:10px max(16px,env(safe-area-inset-right,0px)) 6px max(16px,env(safe-area-inset-left,0px))}
@@ -414,7 +410,6 @@ body.qwhite .credit{color:#767676}
 <div id="qback" class="wrap qback" hidden><button class="back" data-act="qmenu" aria-label="Retour au choix">‹ <span>Coran</span></button></div>
 <div id="mutaHost" class="wrap" hidden></div>
 <nav class="nav" id="nav" aria-label="Sections"></nav>
-<div class="viewer" id="viewer" hidden></div>
 <div class="viewer" id="picker" hidden></div>
 <div class="viewer" id="creator" hidden></div>
 
@@ -885,7 +880,7 @@ function pageBlock(n,marks){
   const r=rng[n]||{f:'',t:''};
   const cells=items.map(it=>{
     const st=marks[it.id]||'n';
-    return `<button class="cell st-${st}" data-act="page" data-p="${it.p}" aria-label="Page ${it.p}, ${ST[st].label}. Ouvrir la page">${it.p}<small aria-hidden="true">${ST[st].sym}</small></button>`;
+    return `<button class="cell st-${st}" data-act="paint" data-id="${it.id}" aria-label="Page ${it.p}, ${ST[st].label}">${it.p}<small aria-hidden="true">${ST[st].sym}</small></button>`;
   }).join('');
   const rem=removeControl(n);
   const body=`<div class="grid">${cells}</div>
@@ -1176,41 +1171,6 @@ function render(){
 function go(fn){ fn(); render(); window.scrollTo(0,0); }
 
 /* ---------- Lecteur de page ---------- */
-let vp=null;      // {p, n}
-/* Les pages sont rangées par groupes de quatre (deux feuilles du PDF, deux pages par feuille) dans pages/qNNN.jpg.
-   La feuille s contient la page 2s-1 à droite et la page 2s à gauche ; la feuille impaire est en haut du fichier. */
-function pageURL(p){
-  const sp=Math.ceil(p/2), k=Math.ceil(sp/2);
-  return '../q'+String(k).padStart(3,'0')+'.jpg';
-}
-function pageBox(p){
-  const sp=Math.ceil(p/2), row=(sp%2===1)?0:1;
-  const tx=(p%2===1)?-50:0, ty=row?-50:0;
-  return `<div class="pgbox"><img data-pg="1" src="${pageURL(p)}" alt="Page ${p} du mushaf en tajwid" style="transform:translate(${tx}%,${ty}%)"></div>`;
-}
-function viewerHTML(){
-  const p=vp.p, n=vp.n, s=SUR[n-1];
-  const st=state.profiles[pk].marks['b'+p]||'n';
-  const b=BRUSH_ORDER.map(k=>`<button class="brush st-${k}" data-act="vcolor" data-st="${k}" aria-pressed="${st===k}"><b aria-hidden="true">${ST[k].sym}</b>${ST[k].label}</button>`).join('');
-  return `<div class="vtop"><button class="vbtn" data-act="vclose" aria-label="Retour à la grille">‹ Grille</button>
-    <span class="t">${esc(s.fr)} · page ${p}</span>
-    <button class="vbtn" data-act="vnav" data-delta="-1" aria-label="Page précédente" ${p<=s.p?'disabled':''}>←</button>
-    <button class="vbtn" data-act="vnav" data-delta="1" aria-label="Page suivante" ${p>=lastPage(n)?'disabled':''}>→</button></div>
-    <div class="vbody">${pageBox(p)}</div>
-    <div class="vbottom"><div class="brushes" role="group" aria-label="Couleur de la page">${b}</div></div>`;
-}
-function showViewer(p,n){
-  vp={p:p,n:n};
-  const v=document.getElementById('viewer');
-  v.innerHTML=viewerHTML(); v.hidden=false;
-  document.documentElement.style.overflow='hidden';
-  [p-1,p+1].forEach(q=>{ if(q>=SUR[n-1].p&&q<=lastPage(n)){ try{ new Image().src=pageURL(q); }catch(e){} } });
-}
-function hideViewer(){
-  vp=null; const v=document.getElementById('viewer');
-  v.hidden=true; v.innerHTML=''; document.documentElement.style.overflow='';
-}
-
 /* ---------- Choix d'une sourate ---------- */
 function norm(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9؀-ۿ]/g,''); }
 function juzPages(j){ return SUR[j.from-1].p+'–'+lastPage(j.to); }
@@ -1319,7 +1279,7 @@ const handlers={
   qgoto(){ const i=document.getElementById('qpg'); const v=parseInt(i&&i.value,10); if(v>=1&&v<=604) go(()=>{ qv='read'; qp=v; qPos={p:qp,t:Date.now()}; saveReadNow(); }); },
   open(el){ go(()=>{ pk=el.dataset.pk; screen='profile'; tab=(main==='plan')?'plan':'suivi'; history=[]; resetUI(); selDay=todayWd(); openAcc=new Set(state.profiles[pk].extra.length?[]:['juz30']); }); },
   acc(el){ const k=el.dataset.k; if(openAcc.has(k)) openAcc.delete(k); else openAcc.add(k); render(); },
-  back(){ hideViewer(); hidePicker(); hideCreator(); go(()=>{ if(tab==='reglages'&&screen==='profile'){ tab='suivi'; resetUI(); return; } if(tab==='loop'&&screen==='profile'){ tab='plan'; resetUI(); return; } screen='home'; history=[]; resetUI(); }); },
+  back(){ hidePicker(); hideCreator(); go(()=>{ if(tab==='reglages'&&screen==='profile'){ tab='suivi'; resetUI(); return; } if(tab==='loop'&&screen==='profile'){ tab='plan'; resetUI(); return; } screen='home'; history=[]; resetUI(); }); },
   tab(el){ go(()=>{ const t=el.dataset.tab; resetUI(); if(t==='quran'){ qPop=!qPop; return; } qPop=false; if(t==='test'){ main='test'; return; } if(t==='plan'){ main='plan'; tab='plan'; } else if(t==='reglages'){ main='suivi'; tab='reglages'; } else { main='suivi'; tab='suivi'; } }); },
   brush(el){ brush=el.dataset.st; render(); },
   loop(){ go(()=>{ tab='loop'; resetUI(); }); },
@@ -1446,20 +1406,10 @@ const handlers={
   'del-no'(){ confirmDel=false; render(); },
   'del-yes'(){
     delete state.profiles[pk]; state.order=state.order.filter(x=>x!==pk);
-    hideViewer(); history=[]; confirmDel=false; backupText=''; save();
+    history=[]; confirmDel=false; backupText=''; save();
     screen='home'; render(); window.scrollTo(0,0);
   },
   'reset-yes'(){ const P0=state.profiles[pk]; state.profiles[pk]={name:P0.name,kind:P0.kind,marks:{},done:{},fresh:{},extra:[],loop:P0.loop,levels:{}}; history=[]; confirmReset=false; backupText=''; save(); flash='Profil remis à zéro.'; render(); },
-  page(el){
-    const p=+el.dataset.p; const it=itemsFor(pk).find(i=>i.kind==='b'&&i.p===p);
-    if(it) showViewer(p,it.sn);
-  },
-  vclose(){ hideViewer(); render(); },
-  vnav(el){
-    if(!vp) return; const q=vp.p+(+el.dataset.delta);
-    if(q>=SUR[vp.n-1].p&&q<=lastPage(vp.n)) showViewer(q,vp.n);
-  },
-  vcolor(el){ if(!vp) return; flash=''; paint(['b'+vp.p],el.dataset.st); showViewer(vp.p,vp.n); render(); },
   addopen(){ showPicker(); },
   addclose(){ hidePicker(); },
   addsur(el){
