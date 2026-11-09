@@ -1,6 +1,6 @@
 <!doctype html><html data-theme="light"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>
 
-.tst h1{margin:6px 0 4px}.tpage{padding:8px 6px;margin:10px 0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;min-height:0;overflow:visible}.tbackbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:34;stroke-linecap:round;stroke-linejoin:round}.tbackbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;margin:2px 0 6px;min-height:36px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.tst h1{margin:6px 0 4px}.tpage{padding:8px 6px;margin:10px 0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;min-height:0;overflow:hidden}.tbackbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:34;stroke-linecap:round;stroke-linejoin:round}.tbackbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-weight:700;font-size:.9rem;margin:2px 0 6px;min-height:36px}.tcard{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
 .tl{font-size:.88rem;color:var(--muted);font-weight:700;margin:10px 0 6px}.tl:first-child{margin-top:0}
 .tchips{display:flex;gap:8px;flex-wrap:wrap}.tchip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:40px;color:var(--ink)}
 .tchip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -1548,7 +1548,7 @@ function tLayout(){
   document.querySelectorAll('.tpage').forEach(box=>{
     const p=+box.dataset.p, L=pageLines(p), cs=getComputedStyle(box);
     const W=box.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight); if(W<=0) return;
-    const f=W*0.955/19.354, lh=f*2.5; box.style.fontSize=f+'px'; box.style.lineHeight=lh+'px';
+    const f=W*0.99/19.354, lh=f*2.5; box.style.fontSize=f+'px'; box.style.lineHeight=lh+'px';
     const manual=!TS.heard, cache={};
     const wd=i=>{
       const a=tAyahOf(i), j=i-QAS[a], c=QAC[a-1], mk=j===c-1; let cls='', st='';
@@ -1564,7 +1564,7 @@ function tLayout(){
       else if(l.k==='b') html+=`<div class="qbism" style="height:${lh}px">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>`;
       else html+=`<div class="qline ${l.c?'c':'j'}" style="height:${lh}px">${l.ids.map(wd).join('')}</div>`;
     });
-    box.innerHTML=html; qFit(box,W,f); requestAnimationFrame(()=>qFit(box,W,f));
+    box.innerHTML=html; qFit(box,W,f);
   });
 }
 function afterTest(){
