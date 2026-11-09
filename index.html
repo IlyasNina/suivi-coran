@@ -918,7 +918,7 @@ function suiviHTML(){
   const others=items.filter(i=>i.kind==='s'&&i.n!==1&&!inJuz.has(i.n));
   const brushes=BRUSH_ORDER.map(s=>`<button class="brush st-${s}" data-act="brush" data-st="${s}" aria-pressed="${brush===s}"><b aria-hidden="true">${ST[s].sym}</b>${ST[s].label}</button>`).join('');
   const canUndo=history.length>0;
-  const hint=pageSur.length?'Touche une page pour l’ouvrir et la colorer. Pour une sourate entière, choisis une couleur puis touche-la.':'Choisis une couleur, puis touche une sourate.';
+  const hint=pageSur.length?'Touche une page pour la colorer. Pour une sourate entière, choisis une couleur puis touche-la.':'Choisis une couleur, puis touche une sourate.';
   let h=fragHTML()+`<div class="brushbar"><div class="brushes" role="group" aria-label="Couleur à appliquer">${brushes}</div>
     <div class="hint"><span>${hint}</span>
     <button class="link" data-act="undo" ${canUndo?'':'disabled'}>Annuler</button></div></div>
