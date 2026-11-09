@@ -470,8 +470,8 @@ const AV_OF={adult:['femme-f','femme-c','homme-f','homme-c'],child:['fille-f','f
 const AV_NAME={femme:'Femme',fille:'Fille',homme:'Homme',garcon:'Garçon'};
 function avAlt(k){ const a=k.split('-'); return AV_NAME[a[0]]+(a[1]==='f'?', peau foncée':', peau claire'); }
 function avImg(k,cls){ return AVATARS[k]?'<img class="'+(cls||'av')+'" src="'+AVATARS[k]+'" alt="" width="56" height="56">':''; }
-const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>', SYCRS='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:''},n:{label:'Pas appris',sym:'–'}};
+const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>', SYCRS='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', SYNEW='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.8 5 3.8 8 9 9-5.2 1-8.2 4-9 9-.8-5-3.8-8-9-9 5.2-1 8.2-4 9-9z"/></svg>';
+const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:SYNEW},n:{label:'Pas appris',sym:'–'}};
 const BRUSH_ORDER=['v','o','b','n'];
 const LOOP_START='2024-01-01';   // un lundi : repère fixe des boucles
 const DAYS_LONG=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
