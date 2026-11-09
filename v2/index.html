@@ -1166,7 +1166,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='9 nov. 23:11';
+const APP_VERSION='9 nov. 23:12';
 function creditHTML(){ return '<p class="credit">Application créée par Habiba Marchetto<br>Version du '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1657,7 +1657,7 @@ function testHTML(){
     const p0=SUR[TS.sur-1].p,p1=lastPage(TS.sur);
     return `<div class="tst"><h1>Test</h1>${backBtn}<p class="lead">Je te donne un verset, tu récites la suite.</p>
     <div class="tcard"><p class="tl">Que veux-tu réviser ?</p><div class="tchips">${chip('sur','Une sourate')}${chip('juz','Un juzz')}${chip('pages','Des pages')}</div>
-    ${TS.kind==='juz'?sels('tjuz',30,n=>'Juzz '+n):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
+    ${TS.kind==='juz'?sels('tjuz',30,n=>{ const j=JUZ.find(x=>x.num===n); return 'Juzz '+n+(j?' · '+j.fr.replace(/^Juzz /,''):''); }):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
     ${TS.kind==='pages'?`<p class="tl">De la page… à la page… (pages ${p0} à ${p1})</p><div class="trow"><input id="tpf" class="tsel" inputmode="numeric" placeholder="${p0}" value="${esc(TS.pf)}"><input id="tpt" class="tsel" inputmode="numeric" placeholder="${p1}" value="${esc(TS.pt)}"></div>`:''}
     <button class="btn primary tfull" data-act="tstart">Commencer</button>
     ${TS.msg?`<p class="tmsg">${esc(TS.msg)}</p>`:''}</div></div>`;
