@@ -819,7 +819,7 @@ function hasPages(pk){ return trackedFor(pk,state.profiles[pk].extra).some(n=>mo
 /* ---------- Interface ---------- */
 const app=document.getElementById('app'), mutaHost=document.getElementById('mutaHost'), navEl=document.getElementById('nav');
 let qv='menu', qp=1, qPop=false;
-const QVERS={tajwid:['Hafs · Tajwîd','easyquran.com/hafs-tajweed/','jpg','abarizqon/quran-pages-images'],madina:['Hafs · Médine','kfgqpc/hafs-wasat/','jpg'],warsh:['Warch','kfgqpc/warsh/','jpg'],ttaj:['Hafs · Tajwîd (texte)'],ttxt:['Hafs (texte)']};
+const QVERS={tajwid:['Hafs · Tajwîd','easyquran.com/hafs-tajweed/','jpg','abarizqon/quran-pages-images'],madina:['Hafs · Médine','kfgqpc/hafs-wasat/','jpg'],warsh:['Warch','kfgqpc/warsh/','jpg']};
 let qVer='tajwid'; try{ const v=localStorage.getItem('suivi-coran-ver'); if(v&&QVERS[v]) qVer=v; }catch(e){}
 const qImg=()=>!!QVERS[qVer][1], qTaj=()=>qVer==='ttaj';
 const Q_CDN=[r=>'https://cdn.jsdelivr.net/gh/'+r+'@main/',r=>'https://raw.githubusercontent.com/'+r+'/main/'];
