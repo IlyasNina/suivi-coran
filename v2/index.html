@@ -738,31 +738,21 @@ function buildCycle(pk,k){
   const load=new Array(m).fill(0);
   /* Orange et bleu ne sont pas de la « révision qadima » : ils ont leur propre rubrique. */
   days.forEach(d=>{ d.block=d.block.filter(it=>!(marks[it.id]==='o'||marks[it.id]==='b')); });
-  /* Les pages qui se suivent (même couleur, même sourate ou même juzz) sont revues ensemble, dans l'ordre du mushaf. */
-  const runs=[]; let cur=null;
-  weak.slice().sort((a,b)=>order[a.id]-order[b.id]).forEach(it=>{
-    const prev=cur&&cur.items[cur.items.length-1];
-    if(cur&&prev&&order[it.id]===order[prev.id]+1&&marks[it.id]===marks[prev.id]&&gkey(it)===gkey(prev)&&levelOf(P,it.sn)===levelOf(P,prev.sn)&&cur.w+itemW(it)<=8){ cur.items.push(it); cur.w+=itemW(it); }
-    else { cur={items:[it],w:itemW(it)}; runs.push(cur); }
-  });
-  runs.sort((a,b)=>pri(a.items[0])-pri(b.items[0])||kind(a.items[0])-kind(b.items[0])||order[a.items[0].id]-order[b.items[0].id]);
-  for(const r of runs){
-    const it=r.items[0], dd=(daysOf[it.id]||[0]).slice(), used=new Set(dd);
-    dd.forEach(c=>{ r.items.forEach(x=>days[c].reinf.push(x)); load[c]+=r.w; rload[c]+=r.w; });
-    const f=(kind(it)===0?st.fo:st.fb)+(pri(it)===0?1:0);
-    const passes=kind(it)===1?m:clamp(Math.round(f*N/7),1,m), extra=passes-dd.length;
-    const b=dd[0];
-    for(let j=1;j<=extra;j++){
-      const ideal=(b+Math.round(j*m/(extra+1)))%m;
-      let best=-1,bs=Infinity;
-      for(const off of [0,1,-1,2,-2,3,-3]){
-        const c=((ideal+off)%m+m)%m; if(used.has(c)||(kind(it)!==1&&rload[c]>=cap)) continue;
-        const sc=load[c]*10+Math.abs(off); if(sc<bs){ bs=sc; best=c; }
-      }
-      if(best<0){ for(let c=0;c<m;c++){ if(!used.has(c)&&(kind(it)===1||rload[c]<cap)&&load[c]<bs){ bs=load[c]; best=c; } } }
-      if(best<0) break;
-      used.add(best); load[best]+=r.w; rload[best]+=r.w; r.items.forEach(x=>days[best].reinf.push(x));
-    }
+  /* Pages fragiles : une suite logique. Dans l'ordre du mushaf, on en prend un peu chaque jour (11 et 12 aujourd'hui, 13 demain…),
+     et chaque passage supplémentaire refait la même suite, décalée de quelques jours. Le bleu revient chaque jour. */
+  const fr=weak.filter(it=>kind(it)===0).sort((a,b)=>order[a.id]-order[b.id]);
+  weak.filter(it=>kind(it)===1).forEach(it=>{ for(let c=0;c<m;c++) days[c].reinf.push(it); });
+  const need=it=>clamp(Math.round((st.fo+(pri(it)===0?1:0))*N/7),1,m), usedD={};
+  const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
+  for(let j=0;j<kmaxF;j++){
+    const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
+    const Wa=arr.reduce((a,it)=>a+itemW(it),0), shift=Math.floor(j*m/kmaxF); let cum=0;
+    arr.forEach(it=>{
+      const w=itemW(it); let d=(clamp(Math.floor((cum+w/2)/Wa*m),0,m-1)+shift)%m; cum+=w;
+      const u=usedD[it.id]||(usedD[it.id]=new Set());
+      for(let t=0;t<m&&u.has(d);t++) d=(d+1)%m;
+      u.add(d); days[d].reinf.push(it);
+    });
   }
   days.forEach(d=>{ d.block.sort((a,b)=>order[a.id]-order[b.id]); d.reinf.sort((a,b)=>kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
   return {dates:dates,days:days};
