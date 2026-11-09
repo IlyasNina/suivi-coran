@@ -746,12 +746,12 @@ function buildCycle(pk,k){
   const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
   for(let j=0;j<kmaxF;j++){
     const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
-    const Wa=arr.reduce((a,it)=>a+itemW(it),0), shift=Math.floor(j*m/kmaxF); let cum=0;
+    /* chaque passage a sa propre tranche de jours : la suite se fait en entier, sans se mélanger avec la suivante */
+    const a0=Math.floor(j*m/kmaxF), a1=Math.max(a0+1,Math.floor((j+1)*m/kmaxF)), len=a1-a0;
+    const Wa=arr.reduce((a,it)=>a+itemW(it),0); let cum=0;
     arr.forEach(it=>{
-      const w=itemW(it); let d=(clamp(Math.floor((cum+w/2)/Wa*m),0,m-1)+shift)%m; cum+=w;
-      const u=usedD[it.id]||(usedD[it.id]=new Set());
-      for(let t=0;t<m&&u.has(d);t++) d=(d+1)%m;
-      u.add(d); days[d].reinf.push(it);
+      const w=itemW(it), d=a0+clamp(Math.floor((cum+w/2)/Wa*len),0,len-1); cum+=w;
+      days[d].reinf.push(it);
     });
   }
   days.forEach(d=>{ d.block.sort((a,b)=>order[a.id]-order[b.id]); d.reinf.sort((a,b)=>kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
