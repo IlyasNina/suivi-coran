@@ -753,6 +753,8 @@ function buildCycle(pk,k){
       used.add(best); load[best]+=itemW(it); rload[best]+=itemW(it); (kind(it)===2?days[best].prio:days[best].reinf).push(it);
     }
   }
+  /* Orange et bleu ne sont pas de la « révision qadima » : leur passage de base va dans leur propre rubrique. */
+  days.forEach(d=>{ const keep=[]; d.block.forEach(it=>{ if(marks[it.id]==='o'||marks[it.id]==='b') d.reinf.push(it); else keep.push(it); }); d.block=keep; });
   days.forEach(d=>{ d.reinf.sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
   return {dates:dates,days:days};
 }
