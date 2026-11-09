@@ -1113,9 +1113,9 @@ function loadInfo(P,N){
 function freqColorsHTML(){
   const s=state.settings;
   const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
-  return `<section class="card setcard"><h4>Fréquence selon la couleur</h4>
+  return `<section class="card setcard"><h4>Pages à revoir plus souvent</h4>
       <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
-      <div class="fb"><div class="h"><i class="dot st-b"></i>Nouveau</div><p>Revu chaque jour. Au bout de combien de jours passe-t-il en vert ?</p>${st2('fd',s.fd,'jours')}</div>
+      <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour. Au bout de combien de jours passe-t-elle en vert, en révision qadima ?</p>${st2('fd',s.fd,'jours')}</div>
     </section>`;
 }
 function loopHTML(){
@@ -1142,7 +1142,7 @@ function loopHTML(){
   </section>
   ${freqColorsHTML()}
   <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
-    <p>Pour chaque sourate ou juzz, choisis combien de fois il revient dans ta boucle. Au départ, tout revient 1 fois.</p>
+    <p>Pour chaque sourate ou juzz de ta révision qadima (en vert), choisis combien de fois il revient dans ta boucle. Au départ, tout revient 1 fois.</p>
     <p>Appuie sur <b>+</b> pour le revoir plus souvent, sur <b>−</b> pour l’espacer (par exemple 1 fois toutes les 2 boucles). <b>Exclu</b> le retire de la boucle.</p>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
