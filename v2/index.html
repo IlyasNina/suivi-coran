@@ -1142,8 +1142,9 @@ function loopHTML(){
   </section>
   ${freqColorsHTML()}
   <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
-    <p>Pour chaque sourate ou juzz de ta révision qadima (en vert), choisis combien de fois il revient dans ta boucle. Au départ, tout revient 1 fois.</p>
-    <p>Appuie sur <b>+</b> pour le revoir plus souvent, sur <b>−</b> pour l’espacer (par exemple 1 fois toutes les 2 boucles). <b>Exclu</b> le retire de la boucle.</p>
+    <p>Choisis combien de fois chaque sourate ou juzz revient dans ta boucle.</p>
+    <p><b>+</b> : revient plus souvent<br><b>−</b> : revient moins souvent<br><b>Exclu</b> : n’est plus révisé</p>
+    <p>Au départ, tout revient 1 fois par boucle.</p>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
   h+=`<div class="lvlist">${top.map(surLvRow).join('')}</div>`;
