@@ -1646,8 +1646,7 @@ function testHTML(){
     ${TS.kind==='juz'?sels('tjuz',30,n=>'Juzz '+n):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
     ${TS.kind==='pages'?`<p class="tl">De la page… à la page… (pages ${p0} à ${p1})</p><div class="trow"><input id="tpf" class="tsel" inputmode="numeric" placeholder="${p0}" value="${esc(TS.pf)}"><input id="tpt" class="tsel" inputmode="numeric" placeholder="${p1}" value="${esc(TS.pt)}"></div>`:''}
     <button class="btn primary tfull" data-act="tstart">Commencer</button>
-    ${TS.msg?`<p class="tmsg">${esc(TS.msg)}</p>`:''}</div>
-    <p class="tnote">Le micro marche dans Safari. Le modèle de reconnaissance (19 Mo) se télécharge une fois, puis reste sur ton téléphone ; ton audio ne le quitte pas. Modèle : quran-asr-tiny (licence MIT).</p></div>`;
+    ${TS.msg?`<p class="tmsg">${esc(TS.msg)}</p>`:''}</div></div>`;
   }
   const s=surOfAyah(TS.id), p=pageOfAyah(TS.id), endTxt=modeOf(s)==='pages'?'jusqu’à la fin de la page '+pageOfAyah(TS.end):'jusqu’à la fin de la sourate';
   if(TS.step==='ask'){
