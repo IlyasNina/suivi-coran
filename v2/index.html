@@ -967,8 +967,7 @@ function loopBanner(P){
 function bulletLines(items){
   return runsOf(items).map(r=>{
     if(r.items[0].kind==='b'){ const rg=ranges(r.items.map(i=>i.p)); return `<ul class="bl"><li>${esc(SUR[r.items[0].sn-1].fr)} p. ${rg}</li></ul>`; }
-    const l=runLabel(r.items);
-    return (l!=='Sourates'?`<p class="bh">${esc(l)}</p>`:'')+`<ul class="bl">${r.items.map(x=>`<li>${esc(x.fr)}</li>`).join('')}</ul>`;
+    return `<ul class="bl">${r.items.map(x=>`<li>${esc(x.fr)}</li>`).join('')}</ul>`;
   }).join('');
 }
 function tlSec(cls,sym,sec,done,title,sub,body,last){
