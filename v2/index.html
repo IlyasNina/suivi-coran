@@ -108,6 +108,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lvall{padding:0 0 10px}
 .lvall .nm{font-size:.82rem;color:var(--muted);margin-bottom:6px}
 .setcard input[type=number]{width:96px}
+.dayrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600}.dayrow .dsel{width:auto;min-width:76px}
 
 /* Accueil */
 .home{padding-top:44px;display:flex;flex-direction:column;gap:28px}
@@ -1120,6 +1121,7 @@ function freqColorsHTML(){
 }
 function loopHTML(){
   const P=state.profiles[pk], s=state.settings, N=P.loop.n;
+  const sn0=startNum(P), dn0=dayNum(new Date()), posNow=dn0-(sn0+Math.floor((dn0-sn0)/N)*N)+1;
   const tr=trackedFor(pk,P.extra), trSet=new Set(tr);
   const full=JUZ.filter(j=>juzRange(j).every(n=>trSet.has(n)));
   const inJuz=new Set(); full.forEach(j=>juzRange(j).forEach(n=>inJuz.add(n)));
@@ -1133,10 +1135,11 @@ function loopHTML(){
       <select id="lcd" class="field" aria-label="Jour de mon cours">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select>
       ${P.loop.cd!=null&&N%7!==0?`<p>Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
     </div>
-    <div class="subbox"><h5>Début de la boucle de révision</h5>
-      <select id="lst" class="field" aria-label="Début de la boucle de révision"><option value="today">Aujourd’hui (jour 1)</option><option value="after"${P.loop.cd==null?' disabled':''}>Le lendemain de mon cours</option></select>
+    <div class="subbox"><h5>Où en es-tu dans ta boucle ?</h5>
+      <label class="dayrow" for="ljd">Aujourd’hui, c’est le jour <select id="ljd" class="field dsel">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select> de ma boucle</label>
+      <p>Pour recommencer ta boucle, choisis le jour 1.</p>
     </div>
-    <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button><button class="btn" data-act="restartloop">Recommencer ma boucle aujourd’hui</button></div>
+    <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button></div>
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
   </section>
   ${freqColorsHTML()}
@@ -1292,23 +1295,16 @@ const handlers={
   brush(el){ brush=el.dataset.st; render(); },
   loop(){ go(()=>{ tab='loop'; resetUI(); }); },
   setloop(){
-    const P=state.profiles[pk], inp=document.getElementById('lpn'), sel=document.getElementById('lcd'), st=document.getElementById('lst');
+    const P=state.profiles[pk], inp=document.getElementById('lpn'), sel=document.getElementById('lcd'), dsel=document.getElementById('ljd');
     const v=Math.round(+(inp?inp.value:0)), cd=sel&&sel.value!==''&&+sel.value>=0?Math.round(+sel.value):null;
-    const mode=st?st.value:'today';
     if(!(v>=3&&v<=60)){ flash='Choisis un nombre de jours entre 3 et 60.'; render(); return; }
+    const j=clamp(Math.round(+(dsel?dsel.value:1))||1,1,v);
     P.loop.n=v; if(cd==null) delete P.loop.cd; else P.loop.cd=cd;
     const t=new Date(), t0=new Date(t.getFullYear(),t.getMonth(),t.getDate());
-    let back=0;
-    if(mode==='after'&&cd!=null){ const w0=(cd+1)%7; back=(((t.getDay()+6)%7)-w0+7)%7; }
-    P.loop.start=wkKey(addDays(t0,-back));
+    P.loop.start=wkKey(addDays(t0,-(j-1)));
     save();
-    flash='Enregistré : boucle de '+v+' jours'+(cd==null?'':', cours le '+DAYS_LONG[cd])+(back===0?'. Aujourd’hui est le jour 1.':'. Elle a commencé le lendemain de ton cours.');
+    flash='Enregistré : boucle de '+v+' jours'+(cd==null?'':', cours le '+DAYS_LONG[cd])+'. Aujourd’hui est le jour '+j+'.';
     render();
-  },
-  restartloop(){
-    const P=state.profiles[pk], t=new Date();
-    P.loop.start=wkKey(new Date(t.getFullYear(),t.getMonth(),t.getDate()));
-    save(); flash='Boucle recommencée : aujourd’hui est le jour 1.'; render();
   },
   level(el){
     const P=state.profiles[pk], n=+el.dataset.n, cur=levelOf(P,n); flash=''; let nl;
@@ -1711,6 +1707,7 @@ document.addEventListener('click',e=>{
   const h=handlers[el.dataset.act]; if(h) h(el);
 });
 document.addEventListener('input',e=>{
+  if(e.target&&e.target.id==='lpn'){ const d=document.getElementById('ljd'), v=Math.round(+e.target.value); if(d&&v>=3&&v<=60){ const cur=Math.min(+d.value||1,v); d.innerHTML=Array.from({length:v},(_,i)=>`<option value="${i+1}"${i+1===cur?' selected':''}>${i+1}</option>`).join(''); } }
   const id=e.target.id;
   if(id==='bk') backupText=e.target.value;
   else if(id==='pq'){ pickQ=e.target.value; const l=document.getElementById('plist'); if(l) l.innerHTML=pickRows(pickQ); }
