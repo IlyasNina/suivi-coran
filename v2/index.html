@@ -1115,7 +1115,7 @@ function freqColorsHTML(){
   const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
   return `<section class="card setcard"><h4>Pages à revoir plus souvent</h4>
       <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
-      <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour. Au bout de combien de jours passe-t-elle en vert, en révision qadima ?</p>${st2('fd',s.fd,'jours')}</div>
+      <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour.<br>Au bout de combien de temps passe-t-elle en révision qadima (vert) ?</p>${st2('fd',s.fd,'jours')}</div>
     </section>`;
 }
 function loopHTML(){
