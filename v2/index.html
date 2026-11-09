@@ -736,11 +736,22 @@ function buildCycle(pk,k){
   /* À revoir en plus : le orange, le bleu, et toute la sourate prioritaire (même en vert). */
   const weak=L.filter(it=>marks[it.id]==='o'||marks[it.id]==='b').sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]);
   const load=new Array(m).fill(0);
-  for(const it of weak){
-    const f=kind(it)===2?2:(kind(it)===0?st.fo:st.fb)+(pri(it)===0?1:0);
-    const passes=kind(it)===1?m:clamp(Math.round(f*N/7),1,m), extra=passes-1;
-    if(extra<=0) continue;
-    const dd=daysOf[it.id]||[0], b=dd[0], used=new Set(dd);
+  /* Orange et bleu ne sont pas de la « révision qadima » : ils ont leur propre rubrique. */
+  days.forEach(d=>{ d.block=d.block.filter(it=>!(marks[it.id]==='o'||marks[it.id]==='b')); });
+  /* Les pages qui se suivent (même couleur, même sourate ou même juzz) sont revues ensemble, dans l'ordre du mushaf. */
+  const runs=[]; let cur=null;
+  weak.slice().sort((a,b)=>order[a.id]-order[b.id]).forEach(it=>{
+    const prev=cur&&cur.items[cur.items.length-1];
+    if(cur&&prev&&order[it.id]===order[prev.id]+1&&marks[it.id]===marks[prev.id]&&gkey(it)===gkey(prev)&&levelOf(P,it.sn)===levelOf(P,prev.sn)&&cur.w+itemW(it)<=8){ cur.items.push(it); cur.w+=itemW(it); }
+    else { cur={items:[it],w:itemW(it)}; runs.push(cur); }
+  });
+  runs.sort((a,b)=>pri(a.items[0])-pri(b.items[0])||kind(a.items[0])-kind(b.items[0])||order[a.items[0].id]-order[b.items[0].id]);
+  for(const r of runs){
+    const it=r.items[0], dd=(daysOf[it.id]||[0]).slice(), used=new Set(dd);
+    dd.forEach(c=>{ r.items.forEach(x=>days[c].reinf.push(x)); load[c]+=r.w; rload[c]+=r.w; });
+    const f=(kind(it)===0?st.fo:st.fb)+(pri(it)===0?1:0);
+    const passes=kind(it)===1?m:clamp(Math.round(f*N/7),1,m), extra=passes-dd.length;
+    const b=dd[0];
     for(let j=1;j<=extra;j++){
       const ideal=(b+Math.round(j*m/(extra+1)))%m;
       let best=-1,bs=Infinity;
@@ -750,12 +761,10 @@ function buildCycle(pk,k){
       }
       if(best<0){ for(let c=0;c<m;c++){ if(!used.has(c)&&(kind(it)===1||rload[c]<cap)&&load[c]<bs){ bs=load[c]; best=c; } } }
       if(best<0) break;
-      used.add(best); load[best]+=itemW(it); rload[best]+=itemW(it); (kind(it)===2?days[best].prio:days[best].reinf).push(it);
+      used.add(best); load[best]+=r.w; rload[best]+=r.w; r.items.forEach(x=>days[best].reinf.push(x));
     }
   }
-  /* Orange et bleu ne sont pas de la « révision qadima » : leur passage de base va dans leur propre rubrique. */
-  days.forEach(d=>{ const keep=[]; d.block.forEach(it=>{ if(marks[it.id]==='o'||marks[it.id]==='b') d.reinf.push(it); else keep.push(it); }); d.block=keep; });
-  days.forEach(d=>{ d.reinf.sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
+  days.forEach(d=>{ d.block.sort((a,b)=>order[a.id]-order[b.id]); d.reinf.sort((a,b)=>kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
   return {dates:dates,days:days};
 }
 /* Les sept jours de la semaine qui commence à `monday`. */
