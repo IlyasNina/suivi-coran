@@ -12,7 +12,7 @@
 .tw small{display:block;font-family:system-ui,sans-serif;font-size:.7rem;line-height:1.2;color:var(--muted);text-align:center}
 .tn{font-family:system-ui,sans-serif;font-size:.7rem;color:var(--muted);border:1px solid var(--line);border-radius:50%;padding:0 5px;margin:0 3px}
 .tleg,.tmsg,.tnote,.tstat{font-size:.85rem;color:var(--muted);margin:8px 0}.tmsg{color:var(--ink)}.tlinks{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:6px}
-.trec{background:#B3261E!important;border-color:#B3261E!important}
+.trec{background:#B3261E!important;border-color:#B3261E!important}.taud{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent)}
 </style>
 </head><body>
 <title>Suivi mouraja’a</title>
@@ -1160,6 +1160,7 @@ function profileHTML(){
 function creditHTML(){ return '<p class="credit">Application créée par Habiba Marchetto</p>'; }
 
 function render(){
+  if(tAud&&(main!=='test'||TS.step!=='ask'||tAudFor!==TS.id)) tAudStop();
   if(screen==='profile'&&!state.profiles[pk]) screen='home';
   const y=window.scrollY;
   if(settleBlue()) save();
@@ -1641,6 +1642,49 @@ async function tToggleRec(){
   tTimer=setTimeout(()=>{ if(tMR&&tMR.state==='recording') tMR.stop(); },180000);
 }
 function tCount(){ const w=TS.words||[]; const ok=w.filter(x=>x.st==='ok').length; return {ok,n:w.length}; }
+/* audio du verset posé : Ali Al-Hudhayfi, vitesse fixe 1,5×, jamais lancé tout seul */
+const T_RATE=1.5;
+var tAud=null, tAudFor=0, tAudSt='idle', tAudI=0;
+const T_PLAY="<svg viewBox='0 0 24 24' aria-hidden='true' style='width:1.1em;height:1.1em;fill:currentColor'><path d='M7 4.5v15l13-7.5z'/></svg>";
+const T_PAUSE="<svg viewBox='0 0 24 24' aria-hidden='true' style='width:1.1em;height:1.1em;fill:currentColor'><rect x='6' y='4.5' width='4' height='15' rx='1'/><rect x='14' y='4.5' width='4' height='15' rx='1'/></svg>";
+function tAudSrc(id){
+  const s=surOfAyah(id), n=id-sFirst[s-1]+1, c=String(s).padStart(3,'0')+String(n).padStart(3,'0');
+  return ['https://everyayah.com/data/Hudhaify_128kbps/'+c+'.mp3','https://everyayah.com/data/Hudhaify_64kbps/'+c+'.mp3','https://cdn.islamic.network/quran/audio/128/ar.hudhaify/'+id+'.mp3'];
+}
+function tAudLabel(){ return tAudSt==='play'?T_PAUSE+' Pause':tAudSt==='load'?T_PLAY+' Chargement…':T_PLAY+' Écouter'; }
+function tAudUI(){ const b=document.querySelector('[data-act="taud"]'); if(b) b.innerHTML=tAudLabel(); }
+function tSetRate(){ try{ tAud.defaultPlaybackRate=T_RATE; tAud.playbackRate=T_RATE; }catch(e){} }
+function tAudInit(){
+  if(tAud) return;
+  tAud=new Audio(); tAud.preload='auto';
+  try{ tAud.preservesPitch=true; tAud.webkitPreservesPitch=true; }catch(e){}
+  tAud.addEventListener('loadedmetadata',tSetRate);
+  tAud.addEventListener('playing',()=>{ tSetRate(); tAudSt='play'; tAudUI(); });
+  tAud.addEventListener('waiting',()=>{ if(tAudFor&&!tAud.paused){ tAudSt='load'; tAudUI(); } });
+  tAud.addEventListener('pause',()=>{ if(tAudFor){ tAudSt='idle'; tAudUI(); } });
+  tAud.addEventListener('ended',()=>{ if(tAudFor){ tAudSt='idle'; tAudUI(); } });
+  tAud.addEventListener('error',()=>{
+    if(!tAudFor) return;
+    const L=tAudSrc(tAudFor);
+    if(tAudI+1<L.length){ tAudI++; tAud.src=L[tAudI]; tSetRate(); const p=tAud.play(); if(p&&p.catch) p.catch(()=>{}); return; }
+    tAudSt='err'; TS.msg='L’audio n’a pas pu être chargé. Vérifie ta connexion puis réessaie.'; render();
+  });
+}
+function tAudStop(){
+  if(!tAud||(!tAudFor&&tAudSt==='idle')) return;
+  tAudFor=0; tAudSt='idle';
+  try{ tAud.pause(); tAud.removeAttribute('src'); tAud.load(); }catch(e){}
+}
+function tAudPlay(){
+  tAudInit();
+  if(tAudFor!==TS.id||tAudSt==='err'){
+    if(tAudSt==='err'){ TS.msg=''; const m=document.querySelector('.tmsg'); if(m) m.remove(); }
+    tAudFor=TS.id; tAudI=0; tAud.src=tAudSrc(TS.id)[0];
+  } else if(tAud.ended) tAud.currentTime=0;
+  tSetRate(); tAudSt='load'; tAudUI();
+  const p=tAud.play();
+  if(p&&p.catch) p.catch(e=>{ if(e&&e.name==='NotAllowedError'){ tAudSt='idle'; tAudUI(); } });
+}
 function testHTML(){
   const backBtn=(TS.step!=='setup')?'<button class="tbackbtn" data-act="tprev"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="246"/><polyline points="333.82 100.37 178.18 256 333.82 411.63"/></svg>Revenir</button>':'';
   const sels=(id,n,lab)=>`<select id="${id}" class="tsel">${Array.from({length:n},(_,i)=>`<option value="${i+1}"${(id==='tjuz'?TS.juz:TS.sur)===i+1?' selected':''}>${lab(i+1)}</option>`).join('')}</select>`;
@@ -1660,6 +1704,7 @@ function testHTML(){
     const micLab=TS.mic==='rec'?'■ Arrêter':TS.mic==='loading'?'Préparation…':TS.mic==='busy'?'Analyse…':T_MIC+' Réciter';
     return `<div class="tst"><h1>Test</h1>${backBtn}
     <div class="tcard"><div class="tv" lang="ar" dir="rtl">${esc(T_AYAH[TS.id-1])}</div>
+    <button class="btn tfull taud" data-act="taud" aria-label="Écouter le verset">${tAudLabel()}</button>
     <button class="btn primary tfull${TS.mic==='rec'?' trec':''}" data-act="trec"${TS.mic==='loading'||TS.mic==='busy'?' disabled':''}>${micLab}</button>
     ${TS.msg?`<p class="tmsg">${TS.msg}</p>`:''}
     <div class="tlinks"><button class="link" data-act="treveal">Afficher la suite sans réciter</button><button class="link" data-act="tnext">Autre verset</button></div></div></div>`;
@@ -1677,7 +1722,8 @@ Object.assign(handlers,{
   tkind(el){ TS.kind=el.dataset.k; TS.pf=''; TS.pt=''; render(); },
   tstart(){ TS.hist=[]; TS.id=0; if(!tPick()) TS.msg='Aucun verset ne convient dans ce choix. Élargis-le.'; else TS.msg=''; render(); window.scrollTo(0,0); },
   tsurah(){ TS.showS=true; render(); },
-  trec(){ tToggleRec(); },
+  taud(){ if(tAud&&tAudFor===TS.id&&tAudSt!=='err'&&!tAud.paused){ tAud.pause(); return; } tAudPlay(); },
+  trec(){ tAudStop(); tAudUI(); tToggleRec(); },
   treveal(){ tPush(); const E=tExpected(); TS.words=E.map(e=>({w:e.w,v:e.v,st:'neu',h:''})); TS.extras=[]; TS.heard=''; TS.step='result'; render(); window.scrollTo(0,0); },
   tnext(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); TS.mic='idle'; } tPick(); render(); },
   tprev(){ if(tMR&&tMR.state==='recording'){ tMR.onstop=null; tMR.stop(); tStream&&tStream.getTracks().forEach(t=>t.stop()); }
