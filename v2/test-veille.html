@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Test du son en veille</title>
+<style>
+body{font:17px/1.45 -apple-system,system-ui,sans-serif;background:#f8f5ec;color:#1f3b32;margin:0;padding:18px}
+h1{font-size:1.3rem;margin:0 0 6px}
+p{margin:6px 0 12px;color:#4d5a53}
+.card{background:#fff;border:1.5px solid #e3dcc6;border-radius:16px;padding:16px;margin:14px 0}
+button{font:inherit;font-weight:600;width:100%;min-height:52px;border-radius:14px;border:0;background:#2f6b57;color:#fff;margin-top:8px}
+button.s{background:#fff;color:#1f3b32;border:1.5px solid #e3dcc6}
+#log{font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;background:#fff;border:1.5px solid #e3dcc6;border-radius:12px;padding:10px;min-height:120px}
+.big{font-size:1.6rem;font-weight:700;text-align:center;margin:6px 0}
+</style>
+</head>
+<body>
+<h1>Test : le son continue-t-il écran verrouillé ?</h1>
+<p>Al-Baqara, versets 94 à 96, en boucle, voix d'Al-Hudhaify. Deux méthodes à essayer, l'une après l'autre.</p>
+
+<div class="card">
+  <b>Méthode A</b> (lecteur simple)
+  <div class="big" id="ca">—</div>
+  <button id="a1">Lancer la méthode A</button>
+  <button id="a0" class="s">Arrêter</button>
+</div>
+
+<div class="card">
+  <b>Méthode B</b> (son préparé à l'avance)
+  <div class="big" id="cb">—</div>
+  <button id="b1">Lancer la méthode B</button>
+  <button id="b0" class="s">Arrêter</button>
+</div>
+
+<div class="card">
+  <b>Journal</b> (il garde l'heure de chaque verset, même pendant que l'écran est éteint)
+  <div id="log"></div>
+</div>
+
+<script>
+var FROM=94, TO=96, SURA=2;
+var logEl=document.getElementById('log');
+function t(){var d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2)}
+function log(m){logEl.textContent=t()+'  '+m+'\n'+logEl.textContent}
+function pad(n,l){n=''+n;while(n.length<l)n='0'+n;return n}
+function media(title){
+  try{
+    if('mediaSession' in navigator){
+      navigator.mediaSession.metadata=new MediaMetadata({title:title,artist:'Al-Hudhaify',album:'Al-Baqara'});
+      navigator.mediaSession.playbackState='playing';
+    }
+  }catch(e){}
+}
+
+/* Méthode A : un seul lecteur audio, on change de verset à la fin de chacun */
+var au=null, ai=FROM, aOn=false, aTours=0;
+function aSrc(n){return 'https://everyayah.com/data/Hudhaify_64kbps/'+pad(SURA,3)+pad(n,3)+'.mp3'}
+function aPlay(){
+  if(!aOn)return;
+  au.src=aSrc(ai);
+  document.getElementById('ca').textContent='verset '+ai+' · tour '+(aTours+1);
+  var p=au.play(); if(p&&p.catch)p.catch(function(e){log('A : lecture refusée ('+e.name+')')});
+}
+document.getElementById('a1').onclick=function(){
+  stopB();
+  if(!au){au=new Audio();au.preload='auto';
+    au.addEventListener('ended',function(){
+      log('A : verset '+ai+' terminé');
+      ai++; if(ai>TO){ai=FROM;aTours++;}
+      aPlay();
+    });
+    au.addEventListener('error',function(){log('A : erreur de chargement du verset '+ai)});
+  }
+  aOn=true; ai=FROM; aTours=0; log('A : départ'); media('Test A'); aPlay();
+};
+function stopA(){aOn=false;if(au){au.pause();}document.getElementById('ca').textContent='—'}
+document.getElementById('a0').onclick=function(){stopA();log('A : arrêté')};
+
+/* Méthode B : on télécharge les 3 versets, puis on les programme l'un après l'autre */
+var ctx=null, bBufs=null, bOn=false, bSrcs=[], bTimer=null, bTours=0;
+function gl(n){return 7+n}  /* numéro du verset dans tout le Coran : Al-Fatiha a 7 versets */
+function bUrl(n){return 'https://cdn.islamic.network/quran/audio/128/ar.hudhaify/'+gl(n)+'.mp3'}
+function bLoad(){
+  if(bBufs)return Promise.resolve();
+  var list=[];for(var n=FROM;n<=TO;n++)list.push(n);
+  return Promise.all(list.map(function(n){
+    return fetch(bUrl(n)).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer()})
+      .then(function(ab){return new Promise(function(ok,ko){ctx.decodeAudioData(ab,ok,ko)})});
+  })).then(function(b){bBufs=b;log('B : 3 versets prêts')});
+}
+function bSchedule(){
+  if(!bOn)return;
+  var when=ctx.currentTime+0.1;
+  bBufs.forEach(function(buf,i){
+    var s=ctx.createBufferSource();s.buffer=buf;s.connect(ctx.destination);s.start(when);bSrcs.push(s);
+    (function(n,at){setTimeout(function(){if(bOn){document.getElementById('cb').textContent='verset '+n+' · tour '+(bTours+1);log('B : verset '+n+' commence')}},Math.max(0,(at-ctx.currentTime)*1000))})(FROM+i,when);
+    when+=buf.duration;
+  });
+  bTours++;
+  bTimer=setTimeout(bSchedule,Math.max(0,(when-ctx.currentTime)*1000)-300);
+}
+document.getElementById('b1').onclick=function(){
+  stopA();
+  try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();}catch(e){log('B : non disponible');return}
+  if(ctx.state==='suspended')ctx.resume();
+  bOn=true;bTours=0;log('B : téléchargement…');media('Test B');
+  bLoad().then(function(){if(bOn)bSchedule()}).catch(function(e){bOn=false;log('B : échec ('+e.message+'). Cette méthode n\'est pas possible ici.')});
+};
+function stopB(){bOn=false;clearTimeout(bTimer);bSrcs.forEach(function(s){try{s.stop()}catch(e){}});bSrcs=[];document.getElementById('cb').textContent='—'}
+document.getElementById('b0').onclick=function(){stopB();log('B : arrêté')};
+
+document.addEventListener('visibilitychange',function(){log('page '+(document.hidden?'cachée (écran verrouillé ou autre appli)':'de nouveau visible'))});
+log('page prête');
+</script>
+</body>
+</html>
