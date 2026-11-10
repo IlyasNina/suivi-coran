@@ -853,8 +853,8 @@ function homeHTML(){
       </button>`;
   }).join('');
   const none=!state.order.length;
-  const adds=state.order.length>=MAX_PROFILES?'':`<button class="pcard add" data-act="newadult"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil</span><span class="meta">Pour suivre ta mémorisation et ta mouraja’a.</span></button>
-      <button class="pcard add" data-act="newchild"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil enfant</span><span class="meta">Pour suivre aussi la mémorisation de tes enfants.</span></button>`;
+  const adds=state.order.length>=MAX_PROFILES?'':`<button class="pcard add" data-act="newadult"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil</span></button>
+      <button class="pcard add" data-act="newchild"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil enfant</span></button>`;
   return `<div class="home">
     <div><p class="bism" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
     <h1>Suivi mouraja’a</h1><p class="lead">${none?'Crée un profil pour suivre ta mémorisation et ta révision, et celles de tes enfants.':(main==='plan'?'Pour quel profil veux-tu voir la mouraja’a ?':'Qui révise aujourd’hui ?')}</p></div>
@@ -1167,7 +1167,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 06:53';
+const APP_VERSION='10 nov. 06:57';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
