@@ -34,7 +34,7 @@
   --accent:#0E6B5C;
   --accent-ink:#FFFFFF;
   --n-bg:#E7E1CF; --n-fg:#4A5852;
-  --v-bg:#2F7D3A; --v-fg:#FFFFFF;
+  --v-bg:#2F7D3A; --v-fg:#FFFFFF; --v-ink:#2F7D3A;
   --o-bg:#B85A0B; --o-fg:#FFFFFF;
   --r-bg:#B3261E; --r-fg:#FFFFFF;
   --b-bg:#BFE4F8; --b-fg:#0B3550; --b-ink:#1B5A82; --b-line:#7DBCE3; --o-ink:#8A4308;
@@ -47,7 +47,7 @@
   --bg:#0D1613;--surface:#15211D;--ink:#E7EFEB;--muted:#9BAEA7;--line:#263832;--soft:#1B2A25;--dash:#3A4944;
   --accent:#5CC9AF;--accent-ink:#06211B;
   --n-bg:#26352F;--n-fg:#A9BBB4;
-  --v-bg:#5CC06C;--v-fg:#07200E;
+  --v-bg:#5CC06C;--v-fg:#07200E;--v-ink:#7FD08C;
   --o-bg:#F0A04B;--o-fg:#2B1700;
   --r-bg:#F27B72;--r-fg:#330805;
   --b-bg:#AEDBF3;--b-fg:#08293F;--b-ink:#AEDBF3;--b-line:#5E94B8;--o-ink:#F0A04B;
@@ -57,7 +57,7 @@
   --bg:#0D1613;--surface:#15211D;--ink:#E7EFEB;--muted:#9BAEA7;--line:#263832;--soft:#1B2A25;--dash:#3A4944;
   --accent:#5CC9AF;--accent-ink:#06211B;
   --n-bg:#26352F;--n-fg:#A9BBB4;
-  --v-bg:#5CC06C;--v-fg:#07200E;
+  --v-bg:#5CC06C;--v-fg:#07200E;--v-ink:#7FD08C;
   --o-bg:#F0A04B;--o-fg:#2B1700;
   --r-bg:#F27B72;--r-fg:#330805;
   --b-bg:#AEDBF3;--b-fg:#08293F;--b-ink:#AEDBF3;--b-line:#5E94B8;--o-ink:#F0A04B;
@@ -95,12 +95,20 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .acc>.ab .lvrow{background:var(--bg)}
 .lvrow .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.95rem}
 .lvrow .nm span{color:var(--muted);font-family:var(--f-ar);font-size:1.05rem}
-.lv{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.lv button{min-height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:9px;font-size:.76rem;font-weight:600;padding:2px}
-.lv button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.fq{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fq .ctl{display:flex;align-items:center;gap:6px}
+.fq .ctl button{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);font-size:1.2rem;font-weight:700;line-height:1}
+.fq .ctl button:disabled{opacity:.35}
+.fq output{min-width:84px;text-align:center;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.fq output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+.fq .exb{min-height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:0 12px;font-size:.82rem;font-weight:600}
+.lvrow.ex,.lvall.ex{background:rgba(120,120,110,.12)!important}.lvrow.ex .nm,.lvall.ex .nm,.lvrow.ex .fq .ctl,.lvall.ex .fq .ctl{opacity:.4}
+.fq .exb[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.fb{padding:12px 0;border-top:1px solid var(--line)}.fb:first-of-type{border-top:0;padding-top:4px}.fb .h{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:2px}.fb p{margin:0 0 8px}.fb .stepper .ctl output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
 .lvall{padding:0 0 10px}
 .lvall .nm{font-size:.82rem;color:var(--muted);margin-bottom:6px}
 .setcard input[type=number]{width:96px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;margin:6px 0 2px}.srow .sval{display:flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap}.srow .field{width:auto;min-width:0;margin:0}.srow input.field{width:4.4em;padding:8px 4px;text-align:center}.srow select.field{min-width:0;width:auto}.srow select.dsel{padding:8px 4px 8px 12px}.shint{margin:2px 0 14px;font-size:.88rem;color:var(--muted)}
 
 /* Accueil */
 .home{padding-top:44px;display:flex;flex-direction:column;gap:28px}
@@ -276,6 +284,8 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .tl-head span{font-size:.85rem;color:var(--muted)}
 .tl-body .rl b{display:inline;font-size:1rem;text-transform:none;letter-spacing:0;color:var(--ink)}
+.tl-v h4{color:var(--v-ink)}
+.tl-v .bl li,.tl-v .rl,.tl-v .rl b{color:var(--ink)}
 .tl-o h4{color:var(--o-ink)}
 .tl-o .bl li{color:var(--ink)}
 .tl-b h4{color:var(--b-ink)}
@@ -470,8 +480,8 @@ const AV_OF={adult:['femme-f','femme-c','homme-f','homme-c'],child:['fille-f','f
 const AV_NAME={femme:'Femme',fille:'Fille',homme:'Homme',garcon:'Garçon'};
 function avAlt(k){ const a=k.split('-'); return AV_NAME[a[0]]+(a[1]==='f'?', peau foncée':', peau claire'); }
 function avImg(k,cls){ return AVATARS[k]?'<img class="'+(cls||'av')+'" src="'+AVATARS[k]+'" alt="" width="56" height="56">':''; }
-const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>', SYCRS='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:''},n:{label:'Pas appris',sym:'–'}};
+const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>', SYCRS='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>', SYNEW='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.8 5 3.8 8 9 9-5.2 1-8.2 4-9 9-.8-5-3.8-8-9-9 5.2-1 8.2-4 9-9z"/></svg>';
+const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:SYNEW},n:{label:'Pas appris',sym:'–'}};
 const BRUSH_ORDER=['v','o','b','n'];
 const LOOP_START='2024-01-01';   // un lundi : repère fixe des boucles
 const DAYS_LONG=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
@@ -540,12 +550,12 @@ function sanitize(o){
       }
     }
     if(p.loop&&typeof p.loop==='object'){
-      const nn=Math.round(+p.loop.n); if(nn>=3&&nn<=60) q.loop.n=nn;
+      const nn=Math.round(+p.loop.n); if(nn>=3) q.loop.n=Math.min(nn,40);
       if(/^\d{4}-\d{2}-\d{2}$/.test(String(p.loop.start||''))) q.loop.start=p.loop.start;
       if(p.loop.cd!=null&&p.loop.cd!==''&&Math.round(+p.loop.cd)>=0&&Math.round(+p.loop.cd)<=6) q.loop.cd=Math.round(+p.loop.cd);
     }
     if(p.levels&&typeof p.levels==='object'){
-      for(const k of Object.keys(p.levels)){ const n=Math.round(+k), l=p.levels[k]; if(n>=1&&n<=114&&(l==='p'||l==='r'||l==='x')) q.levels[n]=l; }
+      for(const k of Object.keys(p.levels)){ const n=Math.round(+k); let l=p.levels[k]; if(l==='p') l='k2'; else if(l==='r') l='e'+clamp(s.settings.res,2,6); if(n>=1&&n<=114&&typeof l==='string'&&/^(x|e[2-6]|k[2-7])$/.test(l)) q.levels[n]=l; }
     }
     if(p.done&&typeof p.done==='object'){
       for(const wk of Object.keys(p.done)){
@@ -658,6 +668,13 @@ function startNum(P){
   return Math.round(Date.UTC(+m[1],+m[2]-1,+m[3])/864e5);
 }
 function levelOf(P,sn){ return (P.levels&&P.levels[sn])||'n'; }
+/* niveau d'une sourate : n = 1 passage par boucle ; kN = N passages par boucle ; eN = 1 passage toutes les N boucles ; x = exclue */
+function levelMul(l){ if(l==='x') return 0; const v=+l.slice(1); return l.charAt(0)==='k'?v:l.charAt(0)==='e'?1/v:1; }
+function levelLaps(l){ return l.charAt(0)==='k'?+l.slice(1):1; }
+const LADDER=['e4','e3','e2','n','k2','k3','k4','k5','k6','k7'];
+function freqParts(l,N){ const w=N===7; if(l==='x') return ['Exclu','']; const v=+l.slice(1);
+  if(l.charAt(0)==='e') return ['1×','toutes les '+v+(w?' sem.':' boucles')];
+  return [(l==='n'?1:v)+'×','par '+(w?'semaine':'boucle')]; }
 /* Un bleu devient vert tout seul après le délai (7 jours par défaut). */
 function settleBlue(){
   let ch=false; const lim=state.settings.fd*86400000, now=Date.now();
@@ -688,12 +705,11 @@ function buildCycle(pk,k){
   for(let j=0;j<N;j++) dates.push(s0+j);
   const m=dates.length, days=Array.from({length:m},()=>({block:[],reinf:[],prio:[]}));
   if(!m) return {dates:dates,days:days};
-  const R=st.res;
   const L=itemsFor(pk).filter(it=>{
     if(!marks[it.id]) return false;
     const lv=levelOf(P,it.sn);
     if(lv==='x') return false;
-    if(lv==='r') return ((((k+it.sn)%R)+R)%R)===0;
+    if(lv.charAt(0)==='e'){ const R=+lv.slice(1); return ((((k+it.sn)%R)+R)%R)===0; }
     return true;
   });
   const order={}; L.forEach((it,i)=>order[it.id]=i);
@@ -703,42 +719,46 @@ function buildCycle(pk,k){
   const trSet=new Set(trackedFor(pk,P.extra)), fullJ=new Set(JUZ.filter(j=>juzRange(j).every(n=>trSet.has(n))).map(j=>j.id));
   const gkey=it=>{ if(it.kind==='b') return 's'+it.sn; const j=juzOf(it.n); return (j&&fullJ.has(j.id))?'j'+j.id:'o'; };
   const groups={}; L.forEach(it=>{ (groups[gkey(it)]=groups[gkey(it)]||[]).push(it); });
-  const daysOf={};
+  const daysOf={}, sk={};
   Object.keys(groups).forEach(g=>{
-    const arr=groups[g];
-    /* une sourate prioritaire fait deux tours dans la boucle, chacun dans l'ordre */
-    const seq=arr.concat(arr.filter(it=>levelOf(P,it.sn)==='p'));
+    const arr=groups[g].filter(it=>marks[it.id]==='v'); if(!arr.length) return;
+    /* Une suite continue : les passages de la sourate (ou du juzz) se suivent, chaque jour reprend là où la veille s'est arrêtée,
+       avec à peu près le même nombre de pages. Quand on arrive à la fin, on recommence au début. */
+    const kmax=Math.max.apply(null,arr.map(it=>levelLaps(levelOf(P,it.sn))));
+    let seq=arr.slice(); for(let j=2;j<=kmax;j++) seq=seq.concat(arr.filter(it=>levelLaps(levelOf(P,it.sn))>=j));
     const Wg=seq.reduce((a,it)=>a+itemW(it),0); let cum=0;
-    seq.forEach(it=>{
+    const go=order[arr[0].id];
+    seq.forEach((it,si)=>{
       const w=itemW(it), d=clamp(Math.floor((cum+w/2)/Wg*m),0,m-1);
-      if(!days[d].block.some(x=>x.id===it.id)){ days[d].block.push(it); (daysOf[it.id]=daysOf[it.id]||[]).push(d); }
+      if(!days[d].block.some(x=>x.id===it.id)){ days[d].block.push(it); sk[d+'|'+it.id]=go*100000+si; (daysOf[it.id]=daysOf[it.id]||[]).push(d); }
       cum+=w;
     });
   });
-  const Wtot=L.reduce((a,it)=>a+itemW(it)*(levelOf(P,it.sn)==='p'?2:1),0), cap=Math.max(4,Math.ceil(Wtot/m*0.75));
+  const Wtot=L.reduce((a,it)=>a+itemW(it)*levelLaps(levelOf(P,it.sn)),0), cap=Math.max(4,Math.ceil(Wtot/m*0.75));
   const rload=new Array(m).fill(0);
-  const pri=it=>levelOf(P,it.sn)==='p'?0:1, kind=it=>marks[it.id]==='o'?0:marks[it.id]==='b'?1:2;
+  const pri=it=>levelLaps(levelOf(P,it.sn))>=2?0:1, kind=it=>marks[it.id]==='o'?0:marks[it.id]==='b'?1:2;
   /* À revoir en plus : le orange, le bleu, et toute la sourate prioritaire (même en vert). */
   const weak=L.filter(it=>marks[it.id]==='o'||marks[it.id]==='b').sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]);
   const load=new Array(m).fill(0);
-  for(const it of weak){
-    const f=kind(it)===2?2:(kind(it)===0?st.fo:st.fb)+(pri(it)===0?1:0);
-    const passes=kind(it)===1?m:clamp(Math.round(f*N/7),1,m), extra=passes-1;
-    if(extra<=0) continue;
-    const dd=daysOf[it.id]||[0], b=dd[0], used=new Set(dd);
-    for(let j=1;j<=extra;j++){
-      const ideal=(b+Math.round(j*m/(extra+1)))%m;
-      let best=-1,bs=Infinity;
-      for(const off of [0,1,-1,2,-2,3,-3]){
-        const c=((ideal+off)%m+m)%m; if(used.has(c)||(kind(it)!==1&&rload[c]>=cap)) continue;
-        const sc=load[c]*10+Math.abs(off); if(sc<bs){ bs=sc; best=c; }
-      }
-      if(best<0){ for(let c=0;c<m;c++){ if(!used.has(c)&&(kind(it)===1||rload[c]<cap)&&load[c]<bs){ bs=load[c]; best=c; } } }
-      if(best<0) break;
-      used.add(best); load[best]+=itemW(it); rload[best]+=itemW(it); (kind(it)===2?days[best].prio:days[best].reinf).push(it);
-    }
+  /* Orange et bleu ne sont pas de la « révision qadima » : ils ont leur propre rubrique. */
+  days.forEach(d=>{ d.block=d.block.filter(it=>!(marks[it.id]==='o'||marks[it.id]==='b')); });
+  /* Pages fragiles : une suite logique. Dans l'ordre du mushaf, on en prend un peu chaque jour (11 et 12 aujourd'hui, 13 demain…),
+     et chaque passage supplémentaire refait la même suite, décalée de quelques jours. Le bleu revient chaque jour. */
+  const fr=weak.filter(it=>kind(it)===0).sort((a,b)=>order[a.id]-order[b.id]);
+  weak.filter(it=>kind(it)===1).forEach(it=>{ for(let c=0;c<m;c++) days[c].reinf.push(it); });
+  const need=it=>clamp(Math.round((st.fo+(pri(it)===0?1:0))*N/7),1,m), usedD={};
+  const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
+  for(let j=0;j<kmaxF;j++){
+    const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
+    /* chaque passage a sa propre tranche de jours : la suite se fait en entier, sans se mélanger avec la suivante */
+    const a0=Math.floor(j*m/kmaxF), a1=Math.max(a0+1,Math.floor((j+1)*m/kmaxF)), len=a1-a0;
+    const Wa=arr.reduce((a,it)=>a+itemW(it),0); let cum=0;
+    arr.forEach(it=>{
+      const w=itemW(it), d=a0+clamp(Math.floor((cum+w/2)/Wa*len),0,len-1); cum+=w;
+      days[d].reinf.push(it);
+    });
   }
-  days.forEach(d=>{ d.reinf.sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
+  days.forEach((d,di)=>{ d.block.sort((a,b)=>sk[di+'|'+a.id]-sk[di+'|'+b.id]); d.reinf.sort((a,b)=>kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
   return {dates:dates,days:days};
 }
 /* Les sept jours de la semaine qui commence à `monday`. */
@@ -835,8 +855,8 @@ function homeHTML(){
       </button>`;
   }).join('');
   const none=!state.order.length;
-  const adds=state.order.length>=MAX_PROFILES?'':`<button class="pcard add" data-act="newadult"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil</span><span class="meta">Pour suivre ta mémorisation et ta mouraja’a.</span></button>
-      <button class="pcard add" data-act="newchild"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil enfant</span><span class="meta">Pour suivre aussi la mémorisation de tes enfants.</span></button>`;
+  const adds=state.order.length>=MAX_PROFILES?'':`<button class="pcard add" data-act="newadult"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil</span></button>
+      <button class="pcard add" data-act="newchild"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil enfant</span></button>`;
   return `<div class="home">
     <div><p class="bism" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
     <h1>Suivi mouraja’a</h1><p class="lead">${none?'Crée un profil pour suivre ta mémorisation et ta révision, et celles de tes enfants.':(main==='plan'?'Pour quel profil veux-tu voir la mouraja’a ?':'Qui révise aujourd’hui ?')}</p></div>
@@ -942,8 +962,8 @@ function chip(it){ const s=state.profiles[pk].marks[it.id]; return `<span class=
 
 function pagesTxt(w){ const r=Math.round(w); return w<0.75?'moins d’une page':'environ '+r+(r>1?' pages':' page'); }
 function perDay(P,N){
-  const R=state.settings.res; let eff=0;
-  itemsFor(pk).forEach(it=>{ if(!P.marks[it.id]) return; const l=levelOf(P,it.sn); if(l==='x') return; eff+=itemW(it)*(l==='r'?1/R:l==='p'?2:1); });
+  let eff=0;
+  itemsFor(pk).forEach(it=>{ if(!P.marks[it.id]) return; const l=levelOf(P,it.sn); if(l==='x') return; eff+=itemW(it)*levelMul(l); });
   return eff/N;
 }
 function loopBanner(P){
@@ -954,8 +974,7 @@ function loopBanner(P){
 function bulletLines(items){
   return runsOf(items).map(r=>{
     if(r.items[0].kind==='b'){ const rg=ranges(r.items.map(i=>i.p)); return `<ul class="bl"><li>${esc(SUR[r.items[0].sn-1].fr)} p. ${rg}</li></ul>`; }
-    const l=runLabel(r.items);
-    return (l!=='Sourates'?`<p class="bh">${esc(l)}</p>`:'')+`<ul class="bl">${r.items.map(x=>`<li>${esc(x.fr)}</li>`).join('')}</ul>`;
+    return `<ul class="bl">${r.items.map(x=>`<li>${esc(x.fr)}</li>`).join('')}</ul>`;
   }).join('');
 }
 function tlSec(cls,sym,sec,done,title,sub,body,last){
@@ -981,9 +1000,9 @@ function planHTML(){
   } else {
     const d=plan[selDay], dn=doneOf(pk,selDay);
     const sc=daySecs(pk,d), oranges=sc.oranges, blues=sc.blues, secs=[];
-    if(d.block.length) secs.push(['tl-v',SYCHK,'b','Révision du jour','',bulletLines(d.block),dn.b]);
-    if(oranges.length) secs.push(['tl-o',SYCHK,'r','Passages à consolider','',`<ul class="bl">${oranges.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.r]);
-    if(blues.length) secs.push(['tl-b',SYCHK,'p','Nouvelle(s) page(s)','',`<ul class="bl">${blues.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.p]);
+    if(d.block.length) secs.push(['tl-v',SYCHK,'b','Révision qadima','',bulletLines(d.block),dn.b]);
+    if(oranges.length) secs.push(['tl-o',SYCHK,'r','Pages fragiles','',`<ul class="bl">${oranges.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.r]);
+    if(blues.length) secs.push(['tl-b',SYCHK,'p','Révision jadida','',`<ul class="bl">${blues.map(it=>`<li>${esc(itemLabel(it))}</li>`).join('')}</ul>`,dn.p]);
     if(!secs.length){
       // rien à afficher ce jour-là
     } else {
@@ -992,13 +1011,6 @@ function planHTML(){
       h+=`<div class="finish${fin?' on':''}" role="status">${fin?'Mouraja’a terminée ✓':'J’ai terminé ma mouraja’a'}</div>
         ${fin?'':'<p class="finhint">Touche chaque rond quand la partie est faite : le bouton s’allume tout seul.</p>'}`;
     }
-  }
-  if(nLearned){
-    h+=`<section class="overview"><h3>Toute la semaine</h3>`+plan.map((d,i)=>{
-      const wd=i, dt=addDays(monday,wd);
-      const txt=[shortBlock(d.block)||'Rien au programme'].concat(d.reinf.length?['+ '+d.reinf.length+' à revoir (fragiles)']:[]).join(' · ');
-      return `<button class="ov" data-act="day" data-d="${wd}" aria-pressed="${selDay===wd}"><span class="d">${DAYS_SHORT[wd]} ${dt.getDate()}</span><span class="s">${esc(txt)}</span><span class="c">${dayComplete(pk,wd,d)?'✓':''}</span></button>`;
-    }).join('')+`</section>`;
   }
   return h;
 }
@@ -1051,17 +1063,9 @@ function reglagesHTML(){
     <span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins pour ${label}">−</button><output>${val}${unit||' / sem.'}</output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus pour ${label}">+</button></span></div>`;
   const syncTxt=sync==='online'?'Tes données sont enregistrées sur ce téléphone et aussi en ligne, liées à ton compte Claude.':'Tes données sont enregistrées sur ce téléphone, dans ce navigateur.';
   if(!backupText) backupText=exportText();
-  return `<section class="card setcard"><h4>Fréquence de révision</h4>
-      <p>Nombre de passages par semaine, avec la révision dans l’ordre comprise. Un élément vert est relu une fois. Une page orange ou bleue est revue plus souvent. Une page bleue (nouvelle) revient tous les jours jusqu’à ce qu’elle passe en vert toute seule, après le délai ci-dessous.</p>
-      ${step('fo','Fragile (orange)','st-o',s.fo)}
-      ${step('fd','Le bleu devient vert après','st-b',s.fd,' jours')}
-    </section>
-    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
+  return `    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
       ${sync!=='online'?`<div class="row2"><button class="btn primary" data-act="backupfile">Sauvegarder (envoyer un fichier)</button><button class="btn" data-act="restorepick">Restaurer depuis un fichier</button></div>
       <input id="bkfile" type="file" accept=".json,application/json,text/plain" hidden>`:''}
-      <details class="det"><summary>Utiliser un code à copier</summary>
-        <textarea id="bk" class="field" aria-label="Code de sauvegarde" spellcheck="false">${esc(backupText)}</textarea>
-        <div class="row2"><button class="btn" data-act="copy">Copier le code</button><button class="btn" data-act="restore">Restaurer ce code</button></div></details>
       ${sync!=='online'&&state.backupAt?`<p class="meta">Dernière sauvegarde : ${new Date(state.backupAt).toLocaleDateString('fr-FR')}</p>`:''}
       ${flash&&tab==='reglages'?`<p class="flash">${esc(flash)}</p>`:''}
     </section>
@@ -1076,16 +1080,17 @@ function reglagesHTML(){
     <section class="card setcard"><h4>Supprimer le profil de ${name}</h4><p>Supprime ce profil et tout son suivi, sans retour possible.</p>
       ${confirmDel?`<div class="row2"><button class="btn warnfill" data-act="del-yes">Oui, supprimer</button><button class="btn" data-act="del-no">Annuler</button></div>`
         :`<div class="row2"><button class="btn warn" data-act="del-ask">Supprimer ce profil</button></div>`}
-    </section>`;
+    </section>
+    <p class="credit">Application créée par Habiba Marchetto.<br>Pour toute erreur de ma part, merci de me le signaler.</p>`;
 }
 
 function lvSel(act,attrs,cur){
-  const L=[['p','Prioritaire'],['n','Normal'],['r','Espacé'],['x','Exclu']];
-  return `<div class="lv" role="group">`+L.map(c=>`<button data-act="${act}" ${attrs} data-l="${c[0]}" aria-pressed="${cur===c[0]}">${c[1]}</button>`).join('')+`</div>`;
+  const N=state.profiles[pk].loop.n, ex=cur==='x', i=LADDER.indexOf(cur), pt=cur===''?['—','réglages différents']:freqParts(cur,N);
+  return `<div class="fq"><span class="ctl"><button data-act="${act}" ${attrs} data-d="-1" aria-label="Moins souvent"${ex||i===0?' disabled':''}>−</button><output>${pt[0]}${pt[1]?`<small>${pt[1]}</small>`:''}</output><button data-act="${act}" ${attrs} data-d="1" aria-label="Plus souvent"${ex||i===LADDER.length-1?' disabled':''}>+</button></span><button class="exb" data-act="${act}" ${attrs} data-l="x" aria-pressed="${ex}">Exclu</button></div>`;
 }
 function surLvRow(n){
   const s=SUR[n-1], cur=levelOf(state.profiles[pk],n);
-  return `<div class="lvrow"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}</div>`;
+  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}</div>`;
 }
 function lvAcc(key,title,sub,body){
   const open=openAcc.has(key);
@@ -1095,54 +1100,52 @@ function lvAcc(key,title,sub,body){
     ${open?`<div class="ab">${body}</div>`:''}</section>`;
 }
 function loadInfo(P,N){
-  const R=state.settings.res; let eff=0;
-  itemsFor(pk).forEach(it=>{ if(!P.marks[it.id]) return; const l=levelOf(P,it.sn); if(l==='x') return; eff+=itemW(it)*(l==='r'?1/R:l==='p'?2:1); });
+  let eff=0;
+  itemsFor(pk).forEach(it=>{ if(!P.marks[it.id]) return; const l=levelOf(P,it.sn); if(l==='x') return; eff+=itemW(it)*levelMul(l); });
   if(!eff) return '';
   const per=eff/N, txt=per<1?'moins d’une page':'environ '+Math.round(per)+(Math.round(per)>1?' pages':' page');
   const heavy=per>10;
-  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus les passages à consolider.${heavy?' C’est beaucoup : tu peux allonger la boucle ou mettre certaines sourates en « Espacé ».':''}</p>`;
+  return `<p class="loopload${heavy?' heavy':''}"><b>Avec ${N} jours, tu révises ${txt} par jour</b>, plus tes pages fragiles.${heavy?' C’est beaucoup : tu peux allonger la boucle ou espacer certaines sourates.':''}</p>`;
+}
+function freqColorsHTML(){
+  const s=state.settings;
+  const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
+  return `<section class="card setcard"><h4>Pages à revoir plus souvent</h4>
+      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
+      <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour.<br>Au bout de combien de temps passe-t-elle en révision qadima (vert) ?</p>${st2('fd',s.fd,'jours')}</div>
+    </section>`;
 }
 function loopHTML(){
   const P=state.profiles[pk], s=state.settings, N=P.loop.n;
+  const sn0=startNum(P), dn0=dayNum(new Date()), posNow=dn0-(sn0+Math.floor((dn0-sn0)/N)*N)+1;
   const tr=trackedFor(pk,P.extra), trSet=new Set(tr);
   const full=JUZ.filter(j=>juzRange(j).every(n=>trSet.has(n)));
   const inJuz=new Set(); full.forEach(j=>juzRange(j).forEach(n=>inJuz.add(n)));
   const pageSur=tr.filter(n=>modeOf(n)==='pages');
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
-  let h=`<section class="card setcard"><h4>Durée de la boucle de révision</h4>
-    <p>Tout ce que tu as appris est repassé en <b>${N} jours</b>.</p>
-    <div class="row2"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="60" value="${N}" aria-label="Nombre de jours de la boucle"></div>
-    <div class="subbox"><h5>Jour de mon cours (facultatif)</h5>
-      <p>Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
-      <select id="lcd" class="field" aria-label="Jour de mon cours">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select>
-      ${P.loop.cd!=null&&N%7!==0?`<p>Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
-    </div>
-    <div class="subbox"><h5>Début de la boucle de révision</h5>
-      <select id="lst" class="field" aria-label="Début de la boucle de révision"><option value="today">Aujourd’hui (jour 1)</option><option value="after"${P.loop.cd==null?' disabled':''}>Le lendemain de mon cours</option></select>
-    </div>
-    <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button><button class="btn" data-act="restartloop">Recommencer ma boucle aujourd’hui</button></div>
+  let h=`<section class="card setcard">
+    <label class="srow" for="lpn"><span>Durée de la boucle</span><span class="sval"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="40" value="${N}"> <span>jours</span></span></label>
+    <p class="shint" id="lpnh">Tout ce que tu as appris est repassé dans ce délai.</p>
+    <label class="srow" for="lcd"><span>Cours de Coran</span><span class="sval"><select id="lcd" class="field">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select></span></label>
+    <p class="shint">Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
+    ${P.loop.cd!=null&&N%7!==0?`<p class="shint">Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
+    <label class="srow" for="ljd"><span>Aujourd’hui, c’est le jour</span><span class="sval"><select id="ljd" class="field dsel">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select> <span>de ma boucle</span></span></label>
+    <p class="shint">Pour recommencer ta boucle, choisis le jour 1.</p>
+    <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button></div>
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
-    ${loadInfo(P,N)}
   </section>
-  <section class="card setcard"><h4>Priorité de chaque sourate</h4>
-    <p>Pour chaque sourate de la liste ci-dessous, choisis comment elle revient dans ta boucle :</p>
-    <ul class="lvdef">
-      <li><b>Prioritaire</b> : elle fait 2 tours dans la boucle. Les pages orange et bleues reviennent plus souvent.</li>
-      <li><b>Normal</b> : elle fait 1 tour dans la boucle.</li>
-      <li><b>Espacé</b> : elle ne revient qu’une fois toutes les ${s.res} boucles.</li>
-      <li><b>Exclu</b> : la sourate est exclue de la boucle.</li>
-    </ul>
-    <div class="subbox"><h5>À quelle fréquence revient une sourate « Espacé » ?</h5>
-      <div class="stepper"><span class="lab">Toutes les</span><span class="ctl"><button data-act="freq" data-k="res" data-delta="-1" aria-label="Moins">−</button><output>${s.res} boucles</output><button data-act="freq" data-k="res" data-delta="1" aria-label="Plus">+</button></span></div>
-      <p>Une sourate espacée est donc révisée une fois toutes les ${s.res} boucles, soit environ tous les ${s.res*N} jours.</p>
-    </div>
+  ${freqColorsHTML()}
+  <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
+    <p>Choisis combien de fois chaque sourate ou juzz revient dans ta boucle.</p>
+    <p><b>+</b> : revient plus souvent<br><b>−</b> : revient moins souvent<br><b>Exclu</b> : n’est plus révisé</p>
+    <p>Au départ, tout revient 1 fois par boucle.</p>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
   h+=`<div class="lvlist">${top.map(surLvRow).join('')}</div>`;
   if(others.length) h+=lvAcc('Lothers','Autres sourates',others.length+' sourates',others.map(surLvRow).join(''));
   full.forEach(j=>{
     const ns=juzRange(j), lv=ns.map(n=>levelOf(P,n)), uni=lv.every(x=>x===lv[0])?lv[0]:'';
-    const body=`<div class="lvall"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
+    const body=`<div class="lvall${uni==='x'?' ex':''}"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
     h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body);
   });
   return h;
@@ -1152,7 +1155,8 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-function creditHTML(){ return '<p class="credit">Application créée par Habiba Marchetto</p>'; }
+const APP_VERSION='10 nov. 07:21';
+function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
   if(tAud&&(main!=='test'||TS.step!=='ask'||tAudFor!==TS.id)) tAudStop();
@@ -1284,32 +1288,31 @@ const handlers={
   brush(el){ brush=el.dataset.st; render(); },
   loop(){ go(()=>{ tab='loop'; resetUI(); }); },
   setloop(){
-    const P=state.profiles[pk], inp=document.getElementById('lpn'), sel=document.getElementById('lcd'), st=document.getElementById('lst');
+    const P=state.profiles[pk], inp=document.getElementById('lpn'), sel=document.getElementById('lcd'), dsel=document.getElementById('ljd');
     const v=Math.round(+(inp?inp.value:0)), cd=sel&&sel.value!==''&&+sel.value>=0?Math.round(+sel.value):null;
-    const mode=st?st.value:'today';
-    if(!(v>=3&&v<=60)){ flash='Choisis un nombre de jours entre 3 et 60.'; render(); return; }
+    if(!(v>=3&&v<=40)){ flash='Choisis un nombre de jours entre 3 et 40.'; render(); return; }
+    const j=clamp(Math.round(+(dsel?dsel.value:1))||1,1,v);
     P.loop.n=v; if(cd==null) delete P.loop.cd; else P.loop.cd=cd;
     const t=new Date(), t0=new Date(t.getFullYear(),t.getMonth(),t.getDate());
-    let back=0;
-    if(mode==='after'&&cd!=null){ const w0=(cd+1)%7; back=(((t.getDay()+6)%7)-w0+7)%7; }
-    P.loop.start=wkKey(addDays(t0,-back));
+    P.loop.start=wkKey(addDays(t0,-(j-1)));
     save();
-    flash='Enregistré : boucle de '+v+' jours'+(cd==null?'':', cours le '+DAYS_LONG[cd])+(back===0?'. Aujourd’hui est le jour 1.':'. Elle a commencé le lendemain de ton cours.');
+    flash='Enregistré : boucle de '+v+' jours'+(cd==null?'':', cours le '+DAYS_LONG[cd])+'. Aujourd’hui est le jour '+j+'.';
     render();
   },
-  restartloop(){
-    const P=state.profiles[pk], t=new Date();
-    P.loop.start=wkKey(new Date(t.getFullYear(),t.getMonth(),t.getDate()));
-    save(); flash='Boucle recommencée : aujourd’hui est le jour 1.'; render();
-  },
   level(el){
-    const P=state.profiles[pk], n=+el.dataset.n, l=el.dataset.l; flash='';
-    if(l==='n') delete P.levels[n]; else P.levels[n]=l;
+    const P=state.profiles[pk], n=+el.dataset.n, cur=levelOf(P,n); flash=''; let nl;
+    if(el.dataset.l) nl=(cur==='x')?'n':el.dataset.l;
+    else { const i=LADDER.indexOf(cur); if(i<0) return; nl=LADDER[clamp(i+(+el.dataset.d),0,LADDER.length-1)]; }
+    if(nl==='n') delete P.levels[n]; else P.levels[n]=nl;
     save(); render();
   },
   leveljuz(el){
-    const P=state.profiles[pk], j=JUZ.find(x=>x.id===el.dataset.j), l=el.dataset.l; if(!j) return; flash='';
-    for(let n=j.from;n<=j.to;n++){ if(l==='n') delete P.levels[n]; else P.levels[n]=l; }
+    const P=state.profiles[pk], j=JUZ.find(x=>x.id===el.dataset.j); if(!j) return; flash='';
+    const lv=[]; for(let n=j.from;n<=j.to;n++) lv.push(levelOf(P,n));
+    const uni=lv.every(x=>x===lv[0])?lv[0]:null; let nl;
+    if(el.dataset.l) nl=(uni==='x')?'n':el.dataset.l;
+    else { const i=LADDER.indexOf(uni||'n'); if(i<0) return; nl=LADDER[clamp(i+(+el.dataset.d),0,LADDER.length-1)]; }
+    for(let n=j.from;n<=j.to;n++){ if(nl==='n') delete P.levels[n]; else P.levels[n]=nl; }
     save(); render();
   },
   paint(el){ flash=''; paint([el.dataset.id]); render(); },
@@ -1363,7 +1366,7 @@ const handlers={
         const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
         setTimeout(()=>URL.revokeObjectURL(url),4000);
         done('Fichier enregistré dans tes téléchargements.');
-      }catch(e){ flash='Impossible de créer le fichier. Utilise le code à copier.'; render(); }
+      }catch(e){ flash='Impossible de créer le fichier.'; render(); }
     };
     try{
       if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
@@ -1643,7 +1646,7 @@ function testHTML(){
     const p0=SUR[TS.sur-1].p,p1=lastPage(TS.sur);
     return `<div class="tst"><h1>Test</h1>${backBtn}<p class="lead">Je te donne un verset, tu récites la suite.</p>
     <div class="tcard"><p class="tl">Que veux-tu réviser ?</p><div class="tchips">${chip('sur','Une sourate')}${chip('juz','Un juzz')}${chip('pages','Des pages')}</div>
-    ${TS.kind==='juz'?sels('tjuz',30,n=>'Juzz '+n):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
+    ${TS.kind==='juz'?sels('tjuz',30,n=>{ const j=JUZ.find(x=>x.num===n), nm=j?j.fr.replace(/^Juzz /,''):''; return 'Juzz '+n+(nm?' · '+nm:''); }):sels('tsur',114,n=>n+'. '+SUR[n-1].fr)}
     ${TS.kind==='pages'?`<p class="tl">De la page… à la page… (pages ${p0} à ${p1})</p><div class="trow"><input id="tpf" class="tsel" inputmode="numeric" placeholder="${p0}" value="${esc(TS.pf)}"><input id="tpt" class="tsel" inputmode="numeric" placeholder="${p1}" value="${esc(TS.pt)}"></div>`:''}
     <button class="btn primary tfull" data-act="tstart">Commencer</button>
     ${TS.msg?`<p class="tmsg">${esc(TS.msg)}</p>`:''}</div></div>`;
@@ -1686,7 +1689,7 @@ Object.assign(handlers,{
 });
 document.addEventListener('change',e=>{
   const id=e.target&&e.target.id;
-  if(id==='qmode'){ qVer=e.target.value; try{ localStorage.setItem('suivi-coran-ver',qVer); }catch(_){} render(); return; }
+  if(id==='qmode'){ if(qPos) saveReadNow(); qVer=e.target.value; try{ localStorage.setItem('suivi-coran-ver',qVer); }catch(_){} qPos=qPosV[qVer]||null; if(qPos) qp=qPos.p; render(); return; }
   if(id==='tsur'){ TS.sur=+e.target.value; TS.pf=''; TS.pt=''; if(TS.kind==='pages') render(); }
   else if(id==='tjuz') TS.juz=+e.target.value;
   else if(id==='tpf') TS.pf=e.target.value; else if(id==='tpt') TS.pt=e.target.value;
@@ -1697,6 +1700,7 @@ document.addEventListener('click',e=>{
   const h=handlers[el.dataset.act]; if(h) h(el);
 });
 document.addEventListener('input',e=>{
+  if(e.target&&e.target.id==='lpn'){ const d=document.getElementById('ljd'), v=Math.round(+e.target.value), hh=document.getElementById('lpnh'); if(hh) hh.textContent=e.target.value===''||(v>=3&&v<=40)?'Tout ce que tu as appris est repassé dans ce délai.':(v>40?'La boucle ne peut pas dépasser 40 jours.':'La boucle dure au moins 3 jours.'); if(d&&v>=3&&v<=40){ const cur=Math.min(+d.value||1,v); d.innerHTML=Array.from({length:v},(_,i)=>`<option value="${i+1}"${i+1===cur?' selected':''}>${i+1}</option>`).join(''); } }
   const id=e.target.id;
   if(id==='bk') backupText=e.target.value;
   else if(id==='pq'){ pickQ=e.target.value; const l=document.getElementById('plist'); if(l) l.innerHTML=pickRows(pickQ); }
@@ -1735,12 +1739,17 @@ function normPos(r){
   if(r.s>=1&&r.s<=114){ const id=sFirst[r.s-1]+Math.max(0,(+r.a||1)-1); return {p:pageOfAyah(id),t:+r.t||0}; }
   return null;
 }
-try{ qPos=normPos(JSON.parse(localStorage.getItem(Q_KEY)||'null')); }catch(e){}
+/* Une position de lecture par version du mushaf (Tajwîd, Médine, Warch) : regarder une autre version par curiosité n'écrase pas la dernière page de la première. */
+const Q_KEYV=Q_KEY+'-v'; let qPosV={};
+try{ const o=JSON.parse(localStorage.getItem(Q_KEYV)||'null')||{}; Object.keys(QVERS).forEach(k=>{ const n=normPos(o[k]); if(n) qPosV[k]=n; }); }catch(e){}
+try{ const old=normPos(JSON.parse(localStorage.getItem(Q_KEY)||'null')); if(old&&!qPosV[qVer]) qPosV[qVer]=old; }catch(e){}
+qPos=qPosV[qVer]||null; if(qPos) qp=qPos.p;
 function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
 function saveReadNow(){
   if(!qPos) return;
-  try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); }catch(e){}
-  if(qDb){ try{ qDb.set({p:qPos.p,t:qPos.t}).catch(()=>{}); }catch(e){} }
+  qPosV[qVer]=qPos;
+  try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); localStorage.setItem(Q_KEYV,JSON.stringify(qPosV)); }catch(e){}
+  if(qDb){ try{ qDb.set({p:qPos.p,t:qPos.t,v:qPosV}).catch(()=>{}); }catch(e){} }
 }
 async function initLecture(){
   try{
@@ -1751,10 +1760,12 @@ async function initLecture(){
     const doc=db.doc('data/users/'+uid+'/lecture');
     const snap=await doc.get();
     qDb=doc;
-    const d=snap.exists?normPos(snap.data()):null;
-    if(d&&(!qPos||d.t>qPos.t)){
-      qPos=d;
-      try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); }catch(e){}
+    const raw=snap.exists?snap.data():null; let changed=false;
+    if(raw&&raw.v){ Object.keys(QVERS).forEach(k=>{ const n=normPos(raw.v[k]); if(n&&(!qPosV[k]||n.t>qPosV[k].t)){ qPosV[k]=n; changed=true; } }); }
+    else { const d=raw?normPos(raw):null; if(d&&(!qPosV[qVer]||d.t>qPosV[qVer].t)){ qPosV[qVer]=d; changed=true; } }
+    if(changed){
+      qPos=qPosV[qVer]||null;
+      try{ localStorage.setItem(Q_KEYV,JSON.stringify(qPosV)); }catch(e){}
       if(main==='quran'&&qv==='menu') render();
     } else if(qPos){ saveReadNow(); }
   }catch(e){}
@@ -1813,7 +1824,7 @@ function qLayout(){
   qFit(box,W,f2);
 }
 function quranHTML(){
-  const credit='<p class="credit">Texte du Coran : The Noble Qur’an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0. Pagination : quran-meta, licence MIT. Mise en page du mushaf de Médine et texte QPC Hafs : Complexe du Roi Fahd, via Quranic Universal Library (Tarteel). Noms de sourates en calligraphie : Naveed Ahmad et Muath Ahmed Ibn-Hassan (QUL), CC BY 4.0. Images des pages : dépôts QuranHub/quran-pages-images (Hafs, Warch ; domaine public) et abarizqon/quran-pages-images (tajwid, édition Dar Al-Ma’rifah) ; pages Hafs et Warch du Complexe du Roi Fahd. Polices du mushaf (QCF V4, tajwid en couleur) : Complexe du Roi Fahd et Dar Almarifa, usage de bienfaisance (sadaqa jariya) — ne pas vendre.</p>';
+  const credit='<p class="credit">Texte du Coran : The Noble Qur’an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0. Pagination : quran-meta, licence MIT. Mise en page du mushaf de Médine et texte QPC Hafs : Complexe du Roi Fahd, via Quranic Universal Library (Tarteel). Noms de sourates en calligraphie : Naveed Ahmad et Muath Ahmed Ibn-Hassan (QUL), CC BY 4.0. Images des pages : dépôts QuranHub/quran-pages-images (Hafs, Warch ; domaine public) et abarizqon/quran-pages-images (tajwid, édition Dar Al-Ma’rifah) ; pages Hafs et Warch du Complexe du Roi Fahd.</p>';
   if(qv==='list'){
     return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button><h2>Sourates</h2></header>
     <div class="qgo"><label for="qpg">Aller à la page</label><input id="qpg" type="number" inputmode="numeric" min="1" max="604" placeholder="1 à 604"><button class="vbtn" data-act="qgoto">Ouvrir</button></div>
@@ -2004,7 +2015,7 @@ function setSec(name){
   $('q').placeholder = 'Récite le verset à voix haute';
   $('tjl').hidden = true; $('tjl').style.display = 'none'; S.tj = false;
   { const ab=ROOT.querySelector('#seg button[aria-pressed="true"]'); if(ab&&ab.scrollIntoView) ab.scrollIntoView({inline:'nearest',block:'nearest'}); }
-  $('foot').innerHTML = (name==='amma' ? FOOT_AMMA : name==='imran' ? FOOT_IMR : name==='bqim' ? FOOT_BQ : MULTI.indexOf(name)>=0 ? FOOT_JUZ.replace('{J}',JUZNAME[name]) : FOOT_BAQ) + '<br>Application créée par Habiba Marchetto.';
+  $('foot').innerHTML = '';
 }
 function save(){ keptRuns = null; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} refreshBackup(); }
 function allGroups(){
