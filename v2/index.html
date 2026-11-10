@@ -95,7 +95,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .acc>.ab .lvrow{background:var(--bg)}
 .frrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;border-top:1px solid var(--line)}.frl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem}.frrow .fq{margin:0}
 .lvrow .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.95rem}
-.lvrow .nm span{color:var(--muted);font-family:var(--f-ar);font-size:1.05rem}
+.lvrow .nm b{display:flex;align-items:center;gap:8px}.lvrow .nm span{color:var(--muted);font-family:var(--f-ar);font-size:1.05rem}
 .fq{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .fq .ctl{display:flex;align-items:center;gap:6px}
 .fq .ctl button{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);font-size:1.2rem;font-weight:700;line-height:1}
@@ -1109,13 +1109,14 @@ function lvSel(act,attrs,cur,ptx){
 function surLvRow(n){
   const s=SUR[n-1], P=state.profiles[pk], cur=levelOf(P,n), N=P.loop.n;
   const hasFr=cur!=='x'&&itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o');
-  const nm=`<div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>`;
+  const nm=`<div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>`; let nm2=nm;
   /* Petite sourate (apprise en entier) marquée fragile : une seule ligne, c'est la fréquence des fragiles. */
   if(modeOf(n)==='whole'){
     const ex=cur==='x', fragWhole=itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o');
     if(fragWhole){
+      nm2=`<div class="nm"><b><i class="dot st-o" title="Fragile"></i>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>`;
       const c=fragCount(P,n), cc=Math.max(1,Math.round(c*N/7)), fo=state.settings.fo, d=fragD(P,n);
-      return `<div class="lvrow${ex?' ex':''}">${nm}<div class="fq"><span class="ctl"><button data-act="fraglv" data-n="${n}" data-d="-1" aria-label="Moins souvent"${ex||fo+d<=1?' disabled':''}>−</button><output>${ex?'Exclu':cc+'×<small>par '+(N===7?'semaine':'boucle')+'</small>'}</output><button data-act="fraglv" data-n="${n}" data-d="1" aria-label="Plus souvent"${ex||fo+d>=7?' disabled':''}>+</button></span><button class="exb" data-act="level" data-n="${n}" data-l="x" aria-pressed="${ex}">Exclu</button></div></div>`;
+      return `<div class="lvrow${ex?' ex':''}">${nm2}<div class="fq"><span class="ctl"><button data-act="fraglv" data-n="${n}" data-d="-1" aria-label="Moins souvent"${ex||fo+d<=1?' disabled':''}>−</button><output>${ex?'Exclu':cc+'×<small>par '+(N===7?'semaine':'boucle')+'</small>'}</output><button data-act="fraglv" data-n="${n}" data-d="1" aria-label="Plus souvent"${ex||fo+d>=7?' disabled':''}>+</button></span><button class="exb" data-act="level" data-n="${n}" data-l="x" aria-pressed="${ex}">Exclu</button></div></div>`;
     }
   }
   let fr='';
