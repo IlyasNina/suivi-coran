@@ -1905,7 +1905,7 @@ function qLayout(){
 function qLayoutInto(box,p,tag){
   const L=pageLines(p);
   const W=box.clientWidth; if(!W) return;
-  const availH=Math.max(200,window.innerHeight-56-84-6-(tag?88:0));
+  const availH=Math.max(200,window.innerHeight-56-84-6-(tag?58:0));
   const f=W*0.99/19.354;   /* taille unique pour les 604 pages : la ligne la plus dense (à 99 %) tient juste dans la largeur */
   const lh=Math.min(availH/15,f*2.3);
   box.style.fontSize=f+'px'; box.style.lineHeight=lh+'px';
@@ -2104,8 +2104,7 @@ function listenHTML(){
   if(LP.on) return `<header class="top"><button class="back" data-act="lstop" aria-label="Fermer">‹</button><div class="qhead"><b id="ltitle"></b><span>Écouter</span></div><span style="width:44px"></span></header>
     <div class="qpage" id="ltext" lang="ar" dir="rtl"></div>
     <div class="lplayer"><div class="lstat" id="lstat" aria-live="polite"></div>
-      <div class="lctl"><button data-act="lskip" data-d="-1" aria-label="Verset précédent">${L_I.prev}</button><button class="lpp" id="lpp" data-act="lpp" aria-label="Pause">${L_I.pause}</button><button data-act="lskip" data-d="1" aria-label="Verset suivant">${L_I.next}</button></div>
-      <div class="lspd"><button class="vbtn" data-act="lspd" data-d="-1" aria-label="Moins vite">−</button><output id="lspd">${lSpd()}</output><button class="vbtn" data-act="lspd" data-d="1" aria-label="Plus vite">+</button></div></div>`;
+      <div class="lctl"><button data-act="lskip" data-d="-1" aria-label="Verset précédent">${L_I.prev}</button><button class="lpp" id="lpp" data-act="lpp" aria-label="Pause">${L_I.pause}</button><button data-act="lskip" data-d="1" aria-label="Verset suivant">${L_I.next}</button></div></div>`;
   const st=(k,label,v)=>`<div class="lr"><span class="ll">${label}</span><div class="cc"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">−</button><output>${v}</output><button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">+</button></div></div>`;
   const inp=(id,v,n,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="${n}" value="${v}" aria-label="${lab}">`;
   const n=lNb(LS.s);
