@@ -103,7 +103,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .fq output{min-width:84px;text-align:center;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
 .fq output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
 .fq .exb{min-height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:0 12px;font-size:.82rem;font-weight:600}
-.lvrow.ex,.lvall.ex{background:rgba(120,120,110,.12)!important}.lvrow.ex .nm,.lvall.ex .nm,.lvrow.ex .fq .ctl,.lvall.ex .fq .ctl{opacity:.4}
+.acc.ex{background:rgba(120,120,110,.12)}.acc.ex>.ah{opacity:.5}.lvrow.ex,.lvall.ex{background:rgba(120,120,110,.12)!important}.lvrow.ex .nm,.lvall.ex .nm,.lvrow.ex .fq .ctl,.lvall.ex .fq .ctl{opacity:.4}
 .fq .exb[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .fb{padding:12px 0;border-top:1px solid var(--line)}.fb:first-of-type{border-top:0;padding-top:4px}.fb .h{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:2px}.fb p{margin:0 0 8px}.fb .stepper .ctl output small{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
 .lvall{padding:0 0 10px}
@@ -1107,16 +1107,25 @@ function lvSel(act,attrs,cur,ptx){
   return `<div class="fq"><span class="ctl"><button data-act="${act}" ${attrs} data-d="-1" aria-label="Moins souvent"${ex||i===0?' disabled':''}>−</button><output>${pt[0]}${pt[1]?`<small>${pt[1]}</small>`:''}</output><button data-act="${act}" ${attrs} data-d="1" aria-label="Plus souvent"${ex||i===LADDER.length-1?' disabled':''}>+</button></span><button class="exb" data-act="${act}" ${attrs} data-l="x" aria-pressed="${ex}">Exclu</button></div>`;
 }
 function surLvRow(n){
-  const s=SUR[n-1], P=state.profiles[pk], cur=levelOf(P,n);
+  const s=SUR[n-1], P=state.profiles[pk], cur=levelOf(P,n), N=P.loop.n;
   const hasFr=cur!=='x'&&itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o');
+  const nm=`<div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>`;
+  /* Petite sourate (apprise en entier) marquée fragile : une seule ligne, c'est la fréquence des fragiles. */
+  if(modeOf(n)==='whole'){
+    const ex=cur==='x', fragWhole=itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o');
+    if(fragWhole){
+      const c=fragCount(P,n), cc=Math.max(1,Math.round(c*N/7)), fo=state.settings.fo, d=fragD(P,n);
+      return `<div class="lvrow${ex?' ex':''}">${nm}<div class="fq"><span class="ctl"><button data-act="fraglv" data-n="${n}" data-d="-1" aria-label="Moins souvent"${ex||fo+d<=1?' disabled':''}>−</button><output>${ex?'Exclu':cc+'×<small>par '+(N===7?'semaine':'boucle')+'</small>'}</output><button data-act="fraglv" data-n="${n}" data-d="1" aria-label="Plus souvent"${ex||fo+d>=7?' disabled':''}>+</button></span><button class="exb" data-act="level" data-n="${n}" data-l="x" aria-pressed="${ex}">Exclu</button></div></div>`;
+    }
+  }
   let fr='';
-  if(hasFr){ const N=P.loop.n, c=fragCount(P,n), cc=Math.max(1,Math.round(c*N/7)), fo=state.settings.fo, d=fragD(P,n);
+  if(hasFr){ const c=fragCount(P,n), cc=Math.max(1,Math.round(c*N/7)), fo=state.settings.fo, d=fragD(P,n);
     fr=`<div class="frrow"><span class="frl"><i class="dot st-o"></i>Pages fragiles</span><div class="fq"><span class="ctl"><button data-act="fraglv" data-n="${n}" data-d="-1" aria-label="Moins souvent"${fo+d<=1?' disabled':''}>−</button><output>${cc}×<small>par ${N===7?'semaine':'boucle'}</small></output><button data-act="fraglv" data-n="${n}" data-d="1" aria-label="Plus souvent"${fo+d>=7?' disabled':''}>+</button></span></div></div>`; }
-  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}${fr}</div>`;
+  return `<div class="lvrow${cur==='x'?' ex':''}">${nm}${lvSel('level',`data-n="${n}"`,cur)}${fr}</div>`;
 }
-function lvAcc(key,title,sub,body){
+function lvAcc(key,title,sub,body,ex){
   const open=openAcc.has(key);
-  return `<section class="acc" data-open="${open?1:0}"><button class="ah" data-act="acc" data-k="${key}" aria-expanded="${open}">
+  return `<section class="acc${ex?' ex':''}" data-open="${open?1:0}"><button class="ah" data-act="acc" data-k="${key}" aria-expanded="${open}">
     <span class="at">${title}<span class="ac">${sub}</span></span>
     <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
     ${open?`<div class="ab">${body}</div>`:''}</section>`;
@@ -1171,7 +1180,7 @@ function loopHTML(){
   full.forEach(j=>{
     const ns=juzRange(j), lv=ns.map(n=>levelOf(P,n)), uni=lv.every(x=>x===lv[0])?lv[0]:'';
     const body=`<div class="lvall${uni==='x'?' ex':''}"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
-    h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body);
+    h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body,uni==='x');
   });
   return h;
 }
