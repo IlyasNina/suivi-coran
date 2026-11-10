@@ -550,7 +550,7 @@ function sanitize(o){
       }
     }
     if(p.loop&&typeof p.loop==='object'){
-      const nn=Math.round(+p.loop.n); if(nn>=3&&nn<=60) q.loop.n=nn;
+      const nn=Math.round(+p.loop.n); if(nn>=3) q.loop.n=Math.min(nn,40);
       if(/^\d{4}-\d{2}-\d{2}$/.test(String(p.loop.start||''))) q.loop.start=p.loop.start;
       if(p.loop.cd!=null&&p.loop.cd!==''&&Math.round(+p.loop.cd)>=0&&Math.round(+p.loop.cd)<=6) q.loop.cd=Math.round(+p.loop.cd);
     }
@@ -1124,7 +1124,7 @@ function loopHTML(){
   const pageSur=tr.filter(n=>modeOf(n)==='pages');
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
   let h=`<section class="card setcard">
-    <label class="srow" for="lpn"><span>Durée de la boucle</span><span class="sval"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="60" value="${N}"> <span>jours</span></span></label>
+    <label class="srow" for="lpn"><span>Durée de la boucle</span><span class="sval"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="40" value="${N}"> <span>jours</span></span></label>
     <p class="shint" id="lpnh">Tout ce que tu as appris est repassé dans ce délai.</p>
     <label class="srow" for="lcd"><span>Cours de Coran</span><span class="sval"><select id="lcd" class="field">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select></span></label>
     <p class="shint">Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
@@ -1155,7 +1155,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 07:19';
+const APP_VERSION='10 nov. 07:21';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1290,7 +1290,7 @@ const handlers={
   setloop(){
     const P=state.profiles[pk], inp=document.getElementById('lpn'), sel=document.getElementById('lcd'), dsel=document.getElementById('ljd');
     const v=Math.round(+(inp?inp.value:0)), cd=sel&&sel.value!==''&&+sel.value>=0?Math.round(+sel.value):null;
-    if(!(v>=3&&v<=60)){ flash='Choisis un nombre de jours entre 3 et 60.'; render(); return; }
+    if(!(v>=3&&v<=40)){ flash='Choisis un nombre de jours entre 3 et 40.'; render(); return; }
     const j=clamp(Math.round(+(dsel?dsel.value:1))||1,1,v);
     P.loop.n=v; if(cd==null) delete P.loop.cd; else P.loop.cd=cd;
     const t=new Date(), t0=new Date(t.getFullYear(),t.getMonth(),t.getDate());
@@ -1700,7 +1700,7 @@ document.addEventListener('click',e=>{
   const h=handlers[el.dataset.act]; if(h) h(el);
 });
 document.addEventListener('input',e=>{
-  if(e.target&&e.target.id==='lpn'){ const d=document.getElementById('ljd'), v=Math.round(+e.target.value), hh=document.getElementById('lpnh'); if(hh) hh.textContent=e.target.value===''||(v>=3&&v<=60)?'Tout ce que tu as appris est repassé dans ce délai.':(v>60?'La boucle ne peut pas dépasser 60 jours.':'La boucle dure au moins 3 jours.'); if(d&&v>=3&&v<=60){ const cur=Math.min(+d.value||1,v); d.innerHTML=Array.from({length:v},(_,i)=>`<option value="${i+1}"${i+1===cur?' selected':''}>${i+1}</option>`).join(''); } }
+  if(e.target&&e.target.id==='lpn'){ const d=document.getElementById('ljd'), v=Math.round(+e.target.value), hh=document.getElementById('lpnh'); if(hh) hh.textContent=e.target.value===''||(v>=3&&v<=40)?'Tout ce que tu as appris est repassé dans ce délai.':(v>40?'La boucle ne peut pas dépasser 40 jours.':'La boucle dure au moins 3 jours.'); if(d&&v>=3&&v<=40){ const cur=Math.min(+d.value||1,v); d.innerHTML=Array.from({length:v},(_,i)=>`<option value="${i+1}"${i+1===cur?' selected':''}>${i+1}</option>`).join(''); } }
   const id=e.target.id;
   if(id==='bk') backupText=e.target.value;
   else if(id==='pq'){ pickQ=e.target.value; const l=document.getElementById('plist'); if(l) l.innerHTML=pickRows(pickQ); }
