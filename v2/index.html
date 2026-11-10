@@ -307,6 +307,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .overview .ov[aria-pressed=true]{background:var(--soft);border-bottom:1px solid var(--line)}
 
 /* Réglages */
+.rsec{margin-top:16px}.rh{font-size:1.12rem;font-weight:700;margin:0 0 6px}.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.rrow[hidden]{display:none}.rrow .rl{font-weight:600;line-height:1.3;display:block}.rrow .rl small{display:block;font-weight:400;font-size:.85rem;color:var(--muted);margin-top:2px}.rrow .dot{margin-right:4px;vertical-align:-1px}.rrow .rin{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:1.25rem;font-weight:700;line-height:1}.rrow .ctl output{min-width:64px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}.rrow .ctl output small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}.rsep{border-top:2px solid var(--line);margin:18px 0 0}.rday{margin:8px 0 12px}.lnk{border:0;background:none;padding:0;color:var(--accent,#2f6b57);font:inherit;font-weight:600;text-decoration:underline}.rsec .row2{margin:6px 0 4px}
 .setcard h4{font-size:1rem}
 .setcard p{color:var(--muted);font-size:.9rem}
 .stepper{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -1155,25 +1156,24 @@ function loopHTML(){
   const inJuz=new Set(); full.forEach(j=>juzRange(j).forEach(n=>inJuz.add(n)));
   const pageSur=tr.filter(n=>modeOf(n)==='pages');
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
-  let h=`<section class="card setcard">
-    <div class="sgrid">
-      <div class="slab"><label class="lt" for="lpn">Durée de <br>la boucle</label><span class="infow"><button type="button" class="infob" data-act="info" data-t="lpnh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="lpnh" role="tooltip" hidden>Tout ce que tu as appris est repassé dans ce délai.</div></span></div>
-      <input id="lpn" class="field sbox" type="number" inputmode="numeric" min="3" max="40" value="${N}">
-      <span class="sun">jours</span>
-      <label class="slab" for="ljd"><span class="lt">Aujourd’hui, <br>c’est le jour</span></label>
-      <select id="ljd" class="field sbox">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select>
-      <span class="sun">de ma boucle</span>
-    </div>
+  const st2=(key,val,unit)=>`<span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span>`;
+  const infoI=(id,txt)=>`<span class="infow"><button type="button" class="infob" data-act="info" data-t="${id}" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="${id}" role="tooltip" hidden>${txt}</div></span>`;
+  let h=`<section class="rsec">
+    <h3 class="rh">Réglages principaux</h3>
+    <div class="rrow"><label class="rl" for="lpn">Durée de la boucle<small>Tout ce que tu as appris est révisé dans ce délai.</small></label>
+      <span class="rin"><input id="lpn" class="field sbox" type="number" inputmode="numeric" min="3" max="40" value="${N}"><span class="sun">jours</span></span></div>
     <p class="shint warn" id="lpne" hidden></p>
-    <p class="shint">Pour recommencer ta boucle, choisis le jour 1.</p>
+    <p class="shint rday">Aujourd’hui, c’est le jour ${posNow} de ta boucle de ${N} jours. <button type="button" class="lnk" data-act="chday">Changer</button></p>
+    <div class="rrow" id="ljbox" hidden><label class="rl" for="ljd">Aujourd’hui, c’est le jour<small>Pour recommencer ta boucle, choisis le jour 1.</small></label>
+      <span class="rin"><select id="ljd" class="field sbox">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select><span class="sun">de ma boucle</span></span></div>
     <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button></div>
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
+    <div class="rrow"><span class="rl"><i class="dot st-b"></i> Une page jadida reste bleue pendant :</span>${st2('fd',s.fd,'jours')}</div>
+    <div class="rrow"><span class="rl"><i class="dot st-o"></i> Une page fragile revient…${infoI('frh','C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».')}</span>${st2('fo',s.fo+'×','par semaine')}</div>
   </section>
-  ${freqColorsHTML()}
-  <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
-    <p>Choisis combien de fois chaque sourate ou juzz revient dans ta boucle.</p>
-    <p><b>+</b> : revient plus souvent<br><b>−</b> : revient moins souvent<br><b>Exclu</b> : n’est plus révisé</p>
-    <p class="dflt"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>Par défaut, la sourate / page revient 1 fois par boucle.</p>
+  <div class="rsep"></div>
+  <section class="rsec"><h3 class="rh">Affiner sourate par sourate</h3>
+    <p class="shint">Règle ici la fréquence de certaines sourates ou de leurs pages fragiles.</p>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
   h+=`<div class="lvlist">${top.map(surLvRow).join('')}</div>`;
@@ -1325,11 +1325,13 @@ const handlers={
   brush(el){ brush=el.dataset.st; render(); },
   loop(){ go(()=>{ tab='loop'; resetUI(); }); },
   info(el){ const p=document.getElementById(el.dataset.t); if(!p) return; p.hidden=!p.hidden; el.setAttribute('aria-expanded',String(!p.hidden)); },
+  chday(){ const b=document.getElementById('ljbox'); if(b) b.hidden=!b.hidden; },
   setloop(){
     const P=state.profiles[pk], inp=document.getElementById('lpn'), dsel=document.getElementById('ljd');
     const v=Math.round(+(inp?inp.value:0));
     if(!(v>=3&&v<=40)){ flash='Choisis un nombre de jours entre 3 et 40.'; render(); return; }
-    const j=clamp(Math.round(+(dsel?dsel.value:1))||1,1,v);
+    const touched=!!(dsel&&dsel.dataset.touched), changed=v!==P.loop.n;
+    const j=(changed&&!touched)?1:clamp(Math.round(+(dsel?dsel.value:1))||1,1,v);
     P.loop.n=v; delete P.loop.cd;
     const t=new Date(), t0=new Date(t.getFullYear(),t.getMonth(),t.getDate());
     P.loop.start=wkKey(addDays(t0,-(j-1)));
@@ -1758,6 +1760,7 @@ document.addEventListener('click',e=>{
   const h=handlers[el.dataset.act]; if(h) h(el);
 });
 document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('.infob,.pop')) return; document.querySelectorAll('.pop:not([hidden])').forEach(p=>{ p.hidden=true; const b=document.querySelector('.infob[data-t="'+p.id+'"]'); if(b) b.setAttribute('aria-expanded','false'); }); });
+document.addEventListener('change',e=>{ if(e.target&&e.target.id==='ljd') e.target.dataset.touched='1'; });
 document.addEventListener('input',e=>{
   if(e.target&&e.target.id==='lpn'){ const d=document.getElementById('ljd'), v=Math.round(+e.target.value), hh=document.getElementById('lpne'); if(hh){ const bad=e.target.value!==''&&!(v>=3&&v<=40); hh.hidden=!bad; hh.textContent=bad?(v>40?'La boucle ne peut pas dépasser 40 jours.':'La boucle dure au moins 3 jours.'):''; } if(d&&v>=3&&v<=40){ const cur=Math.min(+d.value||1,v); d.innerHTML=Array.from({length:v},(_,i)=>`<option value="${i+1}"${i+1===cur?' selected':''}>${i+1}</option>`).join(''); } }
   const id=e.target.id;
