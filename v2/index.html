@@ -285,6 +285,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .tl-head span{font-size:.85rem;color:var(--muted)}
 .tl-body .rl b{display:inline;font-size:1rem;text-transform:none;letter-spacing:0;color:var(--ink)}
 .tl-v h4{color:var(--v-ink)}
+.tl-v .bl li,.tl-v .rl,.tl-v .rl b{color:var(--ink)}
 .tl-o h4{color:var(--o-ink)}
 .tl-o .bl li{color:var(--ink)}
 .tl-b h4{color:var(--b-ink)}
@@ -1161,7 +1162,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 07:01';
+const APP_VERSION='10 nov. 07:02';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
