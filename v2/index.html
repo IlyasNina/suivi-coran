@@ -740,7 +740,9 @@ function buildCycle(pk,k){
     const Wg=seq.reduce((a,it)=>a+itemW(it),0); let cum=0;
     const go=order[arr[0].id];
     seq.forEach((it,si)=>{
-      const w=itemW(it), d=clamp(Math.floor((cum+w/2)/Wg*m),0,m-1);
+      const w=itemW(it); let d=clamp(Math.floor((cum+w/2)/Wg*m),0,m-1);
+      /* un même passage ne revient pas deux fois le même jour : on le décale au jour suivant */
+      for(let t=0;t<m&&days[d].block.some(x=>x.id===it.id);t++) d=(d+1)%m;
       if(!days[d].block.some(x=>x.id===it.id)){ days[d].block.push(it); sk[d+'|'+it.id]=go*100000+si; (daysOf[it.id]=daysOf[it.id]||[]).push(d); }
       cum+=w;
     });
