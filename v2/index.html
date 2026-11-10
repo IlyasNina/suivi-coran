@@ -1167,7 +1167,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 06:50';
+const APP_VERSION='10 nov. 06:53';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1701,7 +1701,7 @@ Object.assign(handlers,{
 });
 document.addEventListener('change',e=>{
   const id=e.target&&e.target.id;
-  if(id==='qmode'){ qVer=e.target.value; try{ localStorage.setItem('suivi-coran-ver',qVer); }catch(_){} render(); return; }
+  if(id==='qmode'){ if(qPos) saveReadNow(); qVer=e.target.value; try{ localStorage.setItem('suivi-coran-ver',qVer); }catch(_){} qPos=qPosV[qVer]||null; if(qPos) qp=qPos.p; render(); return; }
   if(id==='tsur'){ TS.sur=+e.target.value; TS.pf=''; TS.pt=''; if(TS.kind==='pages') render(); }
   else if(id==='tjuz') TS.juz=+e.target.value;
   else if(id==='tpf') TS.pf=e.target.value; else if(id==='tpt') TS.pt=e.target.value;
@@ -1751,12 +1751,17 @@ function normPos(r){
   if(r.s>=1&&r.s<=114){ const id=sFirst[r.s-1]+Math.max(0,(+r.a||1)-1); return {p:pageOfAyah(id),t:+r.t||0}; }
   return null;
 }
-try{ qPos=normPos(JSON.parse(localStorage.getItem(Q_KEY)||'null')); }catch(e){}
+/* Une position de lecture par version du mushaf (Tajwîd, Médine, Warch) : regarder une autre version par curiosité n'écrase pas la dernière page de la première. */
+const Q_KEYV=Q_KEY+'-v'; let qPosV={};
+try{ const o=JSON.parse(localStorage.getItem(Q_KEYV)||'null')||{}; Object.keys(QVERS).forEach(k=>{ const n=normPos(o[k]); if(n) qPosV[k]=n; }); }catch(e){}
+try{ const old=normPos(JSON.parse(localStorage.getItem(Q_KEY)||'null')); if(old&&!qPosV[qVer]) qPosV[qVer]=old; }catch(e){}
+qPos=qPosV[qVer]||null; if(qPos) qp=qPos.p;
 function toAr(n){ return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]); }
 function saveReadNow(){
   if(!qPos) return;
-  try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); }catch(e){}
-  if(qDb){ try{ qDb.set({p:qPos.p,t:qPos.t}).catch(()=>{}); }catch(e){} }
+  qPosV[qVer]=qPos;
+  try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); localStorage.setItem(Q_KEYV,JSON.stringify(qPosV)); }catch(e){}
+  if(qDb){ try{ qDb.set({p:qPos.p,t:qPos.t,v:qPosV}).catch(()=>{}); }catch(e){} }
 }
 async function initLecture(){
   try{
@@ -1767,10 +1772,12 @@ async function initLecture(){
     const doc=db.doc('data/users/'+uid+'/lecture');
     const snap=await doc.get();
     qDb=doc;
-    const d=snap.exists?normPos(snap.data()):null;
-    if(d&&(!qPos||d.t>qPos.t)){
-      qPos=d;
-      try{ localStorage.setItem(Q_KEY,JSON.stringify(qPos)); }catch(e){}
+    const raw=snap.exists?snap.data():null; let changed=false;
+    if(raw&&raw.v){ Object.keys(QVERS).forEach(k=>{ const n=normPos(raw.v[k]); if(n&&(!qPosV[k]||n.t>qPosV[k].t)){ qPosV[k]=n; changed=true; } }); }
+    else { const d=raw?normPos(raw):null; if(d&&(!qPosV[qVer]||d.t>qPosV[qVer].t)){ qPosV[qVer]=d; changed=true; } }
+    if(changed){
+      qPos=qPosV[qVer]||null;
+      try{ localStorage.setItem(Q_KEYV,JSON.stringify(qPosV)); }catch(e){}
       if(main==='quran'&&qv==='menu') render();
     } else if(qPos){ saveReadNow(); }
   }catch(e){}
