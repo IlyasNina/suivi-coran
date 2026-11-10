@@ -1126,7 +1126,7 @@ function freqColorsHTML(){
   const s=state.settings;
   const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
   return `<section class="card setcard"><h4>Pages à revoir plus souvent</h4>
-      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile</div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
+      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile<span class="infow"><button type="button" class="infob" data-act="info" data-t="frh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="frh" role="tooltip" hidden>C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) revienne plus souvent, va dans « Ma boucle », « Fréquence de chaque sourate », et appuie sur + : seules ses pages fragiles reviendront plus souvent.</div></span></div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
       <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour.<br>Au bout de combien de temps passe-t-elle en révision qadima (vert) ?</p>${st2('fd',s.fd,'jours')}</div>
     </section>`;
 }
