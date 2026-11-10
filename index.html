@@ -1181,7 +1181,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.3';
+const APP_VERSION='1.4';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1521,9 +1521,22 @@ function tPick(){
   tPush();
   const [lo,hi]=tScope(); const cand=[];
   for(let i=lo;i<=hi;i++) if(tEnd(i)>i) cand.push(i);
-  if(!cand.length) return false;
-  let id; do{ id=cand[Math.floor(Math.random()*cand.length)]; }while(cand.length>1&&id===TS.id);
-  TS.id=id; TS.end=tEnd(id); TS.showS=false; TS.words=null; TS.extras=[]; TS.heard=''; TS.msg=''; TS.nq++; TS.step='ask'; return true;
+  /* Une question sur quatre (sourates en mode pages seulement) : un verset de la fin d'une page, et on continue jusqu'à la fin de la page suivante. */
+  const trans=[];
+  if(Math.random()<0.25){
+    for(let i=lo;i<=hi;i++){
+      const sn=surOfAyah(i); if(modeOf(sn)!=='pages') continue;
+      const pg=pageOfAyah(i); if(pg>=lastPage(sn)||pg>=604) continue;
+      const nx=QPAGE[pg+1]; if(i<nx-3||i>=nx||nx>hi||surOfAyah(nx)!==sn) continue;
+      trans.push(i);
+    }
+  }
+  if(!cand.length&&!trans.length) return false;
+  let id, end;
+  if(trans.length){ do{ id=trans[Math.floor(Math.random()*trans.length)]; }while(trans.length>1&&id===TS.id);
+    const pg=pageOfAyah(id); end=Math.min(tSurRange(surOfAyah(id))[1], pg+2<=604?QPAGE[pg+2]-1:6236, hi); }
+  else { do{ id=cand[Math.floor(Math.random()*cand.length)]; }while(cand.length>1&&id===TS.id); end=tEnd(id); }
+  TS.id=id; TS.end=end; TS.showS=false; TS.words=null; TS.extras=[]; TS.heard=''; TS.msg=''; TS.nq++; TS.step='ask'; return true;
 }
 function tNorm(w){
   return w.replace(/آ/g,'ءا').replace(/[أإٱ]/g,'ا').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ة/g,'ه').replace(/ى/g,'ي')
