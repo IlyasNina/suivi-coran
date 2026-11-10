@@ -1100,7 +1100,7 @@ function reglagesHTML(){
       ${confirmDel?`<div class="row2"><button class="btn warnfill" data-act="del-yes">Oui, supprimer</button><button class="btn" data-act="del-no">Annuler</button></div>`
         :`<div class="row2"><button class="btn warn" data-act="del-ask">Supprimer ce profil</button></div>`}
     </section>
-    <p class="credit">Application créée par Habiba Marchetto.<br>Pour toute erreur de ma part, merci de me le signaler.</p>`;
+    ${creditText()}`;
 }
 
 function lvSel(act,attrs,cur,ptx){
@@ -1181,8 +1181,10 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4';
-function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version '+APP_VERSION+'</p>'; }
+const APP_VERSION='1.1';
+/* Affiché seulement sur la page d'accueil et dans Réglages. */
+function creditText(){ return '<p class="credit">Application créée par Habiba Marchetto — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
+function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
 
 function render(){
   if(tAud&&(main!=='test'||TS.step!=='ask'||tAudFor!==TS.id)) tAudStop();
@@ -1193,7 +1195,7 @@ function render(){
   qbackEl.hidden=(main!=='muta');
   if(main==='muta'){ app.hidden=true; mutaHost.hidden=false; ensureMuta(); }
   else if(main==='quran'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=quranHTML(); afterQuran(); }
-  else if(main==='test'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=testHTML()+creditHTML(); }
+  else if(main==='test'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=testHTML(); }
   else { mutaHost.hidden=true; app.hidden=false; app.innerHTML=(screen==='home'?homeHTML():profileHTML())+creditHTML(); }
   navEl.innerHTML=navHTML();
   window.scrollTo(0,y);
@@ -1888,7 +1890,7 @@ function quranHTML(){
   const r=qPos?SUR[surOfAyah(QPAGE[qPos.p])-1]:null;
   return `<div class="qmenu"><h1>Coran</h1>
     <button class="qbig" data-act="qread"><span class="ar" lang="ar">ٱلۡقُرۡءَانُ ٱلۡكَرِيمُ</span><b>Coran</b><span class="s">${r?esc(r.fr)+' · page '+qPos.p:'604 pages · 114 sourates'}</span></button>
-    <button class="qbig" data-act="qmuta"><span class="ar" lang="ar">ٱلۡمُتَشَٰبِهَٰتُ</span><b>Mutashabihat</b><span class="s">Les versets qui se ressemblent</span></button></div>`+creditHTML()+credit;
+    <button class="qbig" data-act="qmuta"><span class="ar" lang="ar">ٱلۡمُتَشَٰبِهَٰتُ</span><b>Mutashabihat</b><span class="s">Les versets qui se ressemblent</span></button></div>`+credit;
 }
 function qFonts(p){ return Promise.all(qPagesOf(p).map(n=>document.fonts.load('20px p'+n,'\uFC41')).concat([document.fonts.load('20px KFGQPCHafs','\u0628')])).catch(()=>{}); }
 function afterQuran(){
