@@ -1338,6 +1338,7 @@ const handlers={
   lset(el){ const k=el.dataset.k, d=+el.dataset.d;
     if(k==='pause'){ const i=L_PAUSES.indexOf(LS.pause); LS.pause=L_PAUSES[clamp(i+d,0,L_PAUSES.length-1)]; }
     else if(k==='speed'){ const i=L_SPEEDS.indexOf(LS.speed); LS.speed=L_SPEEDS[clamp(i+d,0,L_SPEEDS.length-1)]; }
+    else if(k==='rAll'){ const O=[1,2,3,4,5,6,7,8,9,10,0]; let i=O.indexOf(+LS.rAll); if(i<0) i=O.length-1; LS.rAll=O[clamp(i+d,0,O.length-1)]; }
     else LS[k]=(+LS[k]||0)+d;
     if(k==='b'&&LS.b<LS.a) LS.a=LS.b;
     lClamp(); lSave(); render(); },
@@ -1992,7 +1993,7 @@ function lClamp(){
   if(!RECS.some(r=>r.k===LS.rec)) LS.rec='husary';
   LS.s=clamp(Math.round(+LS.s)||1,1,114); const n=lNb(LS.s);
   LS.a=clamp(Math.round(+LS.a)||1,1,n); LS.b=clamp(Math.round(+LS.b)||n,LS.a,n);
-  LS.rAll=clamp(Math.round(+LS.rAll)||0,0,99); LS.rAya=clamp(Math.round(+LS.rAya)||1,1,20);
+  LS.rAll=clamp(Math.round(+LS.rAll)||0,0,10); LS.rAya=clamp(Math.round(+LS.rAya)||1,1,20);
   if(L_PAUSES.indexOf(LS.pause)<0) LS.pause=0;
   if(L_SPEEDS.indexOf(LS.speed)<0) LS.speed=1;
   LS.next=!!LS.next;
@@ -2113,7 +2114,7 @@ function listenHTML(){
     <section class="lcard"><div class="lab">Récitant</div>
       <select id="lrec" class="field" style="width:100%" aria-label="Récitant">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>
       ${lRec().warsh?'<p class="shint">Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}</section>
-    <section class="lcard"><div class="lab">Passage · ${n} versets</div>
+    <section class="lcard"><div class="lab">Sourate · ${n} versets</div>
       <select id="lsur" class="field" style="width:100%" aria-label="Sourate">${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
       <div class="l2"><div><div class="lab">Du verset</div>${inp('lva',LS.a,n,'Du verset')}</div><div><div class="lab">Au verset</div>${inp('lvb',LS.b,n,'Au verset')}</div></div></section>
     <section class="lcard"><div class="lab">Répéter</div>
