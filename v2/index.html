@@ -680,6 +680,7 @@ function startNum(P){
 function levelOf(P,sn){ return (P.levels&&P.levels[sn])||'n'; }
 /* niveau d'une sourate : n = 1 passage par boucle ; kN = N passages par boucle ; eN = 1 passage toutes les N boucles ; x = exclue */
 function levelMul(l){ if(l==='x') return 0; const v=+l.slice(1); return l.charAt(0)==='k'?v:l.charAt(0)==='e'?1/v:1; }
+function fragDelta(l){ const i=LADDER.indexOf(l); return i<0?0:i-LADDER.indexOf('n'); }
 function levelLaps(l){ return l.charAt(0)==='k'?+l.slice(1):1; }
 const LADDER=['e4','e3','e2','n','k2','k3','k4','k5','k6','k7'];
 function freqParts(l,N){ const w=N===7; if(l==='x') return ['Exclu','']; const v=+l.slice(1);
@@ -719,7 +720,7 @@ function buildCycle(pk,k){
     if(!marks[it.id]) return false;
     const lv=levelOf(P,it.sn);
     if(lv==='x') return false;
-    if(lv.charAt(0)==='e'){ const R=+lv.slice(1); return ((((k+it.sn)%R)+R)%R)===0; }
+    if(lv.charAt(0)==='e'&&marks[it.id]!=='o'){ const R=+lv.slice(1); return ((((k+it.sn)%R)+R)%R)===0; }
     return true;
   });
   const order={}; L.forEach((it,i)=>order[it.id]=i);
@@ -756,7 +757,7 @@ function buildCycle(pk,k){
      et chaque passage supplémentaire refait la même suite, décalée de quelques jours. Le bleu revient chaque jour. */
   const fr=weak.filter(it=>kind(it)===0).sort((a,b)=>order[a.id]-order[b.id]);
   weak.filter(it=>kind(it)===1).forEach(it=>{ for(let c=0;c<m;c++) days[c].reinf.push(it); });
-  const need=it=>clamp(Math.round((st.fo+(pri(it)===0?1:0))*N/7),1,m), usedD={};
+  const need=it=>clamp(Math.round((st.fo+fragDelta(levelOf(P,it.sn)))*N/7),1,m), usedD={};
   const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
   for(let j=0;j<kmaxF;j++){
     const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
@@ -1094,13 +1095,15 @@ function reglagesHTML(){
     <p class="credit">Application créée par Habiba Marchetto.<br>Pour toute erreur de ma part, merci de me le signaler.</p>`;
 }
 
-function lvSel(act,attrs,cur){
-  const N=state.profiles[pk].loop.n, ex=cur==='x', i=LADDER.indexOf(cur), pt=cur===''?['—','réglages différents']:freqParts(cur,N);
+function lvSel(act,attrs,cur,ptx){
+  const N=state.profiles[pk].loop.n, ex=cur==='x', i=LADDER.indexOf(cur), pt=ptx||(cur===''?['—','réglages différents']:freqParts(cur,N));
   return `<div class="fq"><span class="ctl"><button data-act="${act}" ${attrs} data-d="-1" aria-label="Moins souvent"${ex||i===0?' disabled':''}>−</button><output>${pt[0]}${pt[1]?`<small>${pt[1]}</small>`:''}</output><button data-act="${act}" ${attrs} data-d="1" aria-label="Plus souvent"${ex||i===LADDER.length-1?' disabled':''}>+</button></span><button class="exb" data-act="${act}" ${attrs} data-l="x" aria-pressed="${ex}">Exclu</button></div>`;
 }
 function surLvRow(n){
-  const s=SUR[n-1], cur=levelOf(state.profiles[pk],n);
-  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}</div>`;
+  const s=SUR[n-1], P=state.profiles[pk], cur=levelOf(P,n);
+  let ptx=null;
+  if(cur!=='x'&&itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o')){ const N=P.loop.n, c=Math.max(1,Math.round((state.settings.fo+fragDelta(cur))*N/7)); ptx=[c+'×','pages fragiles · par '+(N===7?'semaine':'boucle')]; }
+  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur,ptx)}</div>`;
 }
 function lvAcc(key,title,sub,body){
   const open=openAcc.has(key);
