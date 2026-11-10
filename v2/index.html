@@ -108,14 +108,14 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lvall{padding:0 0 10px}
 .lvall .nm{font-size:.82rem;color:var(--muted);margin-bottom:6px}
 .setcard input[type=number]{width:96px}
-.sgrid{display:grid;grid-template-columns:1fr 68px 92px;align-items:center;column-gap:8px;row-gap:12px;margin:4px 0 8px}
-.sgrid .slab{display:block;font-weight:600;position:relative;line-height:1.25;text-wrap:balance}.sgrid .slab label{display:inline}
+.sgrid{display:grid;grid-template-columns:1fr 68px 92px;align-items:center;column-gap:8px;row-gap:12px;margin:4px 0 0}
+.sgrid .slab{display:flex;align-items:center;gap:4px;font-weight:600;position:relative;line-height:1.25}.sgrid .slab .lt{display:block}
 .setcard .sgrid .sbox{width:68px;min-width:0;height:44px;box-sizing:border-box;padding:0 4px;text-align:center;text-align-last:center;margin:0}
 .sgrid .sun{font-weight:500;white-space:nowrap;font-size:.95rem}
 .shint{margin:2px 0 14px;font-size:.88rem;color:var(--muted)}.shint.warn{color:var(--o-ink)}
-.sgrid .nw{white-space:nowrap}
-.infob{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:-6px 0;padding:0;border:0;background:none;color:var(--muted);border-radius:50%;cursor:pointer;flex:none}.infob svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.infob[aria-expanded=true]{color:var(--accent);background:var(--soft)}
-.infow{position:relative;display:inline-flex;vertical-align:middle;margin-left:0}
+.sgrid~.shint:not(.warn){margin-top:8px}
+.infob{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0;padding:0;border:0;background:none;color:var(--muted);border-radius:50%;cursor:pointer;flex:none}.infob svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.infob[aria-expanded=true]{color:var(--accent);background:var(--soft)}
+.infow{position:relative;display:inline-flex;align-items:center}
 .pop{position:absolute;left:-70px;top:calc(100% + 4px);z-index:30;width:min(250px,72vw);padding:10px 12px;background:var(--ink);color:var(--bg);border-radius:12px;font-weight:500;font-size:.9rem;line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.22);text-wrap:auto}
 .pop::before{content:'';position:absolute;left:83px;top:-5px;width:10px;height:10px;background:var(--ink);transform:rotate(45deg)}
 
@@ -1134,10 +1134,10 @@ function loopHTML(){
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
   let h=`<section class="card setcard">
     <div class="sgrid">
-      <div class="slab"><label for="lpn">Durée de</label> <span class="nw"><label for="lpn">la boucle</label><span class="infow"><button type="button" class="infob" data-act="info" data-t="lpnh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="lpnh" role="tooltip" hidden>Tout ce que tu as appris est repassé dans ce délai.</div></span></span></div>
+      <div class="slab"><label class="lt" for="lpn">Durée de<br>la boucle</label><span class="infow"><button type="button" class="infob" data-act="info" data-t="lpnh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="lpnh" role="tooltip" hidden>Tout ce que tu as appris est repassé dans ce délai.</div></span></div>
       <input id="lpn" class="field sbox" type="number" inputmode="numeric" min="3" max="40" value="${N}">
       <span class="sun">jours</span>
-      <label class="slab" for="ljd">Aujourd’hui, c’est le jour</label>
+      <label class="slab" for="ljd"><span class="lt">Aujourd’hui,<br>c’est le jour</span></label>
       <select id="ljd" class="field sbox">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select>
       <span class="sun">de ma boucle</span>
     </div>
@@ -1167,7 +1167,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 07:38';
+const APP_VERSION='10 nov. 07:51';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
