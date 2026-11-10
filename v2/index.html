@@ -113,7 +113,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .sgrid .slab{display:flex;align-items:center;gap:4px;font-weight:600;position:relative;line-height:1.25}.sgrid .slab .lt{display:block}
 .setcard .sgrid .sbox{width:68px;min-width:0;height:44px;box-sizing:border-box;padding:0 4px;text-align:center;text-align-last:center;margin:0}
 .sgrid .sun{font-weight:500;white-space:nowrap;font-size:.95rem}
-.dflt{display:flex;align-items:center;gap:6px}.dflt .arr{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;color:var(--muted)}
+.dflt{display:flex;align-items:flex-start;gap:6px}.dflt .arr{width:16px;height:16px;flex:none;margin-top:.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;color:var(--muted)}
 .shint{margin:2px 0 14px;font-size:.88rem;color:var(--muted)}.shint.warn{color:var(--o-ink)}
 .sgrid~.shint:not(.warn){margin-top:8px}
 .infob{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin:0;padding:0;border:0;background:none;color:var(--muted);border-radius:50%;cursor:pointer;flex:none}.infob svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.infob[aria-expanded=true]{color:var(--accent);background:var(--soft)}
@@ -1164,7 +1164,7 @@ function loopHTML(){
   <section class="card setcard"><h4>Fréquence de chaque sourate</h4>
     <p>Choisis combien de fois chaque sourate ou juzz revient dans ta boucle.</p>
     <p><b>+</b> : revient plus souvent<br><b>−</b> : revient moins souvent<br><b>Exclu</b> : n’est plus révisé</p>
-    <p class="dflt"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>Par défaut, la sourate / page revient 1 fois ${N===7?'par semaine':'tous les '+N+' jours'}.</p>
+    <p class="dflt"><svg class="arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>Par défaut, la sourate / page revient 1 fois par boucle.</p>
   </section>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
   h+=`<div class="lvlist">${top.map(surLvRow).join('')}</div>`;
