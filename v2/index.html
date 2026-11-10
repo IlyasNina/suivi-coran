@@ -723,7 +723,7 @@ function buildCycle(pk,k){
     if(!marks[it.id]) return false;
     const lv=levelOf(P,it.sn);
     if(lv==='x') return false;
-    if(lv.charAt(0)==='e'&&marks[it.id]!=='o'){ const R=+lv.slice(1); return ((((k+it.sn)%R)+R)%R)===0; }
+    if(lv.charAt(0)==='e'&&marks[it.id]!=='o'&&marks[it.id]!=='b'){ const R=+lv.slice(1); return ((((k+it.sn)%R)+R)%R)===0; }
     return true;
   });
   const order={}; L.forEach((it,i)=>order[it.id]=i);
