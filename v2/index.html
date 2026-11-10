@@ -213,6 +213,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .row .tx{min-width:0}
 .row .tx b{display:block;font-size:1rem;line-height:1.25}
 .row .tx span{font-size:.82rem;color:var(--muted)}
+.row.fat{grid-template-columns:32px 1fr;gap:14px;padding:14px 16px;min-height:64px;border-radius:16px;border-color:var(--line)}.row.fat .sw{width:32px;height:32px;border-radius:9px;font-size:1rem}.row.fat .tx{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.row.fat .tx b{display:inline;font-size:1.1rem;font-weight:700}.row.fat .tx span{font-size:.85rem;font-weight:500}
 .row .ar{font-family:var(--f-ar);font-size:1.5rem;line-height:1.3;direction:rtl}
 .rowwrap{display:flex;flex-direction:column}
 .rowwrap .remline{padding-left:8px;font-size:.78rem}
@@ -927,13 +928,13 @@ function pageBlock(n,marks){
     ${rem?`<p class="remrow">${rem}</p>`:''}`;
   return accHTML('sur'+n,esc(s.fr),(c.v+c.o+c.b)+' pages sur '+items.length,c,items.length,body);
 }
-function rowItem(it,marks,withRemove){
+function rowItem(it,marks,withRemove,compact){
   const st=marks[it.id]||'n';
   const rem=withRemove?removeControl(it.n):'';
-  return `<li class="rowwrap"><button class="row" data-act="paint" data-id="${it.id}" aria-label="${esc(it.fr)}, ${ST[st].label}">
+  return `<li class="rowwrap"><button class="row${compact?' fat':''}" data-act="paint" data-id="${it.id}" aria-label="${esc(it.fr)}, ${ST[st].label}">
       <span class="sw st-${st}" aria-hidden="true">${ST[st].sym}</span>
       <span class="tx"><b>${esc(it.fr)}</b><span>Sourate ${it.n} · page ${it.p}</span></span>
-      <span class="ar" lang="ar">${it.ar}</span></button>${rem?`<span class="remline">${rem}</span>`:''}</li>`;
+      ${compact?'':`<span class="ar" lang="ar">${it.ar}</span>`}</button>${rem?`<span class="remline">${rem}</span>`:''}</li>`;
 }
 function juzRemove(j){
   if(j.id==='juz30') return '';
@@ -964,7 +965,7 @@ function suiviHTML(){
     <button class="link" data-act="undo" ${canUndo?'':'disabled'}>Annuler</button></div></div>
     ${flash?`<p class="msg" role="status">${esc(flash)}</p>`:''}
     <button class="addbtn" data-act="addopen">+ Ajouter une sourate ou un juzz</button>`;
-  if(fatiha) h+=`<ul class="rows" style="margin-top:14px">${rowItem(fatiha,marks,false)}</ul>`;
+  if(fatiha) h+=`<ul class="rows" style="margin-top:14px">${rowItem(fatiha,marks,false,true)}</ul>`;
   pageSur.forEach(n=>{ h+=pageBlock(n,marks); });
   if(others.length){
     const c=tally(others,marks);
