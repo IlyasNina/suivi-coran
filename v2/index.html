@@ -767,16 +767,15 @@ function buildCycle(pk,k){
   weak.filter(it=>kind(it)===1).forEach(it=>{ for(let c=0;c<m;c++) days[c].reinf.push(it); });
   const need=it=>clamp(Math.round(fragCount(P,it.sn)*N/7),1,m), usedD={};
   const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
-  for(let j=0;j<kmaxF;j++){
-    const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
-    /* chaque passage a sa propre tranche de jours : la suite se fait en entier, sans se mélanger avec la suivante */
-    const a0=Math.floor(j*m/kmaxF), a1=Math.max(a0+1,Math.floor((j+1)*m/kmaxF)), len=a1-a0;
-    const Wa=arr.reduce((a,it)=>a+itemW(it),0); let cum=0;
-    arr.forEach(it=>{
-      const w=itemW(it), d=a0+clamp(Math.floor((cum+w/2)/Wa*len),0,len-1); cum+=w;
-      days[d].reinf.push(it);
-    });
-  }
+  /* Les passages se suivent : on met bout à bout les tours (chacun dans l'ordre du mushaf) et on les répartit sur la boucle à charge égale.
+     Ainsi aucun jour n'est surchargé, et un même tour avance de jour en jour sans se mélanger. */
+  const seqF=[]; for(let j=0;j<kmaxF;j++) fr.filter(it=>need(it)>j).forEach(it=>seqF.push(it));
+  const Wf=seqF.reduce((a,it)=>a+itemW(it),0); let cumF=0;
+  seqF.forEach(it=>{
+    const w=itemW(it); let d=clamp(Math.floor((cumF+w/2)/Wf*m),0,m-1); cumF+=w;
+    for(let t=0;t<m&&days[d].reinf.some(x=>x.id===it.id);t++) d=(d+1)%m;
+    if(!days[d].reinf.some(x=>x.id===it.id)) days[d].reinf.push(it);
+  });
   days.forEach((d,di)=>{ d.block.sort((a,b)=>sk[di+'|'+a.id]-sk[di+'|'+b.id]); d.reinf.sort((a,b)=>kind(a)-kind(b)||order[a.id]-order[b.id]); d.prio.sort((a,b)=>order[a.id]-order[b.id]); });
   return {dates:dates,days:days};
 }
