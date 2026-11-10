@@ -1181,7 +1181,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.2';
+const APP_VERSION='1.3';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1564,8 +1564,9 @@ async function tGet(name,asText){
 function tLoadModel(){
   if(tSess) return Promise.resolve();
   if(!tLoading) tLoading=(async()=>{
-    const bases=['https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/','https://unpkg.com/onnxruntime-web@1.30.0/dist/'];
-    if(!window.ort){ let err; for(const b of bases){ try{ await tScript(b+'ort.min.js'); err=null; break; }catch(e){ err=e; } } if(err) throw err; }
+    /* L'outil de reconnaissance vocale est hébergé avec l'application (plus de dépendance à un site extérieur) ; les deux CDN ne servent que de secours. */
+    const ORT_LOCAL='v2/vendor/ort/', bases=[new URL(ORT_LOCAL,location.href).href,'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/','https://unpkg.com/onnxruntime-web@1.30.0/dist/'];
+    if(!window.ort){ let err; for(const b of bases){ try{ await tScript(b+(b.indexOf('/vendor/ort/')>=0?'ort.wasm.min.js':'ort.min.js')); err=null; break; }catch(e){ err=e; } } if(err) throw err; }
     window.ort.env.wasm.numThreads=1; window.ort.env.wasm.proxy=false;
     (await tGet('tokens.txt',true)).split('\n').filter(Boolean).forEach(l=>{ const i=l.lastIndexOf(' '); tTok[+l.slice(i+1)]=l.slice(0,i); });
     const buf=await tGet('model.int8.onnx',false);
