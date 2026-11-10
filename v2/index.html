@@ -213,7 +213,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .row .tx{min-width:0}
 .row .tx b{display:block;font-size:1rem;line-height:1.25}
 .row .tx span{font-size:.82rem;color:var(--muted)}
-.row.fat{grid-template-columns:32px 1fr;gap:14px;padding:14px 16px;min-height:64px;border-radius:16px;border-color:var(--line)}.row.fat .sw{width:32px;height:32px;border-radius:9px;font-size:1rem}.row.fat .tx{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.row.fat .tx b{display:inline;font-size:1.1rem;font-weight:700}.row.fat .tx span{font-size:.85rem;font-weight:500}
+.row.fat{grid-template-columns:32px 1fr;gap:14px;padding:14px 16px;min-height:64px;border-radius:16px;border-color:var(--line)}.acc .at .sw.mini{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;font-size:1rem;font-weight:700;align-self:center;margin-right:4px}.row.fat .sw{width:32px;height:32px;border-radius:9px;font-size:1rem}.row.fat .tx{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.row.fat .tx b{display:inline;font-size:1.1rem;font-weight:700}.row.fat .tx span{font-size:.85rem;font-weight:500}
 .row .ar{font-family:var(--f-ar);font-size:1.5rem;line-height:1.3;direction:rtl}
 .rowwrap{display:flex;flex-direction:column}
 .rowwrap .remline{padding-left:8px;font-size:.78rem}
@@ -309,6 +309,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 
 /* Réglages */
 .blk{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}.blk .rh{margin:0 0 4px}.blk .rrow:last-child{border-bottom:0}.blk .shint{margin:2px 0 6px}.blk .lvrow,.blk .acc{background:var(--bg)}.blk .acc>.ab .lvrow,.blk .acc>.ab .lvall{background:#fff}.blk .acc.ex{background:rgba(120,120,110,.12)}.blk .lvrow.ex{background:rgba(120,120,110,.12)!important}.blk .rsec{margin:0}
+.blk .rh{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px;text-decoration-color:var(--accent)}.rrow.rday{align-items:baseline}.rrow.rday .lnk{flex-shrink:0;font-size:1rem}.savebar{margin:16px 0 8px}.savebar .btn{width:100%}
 .rsec{margin-top:16px}.rh{font-size:1.12rem;font-weight:700;margin:0 0 6px}.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.rrow[hidden]{display:none}.rrow .rl{font-weight:600;line-height:1.3;display:block}.rrow .rl small{display:block;font-weight:400;font-size:.85rem;color:var(--muted);margin-top:2px}.rrow .dot{margin-right:4px;vertical-align:-1px}.rrow .rin{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:1.25rem;font-weight:700;line-height:1}.rrow .ctl output{min-width:64px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}.rrow .ctl output small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}.rday{margin:8px 0 12px}.lnk{border:0;background:none;padding:0;color:var(--accent,#2f6b57);font:inherit;font-weight:600;text-decoration:underline}.rsec .row2{margin:6px 0 4px}
 .setcard h4{font-size:1rem}
 .setcard p{color:var(--muted);font-size:.9rem}
@@ -908,7 +909,7 @@ function segBar(c,total){ return ['v','o','b'].map(s=>c[s]?`<i class="st-${s}" s
 function accHTML(key,title,count,c,total,body){
   const open=openAcc.has(key);
   return `<section class="acc" data-open="${open?1:0}"><button class="ah" data-act="acc" data-k="${key}" aria-expanded="${open}">
-    <span class="at">${title}<span class="ac">${count}</span></span>
+    <span class="at">${total>0&&['v','o','b'].some(k=>c[k]===total)?(k=>`<span class="sw mini st-${k}" aria-hidden="true">${ST[k].sym}</span>`)(['v','o','b'].find(k=>c[k]===total)):''}${title}<span class="ac">${count}</span></span>
     <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
     <span class="abar sbar" aria-hidden="true">${segBar(c,total)}</span></button>
     ${open?`<div class="ab">${body}</div>`:''}</section>`;
@@ -1165,11 +1166,9 @@ function loopHTML(){
     <div class="rrow"><label class="rl" for="lpn">Durée de la boucle<small>Tout ce que tu as appris est révisé dans ce délai.</small></label>
       <span class="rin"><input id="lpn" class="field sbox" type="number" inputmode="numeric" min="3" max="40" value="${N}"><span class="sun">jours</span></span></div>
     <p class="shint warn" id="lpne" hidden></p>
-    <p class="shint rday">Aujourd’hui, c’est le jour ${posNow} de ta boucle de ${N} jours. <button type="button" class="lnk" data-act="chday">Changer</button></p>
+    <div class="rrow rday"><span class="rl">Aujourd’hui, c’est le jour ${posNow} de ta boucle de ${N} jours.</span><button type="button" class="lnk" data-act="chday">Changer</button></div>
     <div class="rrow" id="ljbox" hidden><label class="rl" for="ljd">Aujourd’hui, c’est le jour<small>Pour recommencer ta boucle, choisis le jour 1.</small></label>
       <span class="rin"><select id="ljd" class="field sbox">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select><span class="sun">de ma boucle</span></span></div>
-    <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button></div>
-    ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
     <div class="rrow"><span class="rl"><i class="dot st-b"></i> Une page jadida reste bleue pendant :</span>${st2('fd',s.fd,'jours')}</div>
     <div class="rrow"><span class="rl"><i class="dot st-o"></i> Une page fragile revient…${infoI('frh','C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».')}</span>${st2('fo',s.fo+'×','par semaine')}</div>
   </section>
@@ -1184,6 +1183,7 @@ function loopHTML(){
     h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body,uni==='x');
   });
   h+='</section>';
+  h+=`<div class="savebar"><p class="shint">Enregistre ici la durée de la boucle et le jour. Les autres réglages s’enregistrent tout seuls.</p><button class="btn primary" data-act="setloop">Enregistrer</button>${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}</div>`;
   return h;
 }
 function profileHTML(){
