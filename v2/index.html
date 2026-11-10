@@ -93,6 +93,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lvrow{display:flex;flex-direction:column;gap:8px;padding:12px 14px;margin-top:10px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
 .lvlist{margin-top:4px}
 .acc>.ab .lvrow{background:var(--bg)}
+.frrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px;border-top:1px solid var(--line)}.frl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem}.frrow .fq{margin:0}
 .lvrow .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.95rem}
 .lvrow .nm span{color:var(--muted);font-family:var(--f-ar);font-size:1.05rem}
 .fq{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -567,6 +568,7 @@ function sanitize(o){
     if(p.levels&&typeof p.levels==='object'){
       for(const k of Object.keys(p.levels)){ const n=Math.round(+k); let l=p.levels[k]; if(l==='p') l='k2'; else if(l==='r') l='e'+clamp(s.settings.res,2,6); if(n>=1&&n<=114&&typeof l==='string'&&/^(x|e[2-6]|k[2-7])$/.test(l)) q.levels[n]=l; }
     }
+    q.fragLv={}; if(p.fragLv&&typeof p.fragLv==='object'){ for(const k of Object.keys(p.fragLv)){ const n=Math.round(+k), d=Math.round(+p.fragLv[k]); if(n>=1&&n<=114&&d&&d>=-6&&d<=6) q.fragLv[n]=d; } }
     if(p.done&&typeof p.done==='object'){
       for(const wk of Object.keys(p.done)){
         if(!/^\d{4}-\d{2}-\d{2}$/.test(wk)||!p.done[wk]||typeof p.done[wk]!=='object') continue;
@@ -680,7 +682,8 @@ function startNum(P){
 function levelOf(P,sn){ return (P.levels&&P.levels[sn])||'n'; }
 /* niveau d'une sourate : n = 1 passage par boucle ; kN = N passages par boucle ; eN = 1 passage toutes les N boucles ; x = exclue */
 function levelMul(l){ if(l==='x') return 0; const v=+l.slice(1); return l.charAt(0)==='k'?v:l.charAt(0)==='e'?1/v:1; }
-function fragDelta(l){ const i=LADDER.indexOf(l); return i<0?0:i-LADDER.indexOf('n'); }
+function fragD(P,sn){ return (P.fragLv&&P.fragLv[sn])||0; }
+function fragCount(P,sn){ return clamp(state.settings.fo+fragD(P,sn),1,7); }
 function levelLaps(l){ return l.charAt(0)==='k'?+l.slice(1):1; }
 const LADDER=['e4','e3','e2','n','k2','k3','k4','k5','k6','k7'];
 function freqParts(l,N){ const w=N===7; if(l==='x') return ['Exclu','']; const v=+l.slice(1);
@@ -762,7 +765,7 @@ function buildCycle(pk,k){
      et chaque passage supplémentaire refait la même suite, décalée de quelques jours. Le bleu revient chaque jour. */
   const fr=weak.filter(it=>kind(it)===0).sort((a,b)=>order[a.id]-order[b.id]);
   weak.filter(it=>kind(it)===1).forEach(it=>{ for(let c=0;c<m;c++) days[c].reinf.push(it); });
-  const need=it=>clamp(Math.round((st.fo+fragDelta(levelOf(P,it.sn)))*N/7),1,m), usedD={};
+  const need=it=>clamp(Math.round(fragCount(P,it.sn)*N/7),1,m), usedD={};
   const kmaxF=fr.reduce((a,it)=>Math.max(a,need(it)),0);
   for(let j=0;j<kmaxF;j++){
     const arr=fr.filter(it=>need(it)>j); if(!arr.length) continue;
@@ -1106,9 +1109,11 @@ function lvSel(act,attrs,cur,ptx){
 }
 function surLvRow(n){
   const s=SUR[n-1], P=state.profiles[pk], cur=levelOf(P,n);
-  let ptx=null;
-  if(cur!=='x'&&itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o')){ const N=P.loop.n, c=Math.max(1,Math.round((state.settings.fo+fragDelta(cur))*N/7)); ptx=[c+'×','pages fragiles · par '+(N===7?'semaine':'boucle')]; }
-  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur,ptx)}</div>`;
+  const hasFr=cur!=='x'&&itemsFor(pk).some(it=>it.sn===n&&P.marks[it.id]==='o');
+  let fr='';
+  if(hasFr){ const N=P.loop.n, c=fragCount(P,n), cc=Math.max(1,Math.round(c*N/7)), fo=state.settings.fo, d=fragD(P,n);
+    fr=`<div class="frrow"><span class="frl"><i class="dot st-o"></i>Pages fragiles</span><div class="fq"><span class="ctl"><button data-act="fraglv" data-n="${n}" data-d="-1" aria-label="Moins souvent"${fo+d<=1?' disabled':''}>−</button><output>${cc}×<small>par ${N===7?'semaine':'boucle'}</small></output><button data-act="fraglv" data-n="${n}" data-d="1" aria-label="Plus souvent"${fo+d>=7?' disabled':''}>+</button></span></div></div>`; }
+  return `<div class="lvrow${cur==='x'?' ex':''}"><div class="nm"><b>${esc(s.fr)}</b><span lang="ar">${s.ar}</span></div>${lvSel('level',`data-n="${n}"`,cur)}${fr}</div>`;
 }
 function lvAcc(key,title,sub,body){
   const open=openAcc.has(key);
@@ -1129,7 +1134,7 @@ function freqColorsHTML(){
   const s=state.settings;
   const st2=(key,val,unit)=>`<div class="stepper"><span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span></div>`;
   return `<section class="card setcard"><h4>Pages à revoir plus souvent</h4>
-      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile<span class="infow"><button type="button" class="infob" data-act="info" data-t="frh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="frh" role="tooltip" hidden>C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) revienne plus souvent, va dans « Ma boucle », « Fréquence de chaque sourate », et appuie sur + : seules ses pages fragiles reviendront plus souvent.</div></span></div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
+      <div class="fb"><div class="h"><i class="dot st-o"></i>Fragile<span class="infow"><button type="button" class="infob" data-act="info" data-t="frh" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="frh" role="tooltip" hidden>C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, va dans « Ma boucle », « Fréquence de chaque sourate », et utilise la ligne « Pages fragiles » de cette sourate : le réglage de la sourate elle-même ne change pas.</div></span></div><p>Combien de fois par semaine une page fragile revient-elle ?</p>${st2('fo',s.fo,'fois / semaine')}</div>
       <div class="fb"><div class="h"><i class="dot st-b"></i>Révision jadida</div><p>Revue chaque jour.<br>Au bout de combien de temps passe-t-elle en révision qadima (vert) ?</p>${st2('fd',s.fd,'jours')}</div>
     </section>`;
 }
@@ -1328,6 +1333,12 @@ const handlers={
     if(nl==='n') delete P.levels[n]; else P.levels[n]=nl;
     save(); render();
   },
+  fraglv(el){
+    const P=state.profiles[pk], n=+el.dataset.n, fo=state.settings.fo; flash=''; P.fragLv=P.fragLv||{};
+    const d=clamp((P.fragLv[n]||0)+(+el.dataset.d),1-fo,7-fo);
+    if(d===0) delete P.fragLv[n]; else P.fragLv[n]=d;
+    save(); render();
+  },
   leveljuz(el){
     const P=state.profiles[pk], j=JUZ.find(x=>x.id===el.dataset.j); if(!j) return; flash='';
     const lv=[]; for(let n=j.from;n<=j.to;n++) lv.push(levelOf(P,n));
@@ -1434,7 +1445,7 @@ const handlers={
     history=[]; confirmDel=false; backupText=''; save();
     screen='home'; render(); window.scrollTo(0,0);
   },
-  'reset-yes'(){ const P0=state.profiles[pk]; state.profiles[pk]={name:P0.name,kind:P0.kind,marks:{},done:{},fresh:{},extra:[],loop:P0.loop,levels:{}}; history=[]; confirmReset=false; backupText=''; save(); flash='Profil remis à zéro.'; render(); },
+  'reset-yes'(){ const P0=state.profiles[pk]; state.profiles[pk]={name:P0.name,kind:P0.kind,marks:{},done:{},fresh:{},extra:[],loop:P0.loop,levels:{},fragLv:{}}; history=[]; confirmReset=false; backupText=''; save(); flash='Profil remis à zéro.'; render(); },
   addopen(){ showPicker(); },
   addclose(){ hidePicker(); },
   addsur(el){
