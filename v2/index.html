@@ -108,7 +108,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lvall{padding:0 0 10px}
 .lvall .nm{font-size:.82rem;color:var(--muted);margin-bottom:6px}
 .setcard input[type=number]{width:96px}
-.dayrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600}.dayrow .dsel{width:auto;min-width:76px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;margin:6px 0 2px}.srow .sval{display:flex;align-items:center;gap:6px;font-weight:500;white-space:nowrap}.srow .field{width:auto;min-width:0;margin:0}.srow input.field{width:76px}.srow select.field{min-width:96px}.shint{margin:2px 0 14px;font-size:.88rem;color:var(--muted)}
 
 /* Accueil */
 .home{padding-top:44px;display:flex;flex-direction:column;gap:28px}
@@ -1066,9 +1066,6 @@ function reglagesHTML(){
   return `    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
       ${sync!=='online'?`<div class="row2"><button class="btn primary" data-act="backupfile">Sauvegarder (envoyer un fichier)</button><button class="btn" data-act="restorepick">Restaurer depuis un fichier</button></div>
       <input id="bkfile" type="file" accept=".json,application/json,text/plain" hidden>`:''}
-      <details class="det"><summary>Utiliser un code à copier</summary>
-        <textarea id="bk" class="field" aria-label="Code de sauvegarde" spellcheck="false">${esc(backupText)}</textarea>
-        <div class="row2"><button class="btn" data-act="copy">Copier le code</button><button class="btn" data-act="restore">Restaurer ce code</button></div></details>
       ${sync!=='online'&&state.backupAt?`<p class="meta">Dernière sauvegarde : ${new Date(state.backupAt).toLocaleDateString('fr-FR')}</p>`:''}
       ${flash&&tab==='reglages'?`<p class="flash">${esc(flash)}</p>`:''}
     </section>
@@ -1126,18 +1123,14 @@ function loopHTML(){
   const inJuz=new Set(); full.forEach(j=>juzRange(j).forEach(n=>inJuz.add(n)));
   const pageSur=tr.filter(n=>modeOf(n)==='pages');
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
-  let h=`<section class="card setcard"><h4>Durée de la boucle de révision</h4>
-    <p>Tout ce que tu as appris est repassé en <b>${N} jours</b>.</p>
-    <div class="row2"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="60" value="${N}" aria-label="Nombre de jours de la boucle"></div>
-    <div class="subbox"><h5>Jour de mon cours (facultatif)</h5>
-      <p>Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
-      <select id="lcd" class="field" aria-label="Jour de mon cours">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select>
-      ${P.loop.cd!=null&&N%7!==0?`<p>Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
-    </div>
-    <div class="subbox"><h5>Où en es-tu dans ta boucle ?</h5>
-      <label class="dayrow" for="ljd">Aujourd’hui, c’est le jour <select id="ljd" class="field dsel">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select> de ma boucle</label>
-      <p>Pour recommencer ta boucle, choisis le jour 1.</p>
-    </div>
+  let h=`<section class="card setcard">
+    <label class="srow" for="lpn"><span>Durée de la boucle</span><span class="sval"><input id="lpn" class="field" type="number" inputmode="numeric" min="3" max="60" value="${N}"> <span>jours</span></span></label>
+    <p class="shint">Tout ce que tu as appris est repassé dans ce délai.</p>
+    <label class="srow" for="lcd"><span>Cours de Coran</span><span class="sval"><select id="lcd" class="field">${['Aucun'].concat(DAYS_LONG.map(x=>x.charAt(0).toUpperCase()+x.slice(1))).map((t,i)=>`<option value="${i-1}"${(P.loop.cd==null?-1:P.loop.cd)===i-1?' selected':''}>${t}</option>`).join('')}</select></span></label>
+    <p class="shint">Si tu as un cours de Coran, la boucle se termine ce jour-là : tout ce qui est au programme est révisé avant ton cours.</p>
+    ${P.loop.cd!=null&&N%7!==0?`<p class="shint">Avec ${N} jours, ta boucle ne se termine pas toujours le jour du cours. Pour qu’elle tombe chaque semaine sur ton cours, choisis 7 jours.</p>`:''}
+    <label class="srow" for="ljd"><span>Aujourd’hui, c’est le jour</span><span class="sval"><select id="ljd" class="field dsel">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select> <span>de ma boucle</span></span></label>
+    <p class="shint">Pour recommencer ta boucle, choisis le jour 1.</p>
     <div class="row2"><button class="btn primary" data-act="setloop">Enregistrer</button></div>
     ${flash&&tab==='loop'?`<p class="flash">${esc(flash)}</p>`:''}
   </section>
@@ -1162,7 +1155,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 07:02';
+const APP_VERSION='10 nov. 07:10';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -1373,7 +1366,7 @@ const handlers={
         const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
         setTimeout(()=>URL.revokeObjectURL(url),4000);
         done('Fichier enregistré dans tes téléchargements.');
-      }catch(e){ flash='Impossible de créer le fichier. Utilise le code à copier.'; render(); }
+      }catch(e){ flash='Impossible de créer le fichier.'; render(); }
     };
     try{
       if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
