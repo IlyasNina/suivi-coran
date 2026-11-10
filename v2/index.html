@@ -308,7 +308,9 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .overview .ov[aria-pressed=true]{background:var(--soft);border-bottom:1px solid var(--line)}
 
 /* Réglages */
-.lhl{background:#f6df8f;border-radius:.2em;box-shadow:0 0 0 .1em #f6df8f}
+.lhl{}
+#ltext .qline{position:relative;isolation:isolate}
+.lbar{position:absolute;z-index:-1;top:16%;height:68%;border-radius:.3em;background:rgba(255,226,80,.42);pointer-events:none}
 .lnum{width:84px;height:44px;border:1.5px solid var(--line,#e3dcc6);border-radius:12px;background:#fff;text-align:center;font:inherit;font-size:1.1rem;font-weight:700;color:inherit}
 .lplayer{margin:10px 0 0;text-align:center}.lstat{font-size:.88rem;color:#555;min-height:1.3em}
 .lctl{display:flex;justify-content:center;align-items:center;gap:26px;margin-top:8px}
@@ -2091,7 +2093,10 @@ function lHL(){
   const box=document.getElementById('ltext'); if(!box) return;
   box.querySelectorAll('.lhl').forEach(e=>e.classList.remove('lhl'));
   const g=sFirst[LP.s-1]+LP.i-1;
-  box.querySelectorAll('[data-g="'+g+'"]').forEach(e=>e.classList.add('lhl'));
+  box.querySelectorAll('.lbar').forEach(e=>e.remove());
+  const els=box.querySelectorAll('[data-g="'+g+'"]'); els.forEach(e=>e.classList.add('lhl'));
+  const by=new Map(); els.forEach(e=>{ const ln=e.closest('.qline'); if(!ln) return; const r=e.getBoundingClientRect(); const o=by.get(ln)||{l:1e9,r:-1e9}; o.l=Math.min(o.l,r.left); o.r=Math.max(o.r,r.right); by.set(ln,o); });
+  by.forEach((o,ln)=>{ const lr=ln.getBoundingClientRect(), d=document.createElement('div'); d.className='lbar'; const pad=lr.height*.06; d.style.left=(o.l-lr.left-pad)+'px'; d.style.width=(o.r-o.l+2*pad)+'px'; ln.appendChild(d); });
 }
 function listenHTML(){
   if(LP.on) return `<header class="top"><button class="back" data-act="lstop" aria-label="Fermer">‹</button><div class="qhead"><b id="ltitle"></b><span>Écouter</span></div><span style="width:44px"></span></header>
