@@ -1564,8 +1564,9 @@ async function tGet(name,asText){
 function tLoadModel(){
   if(tSess) return Promise.resolve();
   if(!tLoading) tLoading=(async()=>{
-    const bases=['https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/','https://unpkg.com/onnxruntime-web@1.30.0/dist/'];
-    if(!window.ort){ let err; for(const b of bases){ try{ await tScript(b+'ort.min.js'); err=null; break; }catch(e){ err=e; } } if(err) throw err; }
+    /* L'outil de reconnaissance vocale est hébergé avec l'application (plus de dépendance à un site extérieur) ; les deux CDN ne servent que de secours. */
+    const ORT_LOCAL='vendor/ort/', bases=[new URL(ORT_LOCAL,location.href).href,'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/','https://unpkg.com/onnxruntime-web@1.30.0/dist/'];
+    if(!window.ort){ let err; for(const b of bases){ try{ await tScript(b+(b.indexOf('/vendor/ort/')>=0?'ort.wasm.min.js':'ort.min.js')); err=null; break; }catch(e){ err=e; } } if(err) throw err; }
     window.ort.env.wasm.numThreads=1; window.ort.env.wasm.proxy=false;
     (await tGet('tokens.txt',true)).split('\n').filter(Boolean).forEach(l=>{ const i=l.lastIndexOf(' '); tTok[+l.slice(i+1)]=l.slice(0,i); });
     const buf=await tGet('model.int8.onnx',false);
