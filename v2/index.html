@@ -311,6 +311,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lhl{}
 #ltext .qline{position:relative;isolation:isolate}
 .lbar{position:absolute;z-index:-1;top:16%;height:68%;border-radius:.3em;background:rgba(255,226,80,.42);pointer-events:none}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cs{min-width:0}.cl{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:4px}.cc{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:12px;padding:3px;background:var(--bg)}.cc button{width:36px;height:38px;border:0;border-radius:9px;background:#fff;font-size:1.2rem;font-weight:700;color:inherit}.cc output{flex:1;text-align:center;font-weight:700;font-size:1rem}.cc .lnum{flex:1;width:0;min-width:0;height:38px;border:0;background:transparent;font-size:1rem}
 .lnum{width:84px;height:44px;border:1.5px solid var(--line,#e3dcc6);border-radius:12px;background:#fff;text-align:center;font:inherit;font-size:1.1rem;font-weight:700;color:inherit}
 .lplayer{margin:10px 0 0;text-align:center}.lstat{font-size:.88rem;color:#555;min-height:1.3em}
 .lctl{display:flex;justify-content:center;align-items:center;gap:26px;margin-top:8px}
@@ -2104,16 +2105,19 @@ function listenHTML(){
     <div class="lplayer"><div class="lstat" id="lstat" aria-live="polite"></div>
       <div class="lctl"><button data-act="lskip" data-d="-1" aria-label="Verset précédent">${L_I.prev}</button><button class="lpp" id="lpp" data-act="lpp" aria-label="Pause">${L_I.pause}</button><button data-act="lskip" data-d="1" aria-label="Verset suivant">${L_I.next}</button></div>
       <div class="lspd"><button class="vbtn" data-act="lspd" data-d="-1" aria-label="Moins vite">−</button><output id="lspd">${lSpd()}</output><button class="vbtn" data-act="lspd" data-d="1" aria-label="Plus vite">+</button></div></div>`;
-  const stp=(k,label,disp)=>`<div class="rrow"><span class="rl">${label}</span><span class="ctl"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">−</button><output>${disp}</output><button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">+</button></span></div>`;
+  const cs=(k,label,mid)=>`<div class="cs"><span class="cl">${label}</span><div class="cc"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">−</button>${mid}<button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">+</button></div></div>`;
+  const out=v=>`<output>${v}</output>`;
+  const inp=(id,v,n,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="${n}" value="${v}" aria-label="${lab}">`;
   const n=lNb(LS.s);
   return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button><h2>Écouter</h2></header>
-    <section class="blk"><h3 class="rh">Récitant</h3><select id="lrec" class="field" style="width:100%" aria-label="Récitant">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>${lRec().warsh?'<p class="shint">Récitation en Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}</section>
-    <section class="blk"><h3 class="rh">Passage</h3>
-      <select id="lsur" class="field" style="width:100%" aria-label="Sourate">${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
-      ${stp('a','Du verset','<input class="lnum" id="lva" type="number" inputmode="numeric" min="1" max="'+n+'" value="'+LS.a+'" aria-label="Du verset">')}${stp('b','Au verset','<input class="lnum" id="lvb" type="number" inputmode="numeric" min="1" max="'+n+'" value="'+LS.b+'" aria-label="Au verset">')}
+    <section class="blk"><h3 class="rh" style="margin-bottom:12px">Récitant et passage</h3>
+      <select id="lrec" class="field" style="width:100%" aria-label="Récitant">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>
+      ${lRec().warsh?'<p class="shint">Récitation en Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}
+      <select id="lsur" class="field" style="width:100%;margin-top:8px" aria-label="Sourate">${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
+      <div class="cgrid" style="margin-top:10px">${cs('a','Du verset',inp('lva',LS.a,n,'Du verset'))}${cs('b','Au verset',inp('lvb',LS.b,n,'Au verset'))}</div>
       <p class="shint">Cette sourate a ${n} versets.</p></section>
-    <section class="blk"><h3 class="rh">Répétitions</h3>
-      ${stp('rAll','Toute la plage',LS.rAll?LS.rAll+'×':'∞')}${stp('rAya','Chaque verset',LS.rAya+'×')}${stp('pause','Pause entre deux',LS.pause+' s')}${stp('speed','Vitesse',lSpd())}
+    <section class="blk"><h3 class="rh" style="margin-bottom:12px">Répétitions et lecture</h3>
+      <div class="cgrid">${cs('rAya','Chaque verset',out(LS.rAya+'×'))}${cs('rAll','Toute la plage',out(LS.rAll?LS.rAll+'×':'∞'))}${cs('pause','Pause entre deux',out(LS.pause+' s'))}${cs('speed','Vitesse',out(lSpd()))}</div>
       <div class="rrow"><span class="rl">Passer à la sourate suivante<small>${LS.rAll?'Quand tous les tours sont finis.':'Choisis un nombre de tours, pas ∞.'}</small></span><button class="ltg" data-act="lnext" role="switch" aria-checked="${LS.next}" aria-label="Passer à la sourate suivante"><span></span></button></div></section>
     <div class="savebar"><button class="btn primary" data-act="lplay">Écouter</button></div>`;
 }
