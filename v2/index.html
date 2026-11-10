@@ -34,7 +34,7 @@
   --accent:#0E6B5C;
   --accent-ink:#FFFFFF;
   --n-bg:#E7E1CF; --n-fg:#4A5852;
-  --v-bg:#2F7D3A; --v-fg:#FFFFFF;
+  --v-bg:#2F7D3A; --v-fg:#FFFFFF; --v-ink:#2F7D3A;
   --o-bg:#B85A0B; --o-fg:#FFFFFF;
   --r-bg:#B3261E; --r-fg:#FFFFFF;
   --b-bg:#BFE4F8; --b-fg:#0B3550; --b-ink:#1B5A82; --b-line:#7DBCE3; --o-ink:#8A4308;
@@ -47,7 +47,7 @@
   --bg:#0D1613;--surface:#15211D;--ink:#E7EFEB;--muted:#9BAEA7;--line:#263832;--soft:#1B2A25;--dash:#3A4944;
   --accent:#5CC9AF;--accent-ink:#06211B;
   --n-bg:#26352F;--n-fg:#A9BBB4;
-  --v-bg:#5CC06C;--v-fg:#07200E;
+  --v-bg:#5CC06C;--v-fg:#07200E;--v-ink:#7FD08C;
   --o-bg:#F0A04B;--o-fg:#2B1700;
   --r-bg:#F27B72;--r-fg:#330805;
   --b-bg:#AEDBF3;--b-fg:#08293F;--b-ink:#AEDBF3;--b-line:#5E94B8;--o-ink:#F0A04B;
@@ -57,7 +57,7 @@
   --bg:#0D1613;--surface:#15211D;--ink:#E7EFEB;--muted:#9BAEA7;--line:#263832;--soft:#1B2A25;--dash:#3A4944;
   --accent:#5CC9AF;--accent-ink:#06211B;
   --n-bg:#26352F;--n-fg:#A9BBB4;
-  --v-bg:#5CC06C;--v-fg:#07200E;
+  --v-bg:#5CC06C;--v-fg:#07200E;--v-ink:#7FD08C;
   --o-bg:#F0A04B;--o-fg:#2B1700;
   --r-bg:#F27B72;--r-fg:#330805;
   --b-bg:#AEDBF3;--b-fg:#08293F;--b-ink:#AEDBF3;--b-line:#5E94B8;--o-ink:#F0A04B;
@@ -284,6 +284,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .tl-head span{font-size:.85rem;color:var(--muted)}
 .tl-body .rl b{display:inline;font-size:1rem;text-transform:none;letter-spacing:0;color:var(--ink)}
+.tl-v h4{color:var(--v-ink)}
 .tl-o h4{color:var(--o-ink)}
 .tl-o .bl li{color:var(--ink)}
 .tl-b h4{color:var(--b-ink)}
@@ -1010,13 +1011,6 @@ function planHTML(){
         ${fin?'':'<p class="finhint">Touche chaque rond quand la partie est faite : le bouton s’allume tout seul.</p>'}`;
     }
   }
-  if(nLearned){
-    h+=`<section class="overview"><h3>Toute la semaine</h3>`+plan.map((d,i)=>{
-      const wd=i, dt=addDays(monday,wd);
-      const txt=[shortBlock(d.block)||'Rien au programme'].concat(d.reinf.length?['+ '+d.reinf.length+' à revoir (fragiles)']:[]).join(' · ');
-      return `<button class="ov" data-act="day" data-d="${wd}" aria-pressed="${selDay===wd}"><span class="d">${DAYS_SHORT[wd]} ${dt.getDate()}</span><span class="s">${esc(txt)}</span><span class="c">${dayComplete(pk,wd,d)?'✓':''}</span></button>`;
-    }).join('')+`</section>`;
-  }
   return h;
 }
 
@@ -1167,7 +1161,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='10 nov. 06:57';
+const APP_VERSION='10 nov. 07:01';
 function creditHTML(){ const own=(screen==='profile'&&tab==='reglages'); return '<p class="credit">'+(own?'':'Application créée par Habiba Marchetto<br>')+'Version du '+APP_VERSION+'</p>'; }
 
 function render(){
