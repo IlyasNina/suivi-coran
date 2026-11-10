@@ -1166,7 +1166,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='9 nov. 23:15';
+const APP_VERSION='10 nov. 06:46';
 function creditHTML(){ return '<p class="credit">Application créée par Habiba Marchetto<br>Version du '+APP_VERSION+'</p>'; }
 
 function render(){
@@ -2019,7 +2019,7 @@ function setSec(name){
   $('q').placeholder = 'Récite le verset à voix haute';
   $('tjl').hidden = true; $('tjl').style.display = 'none'; S.tj = false;
   { const ab=ROOT.querySelector('#seg button[aria-pressed="true"]'); if(ab&&ab.scrollIntoView) ab.scrollIntoView({inline:'nearest',block:'nearest'}); }
-  $('foot').innerHTML = (name==='amma' ? FOOT_AMMA : name==='imran' ? FOOT_IMR : name==='bqim' ? FOOT_BQ : MULTI.indexOf(name)>=0 ? FOOT_JUZ.replace('{J}',JUZNAME[name]) : FOOT_BAQ) + '<br>Application créée par Habiba Marchetto.';
+  $('foot').innerHTML = '';
 }
 function save(){ keptRuns = null; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} refreshBackup(); }
 function allGroups(){
