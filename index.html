@@ -307,7 +307,8 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .overview .ov[aria-pressed=true]{background:var(--soft);border-bottom:1px solid var(--line)}
 
 /* Réglages */
-.rsec{margin-top:16px}.rh{font-size:1.12rem;font-weight:700;margin:0 0 6px}.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.rrow[hidden]{display:none}.rrow .rl{font-weight:600;line-height:1.3;display:block}.rrow .rl small{display:block;font-weight:400;font-size:.85rem;color:var(--muted);margin-top:2px}.rrow .dot{margin-right:4px;vertical-align:-1px}.rrow .rin{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:1.25rem;font-weight:700;line-height:1}.rrow .ctl output{min-width:64px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}.rrow .ctl output small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}.rsep{border-top:2px solid var(--line);margin:18px 0 0}.rday{margin:8px 0 12px}.lnk{border:0;background:none;padding:0;color:var(--accent,#2f6b57);font:inherit;font-weight:600;text-decoration:underline}.rsec .row2{margin:6px 0 4px}
+.blk{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}.blk .rh{margin:0 0 4px}.blk .rrow:last-child{border-bottom:0}.blk .shint{margin:2px 0 6px}.blk .lvrow,.blk .acc{background:var(--bg)}.blk .acc>.ab .lvrow,.blk .acc>.ab .lvall{background:#fff}.blk .acc.ex{background:rgba(120,120,110,.12)}.blk .lvrow.ex{background:rgba(120,120,110,.12)!important}.blk .rsec{margin:0}
+.rsec{margin-top:16px}.rh{font-size:1.12rem;font-weight:700;margin:0 0 6px}.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.rrow[hidden]{display:none}.rrow .rl{font-weight:600;line-height:1.3;display:block}.rrow .rl small{display:block;font-weight:400;font-size:.85rem;color:var(--muted);margin-top:2px}.rrow .dot{margin-right:4px;vertical-align:-1px}.rrow .rin{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl{display:flex;align-items:center;gap:8px;flex-shrink:0}.rrow .ctl button{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:1.25rem;font-weight:700;line-height:1}.rrow .ctl output{min-width:64px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}.rrow .ctl output small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}.rday{margin:8px 0 12px}.lnk{border:0;background:none;padding:0;color:var(--accent,#2f6b57);font:inherit;font-weight:600;text-decoration:underline}.rsec .row2{margin:6px 0 4px}
 .setcard h4{font-size:1rem}
 .setcard p{color:var(--muted);font-size:.9rem}
 .stepper{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -1158,7 +1159,7 @@ function loopHTML(){
   const others=tr.filter(n=>n!==1&&modeOf(n)!=='pages'&&!inJuz.has(n));
   const st2=(key,val,unit)=>`<span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins">−</button><output>${val}<small>${unit}</small></output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus">+</button></span>`;
   const infoI=(id,txt)=>`<span class="infow"><button type="button" class="infob" data-act="info" data-t="${id}" aria-expanded="false" aria-label="Plus d’information"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.7" r="1" fill="currentColor" stroke="none"/></svg></button><div class="pop" id="${id}" role="tooltip" hidden>${txt}</div></span>`;
-  let h=`<section class="rsec">
+  let h=`<section class="blk">
     <h3 class="rh">Réglages principaux</h3>
     <div class="rrow"><label class="rl" for="lpn">Durée de la boucle<small>Tout ce que tu as appris est révisé dans ce délai.</small></label>
       <span class="rin"><input id="lpn" class="field sbox" type="number" inputmode="numeric" min="3" max="40" value="${N}"><span class="sun">jours</span></span></div>
@@ -1171,10 +1172,8 @@ function loopHTML(){
     <div class="rrow"><span class="rl"><i class="dot st-b"></i> Une page jadida reste bleue pendant :</span>${st2('fd',s.fd,'jours')}</div>
     <div class="rrow"><span class="rl"><i class="dot st-o"></i> Une page fragile revient…${infoI('frh','C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».')}</span>${st2('fo',s.fo+'×','par semaine')}</div>
   </section>
-  <div class="rsep"></div>
-  <section class="rsec"><h3 class="rh">Affiner sourate par sourate</h3>
-    <p class="shint">Règle ici la fréquence de certaines sourates ou de leurs pages fragiles.</p>
-  </section>`;
+  <section class="blk"><h3 class="rh">Affiner sourate par sourate</h3>
+    <p class="shint">Règle ici la fréquence de certaines sourates ou de leurs pages fragiles.</p>`;
   const top=[1].concat(pageSur.filter(n=>n!==1));
   h+=`<div class="lvlist">${top.map(surLvRow).join('')}</div>`;
   if(others.length) h+=lvAcc('Lothers','Autres sourates',others.length+' sourates',others.map(surLvRow).join(''));
@@ -1183,6 +1182,7 @@ function loopHTML(){
     const body=`<div class="lvall${uni==='x'?' ex':''}"><div class="nm">Tout le juzz d’un coup</div>${lvSel('leveljuz',`data-j="${j.id}"`,uni)}</div>`+ns.map(surLvRow).join('');
     h+=lvAcc('L'+j.id,esc(j.fr),ns.length+' sourates',body,uni==='x');
   });
+  h+='</section>';
   return h;
 }
 function profileHTML(){
