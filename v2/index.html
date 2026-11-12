@@ -2210,7 +2210,7 @@ function listenHTML(){
     <section class="lcard"><div class="lab">Sourate · ${n} versets</div>
       <select id="lsur" class="field" style="width:100%" aria-label="Sourate"${dis}>${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
       <div class="l2"><div><div class="lab">Du verset</div>${inp('lva',LS.a,n,'Du verset').replace('<input','<input'+dis)}</div><div><div class="lab">Au verset</div>${inp('lvb',LS.b,n,'Au verset').replace('<input','<input'+dis)}</div></div>
-      <div class="lor">ou par pages</div>
+      <div class="lor"></div>
       <div class="l2"><div><div class="lab">De la page</div>${inpP('lpa',LS.pa,'De la page')}</div><div><div class="lab">À la page</div>${inpP('lpb',LS.pb,'À la page')}</div></div></section>
     <section class="lcard"><div class="lab">Répéter</div>
       ${st('rAya','Chaque verset',LS.rAya+'×')}${st('rAll','Toute la plage',LS.rAll?LS.rAll+'×':'∞')}</section>
