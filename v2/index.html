@@ -1212,7 +1212,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4.1';
+const APP_VERSION='1.4.2';
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
 function creditText(){ return '<p class="credit">Application créée par Habiba Marchetto — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
