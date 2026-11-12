@@ -758,7 +758,7 @@ function buildCycle(pk,k){
     /* Une page fragile reste dans la suite (pour que les numéros se suivent) ; elle est en plus reprise dans « pages fragiles ».
        Une sourate entière fragile, elle, n'est pas dans la révision qadima. */
     const qOn=it=>{ const lv=levelOf(P,it.sn); return lv.charAt(0)!=='e'||((((k+it.sn)%(+lv.slice(1)))+(+lv.slice(1)))%(+lv.slice(1)))===0; };
-    const arr=groups[g].filter(it=>marks[it.id]==='v'||(marks[it.id]==='o'&&it.kind==='b'&&qOn(it))); if(!arr.length) return;
+    const arr=groups[g].filter(it=>marks[it.id]==='v'||((marks[it.id]==='o'||marks[it.id]==='b')&&it.kind==='b'&&qOn(it))); if(!arr.length) return;
     /* Une suite continue : les passages de la sourate (ou du juzz) se suivent, chaque jour reprend là où la veille s'est arrêtée,
        avec à peu près le même nombre de pages. Quand on arrive à la fin, on recommence au début. */
     const kmax=Math.max.apply(null,arr.map(it=>levelLaps(levelOf(P,it.sn))));
@@ -779,8 +779,9 @@ function buildCycle(pk,k){
   /* À revoir en plus : le orange, le bleu, et toute la sourate prioritaire (même en vert). */
   const weak=L.filter(it=>marks[it.id]==='o'||marks[it.id]==='b').sort((a,b)=>pri(a)-pri(b)||kind(a)-kind(b)||order[a.id]-order[b.id]);
   const load=new Array(m).fill(0);
-  /* Le bleu et les sourates entières fragiles ne sont pas de la « révision qadima » : ils ont leur propre rubrique. Une page fragile reste dans la suite. */
-  days.forEach(d=>{ d.block=d.block.filter(it=>!(marks[it.id]==='b'||(marks[it.id]==='o'&&it.kind!=='b'))); });
+  /* Les sourates entières (fragiles ou bleues) ne sont pas de la « révision qadima » : elles ont leur propre rubrique.
+     Une page fragile ou bleue d'une sourate à pages reste dans la suite (pour que les numéros se suivent), en plus de sa rubrique. */
+  days.forEach(d=>{ d.block=d.block.filter(it=>!((marks[it.id]==='b'||marks[it.id]==='o')&&it.kind!=='b')); });
   /* Pages fragiles : une suite logique. Dans l'ordre du mushaf, on en prend un peu chaque jour (11 et 12 aujourd'hui, 13 demain…),
      et chaque passage supplémentaire refait la même suite, décalée de quelques jours. Le bleu revient chaque jour. */
   const fr=weak.filter(it=>kind(it)===0).sort((a,b)=>order[a.id]-order[b.id]);
