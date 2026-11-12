@@ -287,7 +287,18 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .bl li::marker{color:var(--muted)}
 .bh{margin:8px 0 0;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
 .finish{margin-top:14px;border:2px solid var(--line);color:var(--muted);border-radius:14px;min-height:50px;display:flex;align-items:center;justify-content:center;font-weight:700;text-align:center}
-.finish.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.finish{position:relative;margin-bottom:10px;gap:10px;box-shadow:0 4px 0 #D2CDB9,0 8px 14px rgba(27,43,38,.08),inset 0 2px 0 rgba(255,255,255,.9)}
+.finish.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 5px 0 #1D4A3B,0 10px 18px rgba(29,74,59,.30),inset 0 2px 0 rgba(255,255,255,.22)}
+.finish .fck{display:flex}
+.finish.go{animation:finpress .45s ease-out}
+.finish.go .chk{stroke-dasharray:26;stroke-dashoffset:26;animation:findraw .45s .12s ease-out forwards}
+.finish.go .fck{animation:finpop .5s .12s cubic-bezier(.3,1.6,.5,1)}
+@keyframes finpress{0%{transform:translateY(0)}25%{transform:translateY(4px);box-shadow:0 1px 0 #1D4A3B,0 3px 6px rgba(29,74,59,.25)}60%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+@keyframes findraw{to{stroke-dashoffset:0}}
+@keyframes finpop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.finish .st{position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;opacity:0;pointer-events:none;animation:finburst 1s cubic-bezier(.15,.8,.3,1) forwards}
+@keyframes finburst{0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0deg)}12%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(var(--r))}}
+@media (prefers-reduced-motion:reduce){.finish.go,.finish.go .fck,.finish.go .chk{animation:none}.finish .st{display:none}}
 .finhint{font-size:.82rem;color:var(--muted);text-align:center;margin-top:6px}
 .tl-line{flex-grow:1;width:3px;background:var(--dash);margin-top:4px;border-radius:2px}
 .tl-body{padding-bottom:22px;min-width:0}
@@ -1037,6 +1048,10 @@ function tlSec(cls,sym,sec,done,title,sub,body,last){
   return `<div class="tl-sec ${cls}"><div class="tl-rail"><button class="tl-dot${done?' on':''}" data-act="done" data-sec="${sec}" aria-pressed="${done?'true':'false'}" aria-label="${esc(title)} : ${done?'fait':'à faire'}">${sym}</button>${last?'':'<span class="tl-line"></span>'}</div>
     <div class="tl-body"><div class="tl-head"><h4>${title}</h4>${sub?`<span>${sub}</span>`:''}</div>${body}</div></div>`;
 }
+/* Étoiles qui s'éparpillent quand la mouraja'a du jour vient d'être terminée */
+const FIN_STARS=[[-140,-62,140,16,'#E8B64A',.05],[-96,-86,-120,12,'#7FC4A8',.1],[-52,-70,90,20,'#F2D27A',0],[-14,-96,-70,13,'#8DB9E0',.12],[30,-78,150,16,'#E8B64A',.03],[78,-92,-140,11,'#7FC4A8',.14],[118,-60,100,19,'#F2D27A',.02],[150,-30,-90,16,'#8DB9E0',.08],[-150,-22,80,12,'#F2D27A',.09],[-120,34,-110,11,'#7FC4A8',.16],[100,36,130,12,'#E8B64A',.18],[-8,44,60,10,'#8DB9E0',.2]];
+function finStarsHTML(){ return FIN_STARS.map(a=>`<svg class="st" style="--dx:${a[0]}px;--dy:${a[1]}px;--r:${a[2]}deg;width:${a[3]}px;height:${a[3]}px;margin:${-a[3]/2}px 0 0 ${-a[3]/2}px;animation-delay:${a[5]}s" viewBox="0 0 24 24" aria-hidden="true"><path fill="${a[4]}" d="M12 2l2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6z"/></svg>`).join(''); }
+const finSeen={};
 function planHTML(){
   const monday=mondayOf(new Date()), tw=todayWd(), plan=weekPlan(pk,monday), P=state.profiles[pk], PL=P.loop;
   const learned=counts(pk); const nLearned=learned.v+learned.o+learned.b;
@@ -1064,7 +1079,8 @@ function planHTML(){
     } else {
       h+=`<div class="tl">`+secs.map((x,i)=>tlSec(x[0],x[1],x[2],!!x[6],x[3],x[4],x[5],i===secs.length-1)).join('')+`</div>`;
       const fin=dayComplete(pk,selDay,d);
-      h+=`<div class="finish${fin?' on':''}" role="status">${fin?'Mouraja’a terminée ✓':'J’ai terminé ma mouraja’a'}</div>
+      const fk=pk+'|'+wkKey(monday)+'|'+selDay, play=!!fin&&finSeen[fk]===false; finSeen[fk]=!!fin;
+      h+=`<div class="finish${fin?' on':''}${play?' go':''}" role="status">${fin?'<span>Mouraja’a terminée</span><span class="fck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="chk" d="M5 12.5l4.5 4.5L19 7"/></svg></span>'+(play?finStarsHTML():''):'J’ai terminé ma mouraja’a'}</div>
         ${fin?'':'<p class="finhint">Touche chaque rond quand la partie est faite : le bouton s’allume tout seul.</p>'}`;
     }
   }
@@ -1225,7 +1241,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4.3';
+const APP_VERSION='1.4.4';
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
 function creditText(){ return '<p class="credit">Application créée par Habiba Marchetto — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
