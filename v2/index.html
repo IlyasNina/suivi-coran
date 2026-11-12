@@ -334,10 +334,16 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lor{margin:12px 0 2px;text-align:center;font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.lnum:disabled,.lcard select:disabled{opacity:.4;background:#F3F0E6}
 .lnum{width:84px;height:44px;border:1.5px solid var(--line,#e3dcc6);border-radius:12px;background:#fff;text-align:center;font:inherit;font-size:1.1rem;font-weight:700;color:inherit}
 .lplayer{margin:8px 0 0;text-align:center}.lstat{font-size:.88rem;color:#555}.lstat:empty{display:none}
-.lctl{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:2px}
-.lctl button{width:40px;height:40px;border-radius:50%;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;color:#111}
-.lctl svg{width:22px;height:22px;fill:currentColor;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.lctl .lpp{width:46px;height:46px;background:var(--accent);color:#fff}.lctl .lpp svg{width:20px;height:20px;fill:#fff;stroke:#fff}
+.lctl{display:flex;justify-content:center;align-items:center;gap:40px;margin-top:6px}
+.lctl button{width:52px;height:52px;border-radius:50%;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;color:#3A3A3C;transition:transform .15s ease,opacity .15s ease;-webkit-tap-highlight-color:transparent}
+.lctl button:active{transform:scale(.86);opacity:.6}
+.lctl svg{width:30px;height:30px;fill:currentColor;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.lctl .lpp{width:78px;height:78px;background:#919192;color:#fff;box-shadow:0 0 0 6px rgba(60,60,67,.10),0 10px 20px rgba(0,0,0,.28),inset 0 1.5px 0 rgba(255,255,255,.22);transition:transform .18s cubic-bezier(.3,1.5,.5,1)}
+.lctl .lpp:active{transform:scale(.9);opacity:1}
+.lctl .lpp svg{width:34px;height:34px;fill:#fff;stroke:none;animation:lppop .28s cubic-bezier(.3,1.5,.5,1)}
+.lctl .lpp svg.lplay{margin-left:3px;stroke:#fff;stroke-width:3}
+@keyframes lppop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.lctl .lpp svg{animation:none}}
 .lspd{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:2px}.lspd output{min-width:52px;font-weight:600;font-size:.85rem}.lspd .vbtn{min-height:28px;min-width:32px;padding:0 8px;border-radius:9px;font-size:.95rem}
 .ltg{width:46px;height:28px;border-radius:14px;border:0;background:#d9d1b6;position:relative;padding:0;flex:none}
 .ltg span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
@@ -2103,10 +2109,10 @@ function lClamp(){
 }
 lClamp();
 const L_I={
-  prev:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M19 6v12l-9-6z"/></svg>',
-  next:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M5 6v12l9-6z"/></svg>',
-  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
-  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>'
+  prev:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6v12L2.5 12zM21 6v12l-8.5-6z"/></svg>',
+  next:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6v12l8.5-6zM3 6v12l8.5-6z"/></svg>',
+  play:'<svg class="lplay" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13L19 12z" stroke-linejoin="round"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4.5" width="4.4" height="15" rx="1.6"/><rect x="13.6" y="4.5" width="4.4" height="15" rx="1.6"/></svg>'
 };
 let lAud=null, lSil={};
 function lUrls(s,i){ const c=('00'+s).slice(-3)+('00'+i).slice(-3), g=sFirst[s-1]+i-1, r=lRec();
