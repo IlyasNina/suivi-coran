@@ -313,6 +313,7 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lbar{position:absolute;z-index:-1;top:16%;height:68%;border-radius:.3em;background:rgba(255,226,80,.42);pointer-events:none}
 .lcard{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:10px 14px;margin-top:8px}.lcard .lab{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:6px}.l2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.l2 .lnum{width:100%;height:42px;font-size:1.3rem}.lr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0}.lr+.lr{border-top:1px solid var(--line)}.ll{font-weight:600;line-height:1.25}.ll small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}.lr .cc{width:148px;flex-shrink:0}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cs{min-width:0}.cl{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:4px}.cc{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:12px;padding:3px;background:var(--bg)}.cc button{width:36px;height:38px;border:0;border-radius:9px;background:#fff;font-size:1.2rem;font-weight:700;color:inherit}.cc output{flex:1;text-align:center;font-weight:700;font-size:1rem}.cc .lnum{flex:1;width:0;min-width:0;height:38px;border:0;background:transparent;font-size:1rem}
+.lor{margin:12px 0 2px;text-align:center;font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.lnum:disabled,.lcard select:disabled{opacity:.4;background:#F3F0E6}
 .lnum{width:84px;height:44px;border:1.5px solid var(--line,#e3dcc6);border-radius:12px;background:#fff;text-align:center;font:inherit;font-size:1.1rem;font-weight:700;color:inherit}
 .lplayer{margin:8px 0 0;text-align:center}.lstat{font-size:.88rem;color:#555}.lstat:empty{display:none}
 .lctl{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:2px}
@@ -389,6 +390,18 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 .qback .back{font-size:1rem;display:flex;align-items:center;gap:4px;margin-left:0;padding:0 4px 0 0}
 .qtools{display:flex;gap:8px;align-items:center}
 .qtools .vbtn{min-width:44px;padding:0 10px}
+.qtools .qsel{max-width:122px;padding:0 8px}
+.qtools .qbmk{display:flex;align-items:center;justify-content:center;padding:0}.qtools .qbmk.on{border-color:#8E3B46}
+.qshbg{position:fixed;inset:0;z-index:100;background:rgba(27,43,38,.4)}
+.qsheet{position:fixed;left:0;right:0;bottom:0;z-index:101;box-sizing:border-box;background:#fff;color:#1B2B26;border-radius:24px 24px 0 0;padding:12px 18px calc(26px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(27,43,38,.18)}
+.qsheet .grip{width:40px;height:5px;border-radius:3px;background:#D9D5C5;margin:0 auto 14px}
+.qsheet h3{margin:0 0 12px;font-size:1.1rem}
+.qsheet .mk{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #8E3B46;border-radius:16px;background:#FBF3F4}
+.qsheet .mk div{flex:1}.qsheet .mk b{display:block;font-size:1rem}.qsheet .mk small{color:#5C6762;font-size:.82rem}
+.qsheet .mkgo{min-height:44px;padding:0 20px;border-radius:22px;border:0;background:#8E3B46;color:#fff;font-size:.95rem;font-weight:600;font-family:inherit}
+.qsheet .mkset{margin-top:10px;width:100%;min-height:48px;border-radius:24px;border:1.5px solid #D9D5C5;background:#fff;color:#1B2B26;display:flex;align-items:center;justify-content:center;gap:10px;font-size:.95rem;font-weight:600;font-family:inherit}
+.qsheet .mkdel{margin-top:4px;width:100%;min-height:42px;border:0;background:transparent;color:#5C6762;font-size:.88rem;font-family:inherit}
+.qsheet .mkhere{margin:10px 0 0;text-align:center;font-size:.88rem;color:#5C6762}
 .qtitle{flex:1;min-width:0;text-align:center}
 .qtitle .ar{font-family:var(--f-ar);font-size:1.5rem;line-height:1.2}
 .qtitle .fr{display:block;font-size:.78rem;color:var(--muted)}
@@ -874,7 +887,7 @@ function hasPages(pk){ return trackedFor(pk,state.profiles[pk].extra).some(n=>mo
 const app=document.getElementById('app'), mutaHost=document.getElementById('mutaHost'), navEl=document.getElementById('nav');
 let qv='menu', qp=1, qPop=false;
 let LP={on:false,playing:false,done:false,s:1,a:1,b:1,i:1,tour:1,rep:1,phase:'verse',page:0,urlIdx:0};
-let LS={s:1,a:1,b:7,rAll:0,rAya:1,pause:0,speed:1,next:false,rec:'husary'};
+let LS={s:1,a:1,b:7,pa:0,pb:0,rAll:0,rAya:1,pause:0,speed:1,next:false,rec:'husary'};
 try{ const o=JSON.parse(localStorage.getItem('suivi-coran-ecouter')||'null'); if(o&&typeof o==='object'){ Object.keys(LS).forEach(k=>{ if(o[k]!==undefined) LS[k]=o[k]; }); } }catch(e){}
 const QVERS={tajwid:['Hafs · Tajwîd','easyquran.com/hafs-tajweed/','jpg','abarizqon/quran-pages-images'],madina:['Hafs · Médine','kfgqpc/hafs-wasat/','jpg'],warsh:['Warch','kfgqpc/warsh/','jpg']};
 let qVer='tajwid'; try{ const v=localStorage.getItem('suivi-coran-ver'); if(v&&QVERS[v]) qVer=v; }catch(e){}
@@ -1212,7 +1225,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4.2';
+const APP_VERSION='1.4.3';
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
 function creditText(){ return '<p class="credit">Application créée par Habiba Marchetto — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
@@ -1334,6 +1347,11 @@ function toggleDone(sec){
 }
 function resetUI(){ flash=''; confirmReset=false; confirmDel=false; confirmJuz=''; confirmRem=0; openRange=0; backupText=''; }
 const handlers={
+  qmkopen(){ go(()=>{ qSheet=true; }); },
+  qmkclose(){ go(()=>{}); },
+  qmkset(){ go(()=>{ qMark={p:qp,t:Date.now()}; saveMark(); }); },
+  qmkdel(){ go(()=>{ qMark=null; saveMark(); }); },
+  qmkgo(){ go(()=>{ if(qMark){ qp=qMark.p; qPos={p:qp,t:Date.now()}; saveReadNow(); } }); },
   qmenu(){ go(()=>{ if(main==='quran'&&qv==='read') saveReadNow(); main='quran'; qv='menu'; }); },
   qpopclose(){ go(()=>{ qPop=false; }); },
   qmuta(){ go(()=>{ qPop=false; main='muta'; }); },
@@ -1349,8 +1367,10 @@ const handlers={
   lnext(){ LS.next=!LS.next; lSave(); render(); },
   lplay(){ lStart(); go(()=>{}); },
   lstop(){ go(()=>{ lStop(); }); },
-  lpp(){ if(!lAud) return; if(LP.done){ LP.done=false; LP.i=LP.a; LP.tour=1; LP.rep=1; lPlayVerse(); return; } if(LP.playing) lAud.pause(); else { const r=lAud.play(); if(r&&r.catch) r.catch(()=>{}); } },
-  lskip(el){ const n=LP.i+(+el.dataset.d); if(n<LP.a||n>LP.b) return; LP.i=n; LP.rep=1; LP.done=false; lPlayVerse(); },
+  lpp(){ if(!lAud) return; if(LP.done){ LP.done=false; if(LP.segs) lSeg(0); else LP.i=LP.a; LP.tour=1; LP.rep=1; lPlayVerse(); return; } if(LP.playing) lAud.pause(); else { const r=lAud.play(); if(r&&r.catch) r.catch(()=>{}); } },
+  lskip(el){ const d=+el.dataset.d, n=LP.i+d;
+    if(n<LP.a||n>LP.b){ if(!LP.segs) return; const k=LP.si+d; if(k<0||k>=LP.segs.length) return; lSeg(k); if(d<0) LP.i=LP.b; } else LP.i=n;
+    LP.rep=1; LP.done=false; lPlayVerse(); },
   lspd(el){ const i=L_SPEEDS.indexOf(LS.speed); LS.speed=L_SPEEDS[clamp(i+(+el.dataset.d),0,L_SPEEDS.length-1)]; lSave(); if(lAud&&LP.phase==='verse'){ lAud.defaultPlaybackRate=LS.speed; lAud.playbackRate=LS.speed; } const o=document.getElementById('lspd'); if(o) o.textContent=lSpd(); },
   qread(el){ go(()=>{ qPop=false; main='quran'; qv='read'; if(el.dataset.p){ qp=+el.dataset.p; qPos={p:qp,t:Date.now()}; saveReadNow(); } else if(qPos){ qp=qPos.p; } }); },
   qlist(){ go(()=>{ saveReadNow(); qv='list'; }); },
@@ -1830,6 +1850,11 @@ document.addEventListener('error',e=>{
 /* ---------- Onglet Coran (lecture, page par page) ---------- */
 const Q_KEY='suivi-coran-lire';
 let qPos=null, qDb=null;
+/* Marque-page : une page gardée de côté, indépendante de la dernière page lue (stockée dans le navigateur) */
+const Q_MARK='suivi-coran-marque'; let qMark=null, qSheet=false;
+try{ const m=JSON.parse(localStorage.getItem(Q_MARK)||'null'); if(m&&m.p>=1&&m.p<=604) qMark={p:+m.p,t:+m.t||0}; }catch(e){}
+function saveMark(){ try{ if(qMark) localStorage.setItem(Q_MARK,JSON.stringify(qMark)); else localStorage.removeItem(Q_MARK); }catch(e){} }
+const BMK_SVG=(on,sz)=>'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+(on?'#8E3B46':'none')+'" stroke="#8E3B46" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>';
 const sFirst=[]; { let c=1; QDATA.forEach(v=>{ sFirst.push(c); c+=v.length; }); }   /* n° global du premier verset de chaque sourate */
 function pageOfAyah(id){ let lo=1, hi=604; while(lo<hi){ const m=(lo+hi+1)>>1; if(QPAGE[m]<=id) lo=m; else hi=m-1; } return lo; }
 function surOfAyah(id){ let lo=0, hi=113; while(lo<hi){ const m=(lo+hi+1)>>1; if(sFirst[m]<=id) lo=m; else hi=m-1; } return lo+1; }
@@ -1927,6 +1952,13 @@ function qLayoutInto(box,p,tag){
   if(mx>0){ const sc=1.15; if(sc>1.01){ f2=f*sc; const lh2=Math.min(lh,f2*2.2); box.style.fontSize=f2+'px'; box.style.lineHeight=lh2+'px'; box.querySelectorAll('.qline,.qban,.qbism').forEach(e=>{ e.style.height=lh2+'px'; }); } }
   qFit(box,W,f2);
 }
+function markSheetHTML(p){
+  const here=qMark&&qMark.p===p;
+  return `<div class="qshbg" data-act="qmkclose"></div><div class="qsheet" role="dialog" aria-label="Marque-page"><div class="grip"></div><h3>Mon marque-page</h3>
+  ${qMark?`<div class="mk">${BMK_SVG(true,24)}<div><b>${esc(SUR[surOfAyah(QPAGE[qMark.p])-1].fr)}</b><small>Page ${qMark.p}</small></div>${here?'':'<button class="mkgo" data-act="qmkgo">Revenir</button>'}</div>`:''}
+  ${here?'<p class="mkhere">Le marque-page est sur cette page.</p>':`<button class="mkset" data-act="qmkset">${BMK_SVG(false,18)}${qMark?'Déplacer ici':'Poser ici'} · page ${p}</button>`}
+  ${qMark?'<button class="mkdel" data-act="qmkdel">Retirer le marque-page</button>':''}</div>`;
+}
 function quranHTML(){
   const credit='<p class="credit">Texte du Coran : The Noble Qur’an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0. Pagination : quran-meta, licence MIT. Mise en page du mushaf de Médine et texte QPC Hafs : Complexe du Roi Fahd, via Quranic Universal Library (Tarteel). Noms de sourates en calligraphie : Naveed Ahmad et Muath Ahmed Ibn-Hassan (QUL), CC BY 4.0. Images des pages : dépôts QuranHub/quran-pages-images (Hafs, Warch ; domaine public) et abarizqon/quran-pages-images (tajwid, édition Dar Al-Ma’rifah) ; pages Hafs et Warch du Complexe du Roi Fahd.</p>';
   if(qv==='listen') return listenHTML();
@@ -1936,11 +1968,11 @@ function quranHTML(){
     <div class="qlist">${SUR.map(s=>`<button class="qrow" data-act="qsur" data-n="${s.n}" ${qPos&&surOfAyah(QPAGE[qPos.p])===s.n?'aria-current="true"':''}><span class="num">${s.n}</span><span class="fr">${esc(s.fr)}</span><span class="ar" lang="ar" dir="rtl">${s.ar}</span></button>`).join('')}</div>`+credit;
   }
   if(qv==='read'){
-    const p=qp, first=QPAGE[p], s1=surOfAyah(first);
+    const p=qp, first=QPAGE[p], s1=surOfAyah(first), sh=qSheet; qSheet=false;
     return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button>
       <div class="qhead"><b>Page ${p}</b><span>${esc(SUR[s1-1].fr)}</span></div>
-      <div class="qtools"><select id="qmode" class="qsel" aria-label="Version du mushaf">${Object.keys(QVERS).map(k=>`<option value="${k}"${k===qVer?' selected':''}>${QVERS[k][0]}</option>`).join('')}</select><button class="vbtn" data-act="qlist" aria-label="Liste des sourates et aller à une page">☰</button></div></header>
-      <div class="qpage${qTaj()?' qtaj':''}${qImg()?' qimg':''}" id="qtext" lang="ar" dir="rtl">${qImg()?`<img class="qpic" alt="Page ${p}" src="${qImgUrl(p,0)}" data-k="0" onerror="qImgErr(this)">`:''}</div><div id="qmeas" class="qmeas" lang="ar" dir="rtl" aria-hidden="true"></div>`;
+      <div class="qtools"><select id="qmode" class="qsel" aria-label="Version du mushaf">${Object.keys(QVERS).map(k=>`<option value="${k}"${k===qVer?' selected':''}>${QVERS[k][0]}</option>`).join('')}</select><button class="vbtn qbmk${qMark?' on':''}" data-act="qmkopen" aria-label="Marque-page">${BMK_SVG(!!qMark,22)}</button><button class="vbtn" data-act="qlist" aria-label="Liste des sourates et aller à une page">☰</button></div></header>
+      <div class="qpage${qTaj()?' qtaj':''}${qImg()?' qimg':''}" id="qtext" lang="ar" dir="rtl">${qImg()?`<img class="qpic" alt="Page ${p}" src="${qImgUrl(p,0)}" data-k="0" onerror="qImgErr(this)">`:''}</div><div id="qmeas" class="qmeas" lang="ar" dir="rtl" aria-hidden="true"></div>${sh?markSheetHTML(p):''}`;
   }
   const r=qPos?SUR[surOfAyah(QPAGE[qPos.p])-1]:null;
   return `<div class="qmenu"><h1>Coran</h1>
@@ -2014,7 +2046,7 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- Écouter : récitation, répétitions, page qui suit la voix ---------- */
-const L_PAUSES=[0,1,2,3,5,8,10,15,20,30], L_SPEEDS=[0.5,0.75,1,1.25,1.5,1.75,2];
+const L_PAUSES=[0,1,2,3,5,8,10,15,20,30], L_SPEEDS=Array.from({length:16},(_,i)=>Math.round((5+i)*10)/100);   /* 0,5× à 2× par pas de 0,10 */
 const QEND=[...QMK].sort((a,b)=>a-b);
 function QAY(w){ let lo=0, hi=QEND.length-1; while(lo<hi){ const m=(lo+hi)>>1; if(QEND[m]>=w) hi=m; else lo=m+1; } return lo+1; }
 const RECS=[
@@ -2040,7 +2072,9 @@ function lClamp(){
   LS.a=clamp(Math.round(+LS.a)||1,1,n); LS.b=clamp(Math.round(+LS.b)||n,LS.a,n);
   LS.rAll=clamp(Math.round(+LS.rAll)||0,0,10); LS.rAya=clamp(Math.round(+LS.rAya)||1,1,20);
   if(L_PAUSES.indexOf(LS.pause)<0) LS.pause=0;
-  if(L_SPEEDS.indexOf(LS.speed)<0) LS.speed=1;
+  if(L_SPEEDS.indexOf(LS.speed)<0){ const v=+LS.speed||1; LS.speed=L_SPEEDS.reduce((b,x)=>Math.abs(x-v)<Math.abs(b-v)?x:b,1); }
+  LS.pa=clamp(Math.round(+LS.pa)||0,0,604); LS.pb=clamp(Math.round(+LS.pb)||0,0,604);
+  if(LS.pa||LS.pb){ LS.pa=LS.pa||LS.pb; LS.pb=LS.pb||LS.pa; if(LS.pb<LS.pa) LS.pb=LS.pa; }
   LS.next=!!LS.next;
 }
 lClamp();
@@ -2097,14 +2131,25 @@ function lEnded(){
   if(LP.phase==='verse'&&LS.pause>0){ LP.phase='pause'; lAud.src=lSilence(LS.pause); lAud.playbackRate=1; const r=lAud.play(); if(r&&r.catch) r.catch(()=>{}); return; }
   lAdvance();
 }
+function lSeg(k){ const g=LP.segs[k]; LP.si=k; LP.s=g.s; LP.a=g.a; LP.b=g.b; LP.i=g.a; }
+/* Plage de pages : on la découpe en morceaux par sourate (une page peut en traverser plusieurs). */
+function lSegsOfPages(pa,pb){
+  const gA=QPAGE[pa], gB=pb<604?QPAGE[pb+1]-1:6236, out=[];
+  for(let s=surOfAyah(gA); s<=surOfAyah(gB); s++){
+    const f=sFirst[s-1], l=f+lNb(s)-1;
+    out.push({s:s,a:Math.max(gA,f)-f+1,b:Math.min(gB,l)-f+1});
+  }
+  return out;
+}
 function lAdvance(){
   if(LP.rep<LS.rAya){ LP.rep++; lPlayVerse(); return; }
   LP.rep=1; LP.i++;
   if(LP.i>LP.b){
+    if(LP.segs&&LP.si<LP.segs.length-1){ lSeg(LP.si+1); lPlayVerse(); return; }
     if(LS.rAll>0&&LP.tour>=LS.rAll){
-      if(LS.next&&LP.s<114){ LP.s++; LP.a=1; LP.b=lNb(LP.s); LP.i=1; LP.tour=1; }
+      if(!LP.segs&&LS.next&&LP.s<114){ LP.s++; LP.a=1; LP.b=lNb(LP.s); LP.i=1; LP.tour=1; }
       else { lFinish(); return; }
-    } else { LP.tour++; LP.i=LP.a; }
+    } else { LP.tour++; if(LP.segs) lSeg(0); else LP.i=LP.a; }
   }
   lPlayVerse();
 }
@@ -2116,6 +2161,7 @@ function lFinish(){
 function lStart(){
   lClamp(); lSave();
   LP={on:true,playing:false,done:false,s:LS.s,a:LS.a,b:LS.b,i:LS.a,tour:1,rep:1,phase:'verse',page:0,urlIdx:0};
+  if(LS.pa>0){ LP.segs=lSegsOfPages(LS.pa,LS.pb); LP.pr=[LS.pa,LS.pb]; lSeg(0); }
   lPlayVerse();
 }
 function lStop(){
@@ -2128,7 +2174,7 @@ function lPPUI(){ const b=document.getElementById('lpp'); if(!b) return; b.inner
 function lUI(){
   if(!LP.on||main!=='quran'||qv!=='listen') return;
   const g=sFirst[LP.s-1]+LP.i-1, p=pageOfAyah(g);
-  const t=document.getElementById('ltitle'); if(t) t.textContent=SUR[LP.s-1].fr+(LP.a===LP.b?' · verset '+LP.a:' · versets '+LP.a+' à '+LP.b);
+  const t=document.getElementById('ltitle'); if(t) t.textContent=LP.pr?(LP.pr[0]===LP.pr[1]?'Page '+LP.pr[0]:'Pages '+LP.pr[0]+' à '+LP.pr[1]):SUR[LP.s-1].fr+(LP.a===LP.b?' · verset '+LP.a:' · versets '+LP.a+' à '+LP.b);
   const st=document.getElementById('lstat'); if(st&&!LP.done) st.textContent='';
   if(LP.page!==p){ LP.page=p; lShowPage(p); } else lHL();
 }
@@ -2154,23 +2200,32 @@ function listenHTML(){
   const st=(k,label,v)=>`<div class="lr"><span class="ll">${label}</span><div class="cc"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">−</button><output>${v}</output><button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">+</button></div></div>`;
   const inp=(id,v,n,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="${n}" value="${v}" aria-label="${lab}">`;
   const n=lNb(LS.s);
-  const range=LS.a===LS.b?'verset '+LS.a:'versets '+LS.a+' à '+LS.b;
+  const pm=LS.pa>0, dis=pm?' disabled':'';
+  const range=pm?(LS.pa===LS.pb?'page '+LS.pa:'pages '+LS.pa+' à '+LS.pb):(LS.a===LS.b?'verset '+LS.a:'versets '+LS.a+' à '+LS.b);
+  const inpP=(id,v,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="604" value="${v||''}" placeholder="—" aria-label="${lab}">`;
   return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button><h2>Écouter</h2></header>
     <section class="lcard"><div class="lab">Récitant</div>
       <select id="lrec" class="field" style="width:100%" aria-label="Récitant">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>
       ${lRec().warsh?'<p class="shint">Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}</section>
     <section class="lcard"><div class="lab">Sourate · ${n} versets</div>
-      <select id="lsur" class="field" style="width:100%" aria-label="Sourate">${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
-      <div class="l2"><div><div class="lab">Du verset</div>${inp('lva',LS.a,n,'Du verset')}</div><div><div class="lab">Au verset</div>${inp('lvb',LS.b,n,'Au verset')}</div></div></section>
+      <select id="lsur" class="field" style="width:100%" aria-label="Sourate"${dis}>${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
+      <div class="l2"><div><div class="lab">Du verset</div>${inp('lva',LS.a,n,'Du verset').replace('<input','<input'+dis)}</div><div><div class="lab">Au verset</div>${inp('lvb',LS.b,n,'Au verset').replace('<input','<input'+dis)}</div></div>
+      <div class="lor"></div>
+      <div class="l2"><div><div class="lab">De la page</div>${inpP('lpa',LS.pa,'De la page')}</div><div><div class="lab">À la page</div>${inpP('lpb',LS.pb,'À la page')}</div></div></section>
     <section class="lcard"><div class="lab">Répéter</div>
       ${st('rAya','Chaque verset',LS.rAya+'×')}${st('rAll','Toute la plage',LS.rAll?LS.rAll+'×':'∞')}</section>
     <section class="lcard"><div class="lab">Lecture</div>
       ${st('pause','Pause entre deux',LS.pause+' s')}${st('speed','Vitesse',lSpd())}
-      <div class="lr"><span class="ll">Sourate suivante<small>${LS.rAll?'Quand tous les tours sont finis.':'Choisis un nombre de tours, pas ∞.'}</small></span><button class="ltg" data-act="lnext" role="switch" aria-checked="${LS.next}" aria-label="Passer à la sourate suivante"><span></span></button></div></section>
+      <div class="lr"><span class="ll">Sourate suivante<small>${pm?'Pas disponible avec les pages.':LS.rAll?'Quand tous les tours sont finis.':'Choisis un nombre de tours, pas ∞.'}</small></span><button class="ltg" data-act="lnext" role="switch" aria-checked="${LS.next}" aria-label="Passer à la sourate suivante"><span></span></button></div></section>
     <div class="savebar"><button class="btn primary" data-act="lplay">▶ Écouter — ${range}</button></div>`;
 }
 document.addEventListener('change',e=>{ const t=e.target; if(!t) return;
   if(t.id==='lrec'){ LS.rec=t.value; lClamp(); lSave(); render(); return; }
+  if(t.id==='lpa'||t.id==='lpb'){ const v=Math.round(+t.value)||0;
+    if(!v){ LS.pa=0; LS.pb=0; }
+    else if(t.id==='lpa'){ LS.pa=v; if(LS.pb>0&&LS.pb<v) LS.pb=v; }
+    else { LS.pb=v; if(LS.pa>0&&LS.pa>v) LS.pa=v; }
+    lClamp(); lSave(); render(); return; }
   if(t.id==='lva'||t.id==='lvb'){ const v=Math.round(+t.value)||1; if(t.id==='lva'){ LS.a=v; if(LS.b<LS.a) LS.b=LS.a; } else { LS.b=v; if(LS.a>LS.b) LS.a=LS.b; } lClamp(); lSave(); render(); return; }
   if(e.target&&e.target.id==='lsur'){ LS.s=+e.target.value; LS.a=1; LS.b=lNb(LS.s); lClamp(); lSave(); render(); } });
 window.addEventListener('resize',()=>{ if(main==='quran'&&qv==='listen'&&LP.on&&LP.page) lShowPage(LP.page); });
