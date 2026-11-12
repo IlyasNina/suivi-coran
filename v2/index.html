@@ -389,6 +389,18 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 .qback .back{font-size:1rem;display:flex;align-items:center;gap:4px;margin-left:0;padding:0 4px 0 0}
 .qtools{display:flex;gap:8px;align-items:center}
 .qtools .vbtn{min-width:44px;padding:0 10px}
+.qtools .qsel{max-width:122px;padding:0 8px}
+.qtools .qbmk{display:flex;align-items:center;justify-content:center;padding:0}.qtools .qbmk.on{border-color:#8E3B46}
+.qshbg{position:fixed;inset:0;z-index:100;background:rgba(27,43,38,.4)}
+.qsheet{position:fixed;left:0;right:0;bottom:0;z-index:101;box-sizing:border-box;background:#fff;color:#1B2B26;border-radius:24px 24px 0 0;padding:12px 18px calc(26px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(27,43,38,.18)}
+.qsheet .grip{width:40px;height:5px;border-radius:3px;background:#D9D5C5;margin:0 auto 14px}
+.qsheet h3{margin:0 0 12px;font-size:1.1rem}
+.qsheet .mk{display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid #8E3B46;border-radius:16px;background:#FBF3F4}
+.qsheet .mk div{flex:1}.qsheet .mk b{display:block;font-size:1rem}.qsheet .mk small{color:#5C6762;font-size:.82rem}
+.qsheet .mkgo{min-height:44px;padding:0 20px;border-radius:22px;border:0;background:#8E3B46;color:#fff;font-size:.95rem;font-weight:600;font-family:inherit}
+.qsheet .mkset{margin-top:10px;width:100%;min-height:48px;border-radius:24px;border:1.5px solid #D9D5C5;background:#fff;color:#1B2B26;display:flex;align-items:center;justify-content:center;gap:10px;font-size:.95rem;font-weight:600;font-family:inherit}
+.qsheet .mkdel{margin-top:4px;width:100%;min-height:42px;border:0;background:transparent;color:#5C6762;font-size:.88rem;font-family:inherit}
+.qsheet .mkhere{margin:10px 0 0;text-align:center;font-size:.88rem;color:#5C6762}
 .qtitle{flex:1;min-width:0;text-align:center}
 .qtitle .ar{font-family:var(--f-ar);font-size:1.5rem;line-height:1.2}
 .qtitle .fr{display:block;font-size:.78rem;color:var(--muted)}
@@ -1334,6 +1346,11 @@ function toggleDone(sec){
 }
 function resetUI(){ flash=''; confirmReset=false; confirmDel=false; confirmJuz=''; confirmRem=0; openRange=0; backupText=''; }
 const handlers={
+  qmkopen(){ go(()=>{ qSheet=true; }); },
+  qmkclose(){ go(()=>{}); },
+  qmkset(){ go(()=>{ qMark={p:qp,t:Date.now()}; saveMark(); }); },
+  qmkdel(){ go(()=>{ qMark=null; saveMark(); }); },
+  qmkgo(){ go(()=>{ if(qMark){ qp=qMark.p; qPos={p:qp,t:Date.now()}; saveReadNow(); } }); },
   qmenu(){ go(()=>{ if(main==='quran'&&qv==='read') saveReadNow(); main='quran'; qv='menu'; }); },
   qpopclose(){ go(()=>{ qPop=false; }); },
   qmuta(){ go(()=>{ qPop=false; main='muta'; }); },
@@ -1830,6 +1847,11 @@ document.addEventListener('error',e=>{
 /* ---------- Onglet Coran (lecture, page par page) ---------- */
 const Q_KEY='suivi-coran-lire';
 let qPos=null, qDb=null;
+/* Marque-page : une page gardée de côté, indépendante de la dernière page lue (stockée dans le navigateur) */
+const Q_MARK='suivi-coran-marque'; let qMark=null, qSheet=false;
+try{ const m=JSON.parse(localStorage.getItem(Q_MARK)||'null'); if(m&&m.p>=1&&m.p<=604) qMark={p:+m.p,t:+m.t||0}; }catch(e){}
+function saveMark(){ try{ if(qMark) localStorage.setItem(Q_MARK,JSON.stringify(qMark)); else localStorage.removeItem(Q_MARK); }catch(e){} }
+const BMK_SVG=(on,sz)=>'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+(on?'#8E3B46':'none')+'" stroke="#8E3B46" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>';
 const sFirst=[]; { let c=1; QDATA.forEach(v=>{ sFirst.push(c); c+=v.length; }); }   /* n° global du premier verset de chaque sourate */
 function pageOfAyah(id){ let lo=1, hi=604; while(lo<hi){ const m=(lo+hi+1)>>1; if(QPAGE[m]<=id) lo=m; else hi=m-1; } return lo; }
 function surOfAyah(id){ let lo=0, hi=113; while(lo<hi){ const m=(lo+hi+1)>>1; if(sFirst[m]<=id) lo=m; else hi=m-1; } return lo+1; }
@@ -1927,6 +1949,13 @@ function qLayoutInto(box,p,tag){
   if(mx>0){ const sc=1.15; if(sc>1.01){ f2=f*sc; const lh2=Math.min(lh,f2*2.2); box.style.fontSize=f2+'px'; box.style.lineHeight=lh2+'px'; box.querySelectorAll('.qline,.qban,.qbism').forEach(e=>{ e.style.height=lh2+'px'; }); } }
   qFit(box,W,f2);
 }
+function markSheetHTML(p){
+  const here=qMark&&qMark.p===p;
+  return `<div class="qshbg" data-act="qmkclose"></div><div class="qsheet" role="dialog" aria-label="Marque-page"><div class="grip"></div><h3>Mon marque-page</h3>
+  ${qMark?`<div class="mk">${BMK_SVG(true,24)}<div><b>${esc(SUR[surOfAyah(QPAGE[qMark.p])-1].fr)}</b><small>Page ${qMark.p}</small></div>${here?'':'<button class="mkgo" data-act="qmkgo">Revenir</button>'}</div>`:''}
+  ${here?'<p class="mkhere">Le marque-page est sur cette page.</p>':`<button class="mkset" data-act="qmkset">${BMK_SVG(false,18)}${qMark?'Déplacer ici':'Poser ici'} · page ${p}</button>`}
+  ${qMark?'<button class="mkdel" data-act="qmkdel">Retirer le marque-page</button>':''}</div>`;
+}
 function quranHTML(){
   const credit='<p class="credit">Texte du Coran : The Noble Qur’an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0. Pagination : quran-meta, licence MIT. Mise en page du mushaf de Médine et texte QPC Hafs : Complexe du Roi Fahd, via Quranic Universal Library (Tarteel). Noms de sourates en calligraphie : Naveed Ahmad et Muath Ahmed Ibn-Hassan (QUL), CC BY 4.0. Images des pages : dépôts QuranHub/quran-pages-images (Hafs, Warch ; domaine public) et abarizqon/quran-pages-images (tajwid, édition Dar Al-Ma’rifah) ; pages Hafs et Warch du Complexe du Roi Fahd.</p>';
   if(qv==='listen') return listenHTML();
@@ -1936,11 +1965,11 @@ function quranHTML(){
     <div class="qlist">${SUR.map(s=>`<button class="qrow" data-act="qsur" data-n="${s.n}" ${qPos&&surOfAyah(QPAGE[qPos.p])===s.n?'aria-current="true"':''}><span class="num">${s.n}</span><span class="fr">${esc(s.fr)}</span><span class="ar" lang="ar" dir="rtl">${s.ar}</span></button>`).join('')}</div>`+credit;
   }
   if(qv==='read'){
-    const p=qp, first=QPAGE[p], s1=surOfAyah(first);
+    const p=qp, first=QPAGE[p], s1=surOfAyah(first), sh=qSheet; qSheet=false;
     return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button>
       <div class="qhead"><b>Page ${p}</b><span>${esc(SUR[s1-1].fr)}</span></div>
-      <div class="qtools"><select id="qmode" class="qsel" aria-label="Version du mushaf">${Object.keys(QVERS).map(k=>`<option value="${k}"${k===qVer?' selected':''}>${QVERS[k][0]}</option>`).join('')}</select><button class="vbtn" data-act="qlist" aria-label="Liste des sourates et aller à une page">☰</button></div></header>
-      <div class="qpage${qTaj()?' qtaj':''}${qImg()?' qimg':''}" id="qtext" lang="ar" dir="rtl">${qImg()?`<img class="qpic" alt="Page ${p}" src="${qImgUrl(p,0)}" data-k="0" onerror="qImgErr(this)">`:''}</div><div id="qmeas" class="qmeas" lang="ar" dir="rtl" aria-hidden="true"></div>`;
+      <div class="qtools"><select id="qmode" class="qsel" aria-label="Version du mushaf">${Object.keys(QVERS).map(k=>`<option value="${k}"${k===qVer?' selected':''}>${QVERS[k][0]}</option>`).join('')}</select><button class="vbtn qbmk${qMark?' on':''}" data-act="qmkopen" aria-label="Marque-page">${BMK_SVG(!!qMark,22)}</button><button class="vbtn" data-act="qlist" aria-label="Liste des sourates et aller à une page">☰</button></div></header>
+      <div class="qpage${qTaj()?' qtaj':''}${qImg()?' qimg':''}" id="qtext" lang="ar" dir="rtl">${qImg()?`<img class="qpic" alt="Page ${p}" src="${qImgUrl(p,0)}" data-k="0" onerror="qImgErr(this)">`:''}</div><div id="qmeas" class="qmeas" lang="ar" dir="rtl" aria-hidden="true"></div>${sh?markSheetHTML(p):''}`;
   }
   const r=qPos?SUR[surOfAyah(QPAGE[qPos.p])-1]:null;
   return `<div class="qmenu"><h1>Coran</h1>
