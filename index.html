@@ -169,7 +169,9 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .top h2{font-size:1.25rem;font-weight:700;letter-spacing:-.01em;flex:1;min-width:0}
 .gear{border:0;background:none;min-width:44px;min-height:44px;margin-right:-10px;color:var(--accent);display:inline-flex;align-items:center;justify-content:center}
 .gear svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.credit{margin:34px 0 0;text-align:center;font-size:.78rem;color:var(--muted)}
+.credit{margin:34px 0 0;font-size:min(.624rem,2.5vw);color:var(--muted)}
+.credit .cm{display:block;text-align:justify;text-align-last:justify}
+.credit .cv{display:block;text-align:center}
 
 /* Pinceau */
 .brushbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--bar-h));z-index:25;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
@@ -334,6 +336,21 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .lcard{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:10px 14px;margin-top:8px}.lcard .lab{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin-bottom:6px}.l2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.l2 .lnum{width:100%;height:42px;font-size:1.3rem}.lr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0}.lr+.lr{border-top:1px solid var(--line)}.ll{font-weight:600;line-height:1.25}.ll small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}.lr .cc{width:148px;flex-shrink:0}
 .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cs{min-width:0}.cl{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:4px}.cc{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line);border-radius:12px;padding:3px;background:var(--bg)}.cc button{width:36px;height:38px;border:0;border-radius:9px;background:#fff;font-size:1.2rem;font-weight:700;color:inherit}.cc output{flex:1;text-align:center;font-weight:700;font-size:1rem}.cc .lnum{flex:1;width:0;min-width:0;height:38px;border:0;background:transparent;font-size:1rem}
 .lor{margin:12px 0 2px;text-align:center;font-size:.74rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}.lnum:disabled,.lcard select:disabled{opacity:.4;background:#F3F0E6}
+/* Écouter — réglages (maquette C2, 13/11) */
+body.lgray{background:#F2F2F0}body.lgray::before,body.lgray .top{background:#F2F2F0}body.lgray .top,body.lgray .nav{border-color:#DEDED9}body.lgray .nav{background:#F2F2F0}body.lgray .tab[aria-selected=true]{background:#E2E8E5}
+.lv .lcard{border:1px solid #DEDED9;border-radius:22px;padding:16px;margin-top:10px;display:flex;flex-direction:column;gap:12px}
+.lv .lab{font-size:.75rem;font-weight:600;letter-spacing:.08em;color:var(--muted);margin:0 0 6px}
+.lv .lcard select.field{height:46px;min-height:46px;border:1px solid #DEDED9;border-radius:14px;background:#fff;font-size:1rem;font-weight:500;padding:0 14px}
+.lv .lrow{display:flex;gap:10px;align-items:flex-end}.lv .lrow>div{flex:1;min-width:0}
+.lv .larr{flex:none;height:46px;display:flex;align-items:center;color:var(--muted)}
+.lv .lnum{width:100%;height:46px;border:1px solid #DEDED9;border-radius:14px;font-size:1.06rem;font-weight:600}
+.lv .lnum:disabled,.lv .lcard select:disabled{opacity:.4;background:#F5F5F2}
+.lv .lcard.lset{gap:0}.lv .lr{padding:13px 0}.lv .lr+.lr{border-top:1px solid #E6E6E2}.lv .ll{font-weight:500;font-size:1rem}
+.lv .lr .cc{width:auto;display:flex;align-items:center;gap:6px;border:0;background:none;padding:0}
+.lv .cc button{width:30px;height:30px;border-radius:50%;border:1px solid #DEDED9;background:none;padding:0;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.lv .cc output{flex:none;min-width:46px;font-size:1rem;font-weight:600;text-align:center}
+.lv .savebar{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));margin:12px 0 0;padding:8px 0;background:#F2F2F0}
+.lv .savebar .btn{height:50px;border-radius:25px;font-size:1.05rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
 .lnum{width:84px;height:44px;border:1.5px solid var(--line,#e3dcc6);border-radius:12px;background:#fff;text-align:center;font:inherit;font-size:1.1rem;font-weight:700;color:inherit}
 .lplayer{margin:8px 0 0;text-align:center}.lstat{font-size:.88rem;color:#555}.lstat:empty{display:none}
 .lctl{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:2px}
@@ -1257,9 +1274,28 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4.7';
+const APP_VERSION='1.4.8';
+/* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
+(function(){
+  let busy=false;
+  async function chk(){
+    if(busy) return; busy=true;
+    try{
+      const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) return;
+      const j=await r.json();
+      if(!j||!j.v||j.v===APP_VERSION) return;
+      if((typeof LP!=='undefined'&&LP.on)||(typeof main!=='undefined'&&main==='test')) return;
+      let tried=''; try{ tried=sessionStorage.getItem('upd-tried')||''; }catch(e){}
+      if(tried===j.v) return;
+      try{ sessionStorage.setItem('upd-tried',j.v); }catch(e){}
+      const u=new URL(location.href); u.searchParams.set('v',j.v); location.replace(u.toString());
+    }catch(e){} finally{ busy=false; }
+  }
+  chk(); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) chk(); });
+})();
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
-function creditText(){ return '<p class="credit">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
+function creditText(){ return '<p class="credit"><span class="cm">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur</span><span class="cv">Version '+APP_VERSION+'</span></p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
 
 function render(){
@@ -1270,6 +1306,7 @@ function render(){
   if(typeof qSelClear==='function') qSelClear(true);
   if(settleBlue()) save();
   document.body.classList.toggle('qwhite',main==='quran'&&(qv==='read'||(qv==='listen'&&LP.on)));
+  document.body.classList.toggle('lgray',main==='quran'&&qv==='listen'&&!LP.on);
   qbackEl.hidden=(main!=='muta');
   if(main==='muta'){ app.hidden=true; mutaHost.hidden=false; ensureMuta(); }
   else if(main==='quran'){ mutaHost.hidden=true; app.hidden=false; app.innerHTML=quranHTML(); afterQuran(); }
@@ -2224,32 +2261,35 @@ function lHL(){
   const by=new Map(); els.forEach(e=>{ const ln=e.closest('.qline'); if(!ln) return; const r=e.getBoundingClientRect(); const o=by.get(ln)||{l:1e9,r:-1e9}; o.l=Math.min(o.l,r.left); o.r=Math.max(o.r,r.right); by.set(ln,o); });
   by.forEach((o,ln)=>{ const lr=ln.getBoundingClientRect(), d=document.createElement('div'); d.className='lbar'; const pad=lr.height*.06; d.style.left=(o.l-lr.left-pad)+'px'; d.style.width=(o.r-o.l+2*pad)+'px'; ln.appendChild(d); });
 }
+const L_MI='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>';
+const L_PI='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>';
+const L_AR='<span class="larr"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>';
 function listenHTML(){
   if(LP.on) return `<header class="top"><button class="back" data-act="lstop" aria-label="Fermer">‹</button><div class="qhead"><b id="ltitle"></b><span>Écouter</span></div><span style="width:44px"></span></header>
     <div class="qpage" id="ltext" lang="ar" dir="rtl"></div>
     <div class="lplayer"><div class="lstat" id="lstat" aria-live="polite"></div>
       <div class="lctl"><button data-act="lskip" data-d="-1" aria-label="Verset précédent">${L_I.prev}</button><button class="lpp" id="lpp" data-act="lpp" aria-label="Pause">${L_I.pause}</button><button data-act="lskip" data-d="1" aria-label="Verset suivant">${L_I.next}</button></div></div>`;
-  const st=(k,label,v)=>`<div class="lr"><span class="ll">${label}</span><div class="cc"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">−</button><output>${v}</output><button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">+</button></div></div>`;
+  const st=(k,label,v)=>`<div class="lr"><span class="ll">${label}</span><div class="cc"><button data-act="lset" data-k="${k}" data-d="-1" aria-label="Moins">${L_MI}</button><output>${v}</output><button data-act="lset" data-k="${k}" data-d="1" aria-label="Plus">${L_PI}</button></div></div>`;
   const inp=(id,v,n,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="${n}" value="${v}" aria-label="${lab}">`;
   const n=lNb(LS.s);
   const pm=LS.pa>0, dis=pm?' disabled':'';
   const range=pm?(LS.pa===LS.pb?'page '+LS.pa:'pages '+LS.pa+' à '+LS.pb):(LS.a===LS.b?'verset '+LS.a:'versets '+LS.a+' à '+LS.b);
   const inpP=(id,v,lab)=>`<input class="lnum" id="${id}" type="number" inputmode="numeric" min="1" max="604" value="${v||''}" placeholder="—" aria-label="${lab}">`;
   return `<header class="top"><button class="back" data-act="qmenu" aria-label="Retour au choix">‹</button><h2>Écouter</h2></header>
-    <section class="lcard"><div class="lab">Récitant</div>
-      <select id="lrec" class="field" style="width:100%" aria-label="Récitant">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>
-      ${lRec().warsh?'<p class="shint">Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}</section>
-    <section class="lcard"><div class="lab">Sourate · ${n} versets</div>
-      <select id="lsur" class="field" style="width:100%" aria-label="Sourate"${dis}>${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select>
-      <div class="l2"><div><div class="lab">Du verset</div>${inp('lva',LS.a,n,'Du verset').replace('<input','<input'+dis)}</div><div><div class="lab">Au verset</div>${inp('lvb',LS.b,n,'Au verset').replace('<input','<input'+dis)}</div></div>
-      <div class="lor"></div>
-      <div class="l2"><div><div class="lab">De la page</div>${inpP('lpa',LS.pa,'De la page')}</div><div><div class="lab">À la page</div>${inpP('lpb',LS.pb,'À la page')}</div></div></section>
-    <section class="lcard"><div class="lab">Répéter</div>
-      ${st('rAya','Chaque verset',LS.rAya+'×')}${st('rAll','Toute la plage',LS.rAll?LS.rAll+'×':'∞')}</section>
-    <section class="lcard"><div class="lab">Lecture</div>
-      ${st('pause','Pause entre deux',LS.pause+' s')}${st('speed','Vitesse',lSpd())}
+    <div class="lv">
+    <section class="lcard">
+      <div><div class="lab">RÉCITATEUR</div>
+      <select id="lrec" class="field" style="width:100%" aria-label="Récitateur">${RECS.map(r=>`<option value="${r.k}"${r.k===LS.rec?' selected':''}>${esc(r.n)}</option>`).join('')}</select>
+      ${lRec().warsh?'<p class="shint">Warsh : le découpage des versets peut différer un peu du texte affiché.</p>':''}</div>
+      <div><div class="lab">SOURATE · ${n} VERSETS</div>
+      <select id="lsur" class="field" style="width:100%" aria-label="Sourate"${dis}>${SUR.map(s=>`<option value="${s.n}"${s.n===LS.s?' selected':''}>${s.n} · ${esc(s.fr)}</option>`).join('')}</select></div>
+      <div class="lrow"><div><div class="lab">DU VERSET</div>${inp('lva',LS.a,n,'Du verset').replace('<input','<input'+dis)}</div>${L_AR}<div><div class="lab">AU VERSET</div>${inp('lvb',LS.b,n,'Au verset').replace('<input','<input'+dis)}</div></div>
+      <div class="lrow"><div><div class="lab">DE LA PAGE</div>${inpP('lpa',LS.pa,'De la page')}</div>${L_AR}<div><div class="lab">À LA PAGE</div>${inpP('lpb',LS.pb,'À la page')}</div></div></section>
+    <section class="lcard lset">
+      ${st('rAya','Chaque verset',LS.rAya+'×')}${st('rAll','Toute la plage',LS.rAll?LS.rAll+'×':'∞')}${st('pause','Pause entre deux',LS.pause+' s')}${st('speed','Vitesse',lSpd())}
       <div class="lr"><span class="ll">Sourate suivante<small>${pm?'Pas disponible avec les pages.':LS.rAll?'Quand tous les tours sont finis.':'Choisis un nombre de tours, pas ∞.'}</small></span><button class="ltg" data-act="lnext" role="switch" aria-checked="${LS.next}" aria-label="Passer à la sourate suivante"><span></span></button></div></section>
-    <div class="savebar"><button class="btn primary" data-act="lplay">▶ Écouter — ${range}</button></div>`;
+    <div class="savebar"><button class="btn primary" data-act="lplay" aria-label="Lancer l’écoute, ${range}">▶ Lancer l’écoute</button></div>
+    </div>`;
 }
 document.addEventListener('change',e=>{ const t=e.target; if(!t) return;
   if(t.id==='lrec'){ LS.rec=t.value; lClamp(); lSave(); render(); return; }

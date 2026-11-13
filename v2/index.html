@@ -1274,7 +1274,26 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.4.7';
+const APP_VERSION='1.4.8';
+/* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
+(function(){
+  let busy=false;
+  async function chk(){
+    if(busy) return; busy=true;
+    try{
+      const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok) return;
+      const j=await r.json();
+      if(!j||!j.v||j.v===APP_VERSION) return;
+      if((typeof LP!=='undefined'&&LP.on)||(typeof main!=='undefined'&&main==='test')) return;
+      let tried=''; try{ tried=sessionStorage.getItem('upd-tried')||''; }catch(e){}
+      if(tried===j.v) return;
+      try{ sessionStorage.setItem('upd-tried',j.v); }catch(e){}
+      const u=new URL(location.href); u.searchParams.set('v',j.v); location.replace(u.toString());
+    }catch(e){} finally{ busy=false; }
+  }
+  chk(); document.addEventListener('visibilitychange',()=>{ if(!document.hidden) chk(); });
+})();
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
 function creditText(){ return '<p class="credit"><span class="cm">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur</span><span class="cv">Version '+APP_VERSION+'</span></p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
