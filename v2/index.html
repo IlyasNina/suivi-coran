@@ -169,7 +169,9 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .top h2{font-size:1.25rem;font-weight:700;letter-spacing:-.01em;flex:1;min-width:0}
 .gear{border:0;background:none;min-width:44px;min-height:44px;margin-right:-10px;color:var(--accent);display:inline-flex;align-items:center;justify-content:center}
 .gear svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.credit{margin:34px 0 0;text-align:justify;text-align-last:center;font-size:.624rem;color:var(--muted)}
+.credit{margin:34px 0 0;font-size:min(.624rem,2.5vw);color:var(--muted)}
+.credit .cm{display:block;text-align:justify;text-align-last:justify}
+.credit .cv{display:block;text-align:center}
 
 /* Pinceau */
 .brushbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--bar-h));z-index:25;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
@@ -1259,7 +1261,7 @@ function profileHTML(){
 }
 const APP_VERSION='1.4.7';
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
-function creditText(){ return '<p class="credit">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur<br>Version '+APP_VERSION+'</p>'; }
+function creditText(){ return '<p class="credit"><span class="cm">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur</span><span class="cv">Version '+APP_VERSION+'</span></p>'; }
 function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
 
 function render(){
