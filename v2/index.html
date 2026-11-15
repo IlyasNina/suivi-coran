@@ -1255,7 +1255,7 @@ function loopHTML(){
     <div class="rrow" id="ljbox" hidden><label class="rl" for="ljd">Aujourd’hui, c’est le jour<small>Pour recommencer ta boucle, choisis le jour 1.</small></label>
       <span class="rin"><select id="ljd" class="field sbox">${Array.from({length:N},(_,i)=>`<option value="${i+1}"${i+1===posNow?' selected':''}>${i+1}</option>`).join('')}</select><span class="sun">de ma boucle</span></span></div>
     <div class="rrow"><span class="rl"><i class="dot st-b"></i> Une page jadida reste bleue pendant :</span>${st2('fd',s.fd,'jours')}</div>
-    <div class="rrow"><span class="rl"><i class="dot st-o"></i> Une page fragile revient…${infoI('frh','C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».')}</span>${st2('fo',s.fo+'×','par semaine')}</div>
+    <div class="rrow"><span class="rl"><i class="dot st-o"></i> Une page fragile revient…${infoI('frh','C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».')}</span>${st2('fo',(N===7?s.fo:Math.max(1,Math.round(s.fo*N/7)))+'×',N===7?'par semaine':'par boucle')}</div>
   </section>
   <section class="blk"><h3 class="rh">Affiner sourate par sourate</h3>
     <p class="shint">Règle ici la fréquence de certaines sourates ou de leurs pages fragiles.</p>`;
@@ -1276,7 +1276,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.5.1';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
