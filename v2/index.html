@@ -503,6 +503,18 @@ body.qwhite .credit{color:#767676}
 .qrow .ar{font-family:var(--f-ar);font-size:1.35rem}
 .qrow[aria-current="true"]{border-color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.pcard,.cell,.row,.dbtn{transition:border-color .12s,background-color .12s}.acc .chev{transition:transform .15s}}
+
+.langsw{display:flex;gap:6px;justify-content:flex-end;margin:2px 0 6px}
+.langsw button{all:unset;cursor:pointer;box-sizing:border-box;min-width:46px;height:34px;padding:0 12px;border:1.5px solid var(--bd,#DEDED9);border-radius:17px;font-family:inherit;font-weight:600;font-size:14px;line-height:34px;text-align:center;color:inherit;background:transparent}
+.langsw button[aria-pressed=true]{background:#1F6B57;color:#fff;border-color:#1F6B57}
+.home{position:relative}
+.home>.langsw{position:absolute;top:10px;right:0;margin:0}
+[dir=rtl] .home>.langsw{right:auto;left:0}
+.langsw.big{justify-content:flex-start}.langsw.big button{height:44px;min-width:110px;border-radius:14px;font-size:16px;line-height:44px}
+[dir=rtl] .top .back{transform:scaleX(-1)}
+[dir=rtl] .stepper .ctl,[dir=rtl] .cc{direction:ltr}
+[dir=rtl] .larr{display:inline-block;transform:scaleX(-1)}
+[dir=rtl] .chev{transform:none}
 </style>
 
 <div id="app" class="wrap"></div>
@@ -573,8 +585,9 @@ const SYCHK='<svg class="sy" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 
 const ST={v:{label:'Acquis',sym:SYCHK},o:{label:'Fragile',sym:SYCRS},b:{label:'Nouveau',sym:SYNEW},n:{label:'Pas appris',sym:'–'}};
 const BRUSH_ORDER=['v','o','b','n'];
 const LOOP_START='2024-01-01';   // un lundi : repère fixe des boucles
-const DAYS_LONG=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
-const DAYS_SHORT=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const LANG=(function(){ try{ return localStorage.getItem('suivi-coran-lang')==='ar'?'ar':'fr'; }catch(e){ return 'fr'; } })();
+const DAYS_LONG=LANG==='ar'?['الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد']:['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
+const DAYS_SHORT=LANG==='ar'?['اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت','أحد']:['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
 function trackedFor(pk,extra){
   const set=new Set(BASE);
@@ -735,8 +748,9 @@ function mondayOf(d){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate())
 function addDays(d,n){ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()+n); return x; }
 function pad(n){ return (n<10?'0':'')+n; }
 function wkKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
-const fmtDay=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-const fmtShort=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'});
+const LOC=LANG==='ar'?'ar-u-nu-latn':'fr-FR';
+const fmtDay=new Intl.DateTimeFormat(LOC,{weekday:'long',day:'numeric',month:'long'});
+const fmtShort=new Intl.DateTimeFormat(LOC,{day:'numeric',month:'long'});
 
 /* ---------- Plan de mouraja'a ---------- */
 function combos(arr,k){
@@ -960,6 +974,7 @@ function homeHTML(){
   const adds=state.order.length>=MAX_PROFILES?'':`<button class="pcard add" data-act="newadult"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil</span></button>
       <button class="pcard add" data-act="newchild"><span class="nm"><span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></svg></span>Ajouter un profil enfant</span></button>`;
   return `<div class="home">
+    <div class="langsw" role="group" aria-label="Langue"><button data-act="lang" data-l="fr" aria-pressed="${LANG==='fr'}">FR</button><button data-act="lang" data-l="ar" aria-pressed="${LANG==='ar'}">عربي</button></div>
     <div class="brand"><img class="brandlogo" src="${BRAND_ICON}" width="104" height="104" alt="Logo">${BRAND_NAME}${none?'<p class="lead">Crée un profil pour suivre ta mémorisation et ta révision, et celles de tes enfants.</p>':''}</div>
     <div class="profiles">${cards}${adds}</div>
     ${noticesHTML()}
@@ -1170,10 +1185,11 @@ function reglagesHTML(){
     <span class="ctl"><button data-act="freq" data-k="${key}" data-delta="-1" aria-label="Moins pour ${label}">−</button><output>${val}${unit||' / sem.'}</output><button data-act="freq" data-k="${key}" data-delta="1" aria-label="Plus pour ${label}">+</button></span></div>`;
   const syncTxt=sync==='online'?'Tes données sont enregistrées sur ce téléphone et aussi en ligne, liées à ton compte Claude.':'Tes données sont enregistrées sur ce téléphone, dans ce navigateur.';
   if(!backupText) backupText=exportText();
-  return `    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
+  return `    <section class="card setcard"><h4>Langue / اللغة</h4><div class="langsw big" role="group" aria-label="Langue"><button data-act="lang" data-l="fr" aria-pressed="${LANG==='fr'}">Français</button><button data-act="lang" data-l="ar" aria-pressed="${LANG==='ar'}">العربية</button></div></section>
+    <section class="card setcard"><h4>Sauvegarde</h4><p>${syncTxt}${sync==='online'?'':' Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.'}</p>
       ${sync!=='online'?`<div class="row2"><button class="btn primary" data-act="backupfile">Sauvegarder (envoyer un fichier)</button><button class="btn" data-act="restorepick">Restaurer depuis un fichier</button></div>
       <input id="bkfile" type="file" accept=".json,application/json,text/plain" hidden>`:''}
-      ${sync!=='online'&&state.backupAt?`<p class="meta">Dernière sauvegarde : ${new Date(state.backupAt).toLocaleDateString('fr-FR')}</p>`:''}
+      ${sync!=='online'&&state.backupAt?`<p class="meta">Dernière sauvegarde : ${new Date(state.backupAt).toLocaleDateString(LOC)}</p>`:''}
       ${flash&&tab==='reglages'?`<p class="flash">${esc(flash)}</p>`:''}
     </section>
     ${sync!=='online'&&!isStandalone()?`<section class="card setcard"><h4>Ajouter à l’écran d’accueil</h4><p>Ton suivi est enregistré dans le navigateur de ce téléphone. Un raccourci sur l’écran d’accueil permet de l’ouvrir en un geste ; pense à sauvegarder ton suivi de temps en temps.</p>${installSteps()}</section>`:''}
@@ -1276,7 +1292,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.5.2';
+const APP_VERSION='1.6.0';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
@@ -1862,6 +1878,7 @@ function testHTML(){
   <div class="tlinks"><button class="link" data-act="qread" data-p="${p}">Voir la page ${p} dans le mushaf</button></div></div>`;
 }
 Object.assign(handlers,{
+  lang(el){ const l=el.dataset.l==='ar'?'ar':'fr'; if(l===LANG) return; try{ localStorage.setItem('suivi-coran-lang',l); }catch(e){} location.reload(); },
   tkind(el){ TS.kind=el.dataset.k; TS.pf=''; TS.pt=''; render(); },
   tstart(){ TS.hist=[]; TS.id=0; if(!tPick()) TS.msg='Aucun verset ne convient dans ce choix. Élargis-le.'; else TS.msg=''; render(); window.scrollTo(0,0); },
   tsurah(){ TS.showS=true; render(); },
@@ -2314,6 +2331,7 @@ function ensureMuta(){
   if(mutaReady) return; mutaReady=true;
   const root=mutaHost.attachShadow({mode:'open'});
   root.innerHTML='<style>'+MUTA_CSS+'</style><div class="mt">'+MUTA_HTML+'<p style="margin:26px 0 0;height:1px"></p></div>';
+  if(window.__trRoot) window.__trRoot(root);
   const mirror=()=>{ const t=document.documentElement.getAttribute('data-theme'); if(t) mutaHost.setAttribute('data-theme',t); else mutaHost.removeAttribute('data-theme'); };
   mirror(); try{ new MutationObserver(mirror).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']}); }catch(e){}
   initMuta(root);
@@ -2332,7 +2350,7 @@ const JUZNAME={amma:'Juzz Amma',tabarak:'Juzz Tabarak',qad:'Juzz Qad Sami’a',b
 let V, G, byN = {}, SEC = 'baqara';
 const SECS = {baqara:{data:DATA}, imran:{data:DATA_IMRAN}, amma:{data:DATA_AMMA}, tabarak:{data:DATA_TABARAK}, qad:{data:DATA_QAD}, bqim:{data:DATA_BQIM}};
 function vnum(v){ return isMulti() ? v.s+':'+v.a : String(v.n); }
-function vlabel(v){ return isMulti() ? v.sn+' · verset '+v.a+'' : 'Verset '+v.n; }
+function vlabel(v){ return isMulti() ? (LANG==='ar'&&SUR[v.s-1]?SUR[v.s-1].ar:v.sn)+' · verset '+v.a+'' : 'Verset '+v.n; }
 function inTxt(){ return isMulti() ? 'dans '+JUZNAME[SEC] : 'dans la sourate'; }
 function minW(){ return isMulti() ? 4 : SEC==='imran' ? 6 : 3; }
 function numLookup(d){ if(!isMulti()) return byN[+d]; const m = d.match(/^(\d{1,3})\s*[:.\/\-\s]\s*(\d{1,3})$/); return m ? byN[+m[1]*1000 + +m[2]] : null; }
@@ -2777,6 +2795,279 @@ refreshBackup();
 render();
 
 }
+
+/* ---------- Langue : français / arabe ---------- */
+/* En arabe, tout le texte de l'appli est traduit à l'affichage (glossaire ci-dessous) et l'écran passe de droite à gauche.
+   En français rien ne change : ce bloc ne fait rien. Les clés du glossaire sont comparées sans tenir compte de l'apostrophe
+   typographique ni des espaces multiples ; « {} » remplace un morceau variable (nombre, prénom, nom de sourate…). */
+(function(){
+if(LANG!=='ar') return;
+const FP='Texte coranique (rasm ‘uthmani) : The Noble Qur’an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), même source que pour Al Baqara. Pages et juzz : quran-meta, mushaf de Médine (riwaya Hafs). ';
+const G=[
+/* — mutashabihat : phrases à trous — */
+['Nom enregistré.','تم حفظ الاسم.'],['Profil remis à zéro.','تم تصفير الملف.'],['Sauvegarde restaurée.','تمت استعادة النسخة الاحتياطية.'],
+['Entre deux pages entre {} et {}.','بين صفحتين، اختر بين {} و{}.'],
+['Pages {} à {} : acquis.','الصفحات {} إلى {} : محفوظة.'],['Pages {} à {} : fragiles.','الصفحات {} إلى {} : ضعيفة.'],['Pages {} à {} : nouveau.','الصفحات {} إلى {} : جديدة.'],['Pages {} à {} : pas appris.','الصفحات {} إلى {} : غير محفوظة.'],
+['Mutashabihat {}','متشابهات {}'],['{} · versets {} à {}','{} · الآيات {} إلى {}'],
+['Verset {}','الآية {}'],['(hizb {})','(الحزب {})'],['v. {}','آية {}'],['p. {}','ص {}'],['dans la sourate','في السورة'],['dans {}','في {}'],
+['Et {} autres versets. Récite quelques mots de plus pour préciser.','و{} آيات أخرى. اتلُ بضع كلمات إضافية للتدقيق.'],
+['Ce passage n’apparaît que dans le verset {}.','هذا المقطع لا يرد إلا في الآية {}.'],
+['Pas de fiche enregistrée pour le verset {} : aucune expression de {} mots ou plus de ce verset ne se retrouve ailleurs {}.','لا توجد بطاقة محفوظة للآية {}: لا توجد في هذه الآية عبارة من {} كلمات فأكثر تتكرر في موضع آخر {}.'],
+['Aucune expression de {} mots ou plus de ce verset ne se retrouve ailleurs {}.','لا توجد في هذه الآية عبارة من {} كلمات فأكثر تتكرر في موضع آخر {}.'],
+['{} fiche pour le verset {} · celles qui touchent à ce que tu as récité sont en premier','{} بطاقة للآية {} · تأتي أولًا البطاقات المتعلقة بما تلوته'],
+['{} fiches pour le verset {} · celles qui touchent à ce que tu as récité sont en premier','{} بطاقات للآية {} · تأتي أولًا البطاقات المتعلقة بما تلوته'],
+['{} fiche pour le verset {} · celles qui touchent à ce que tu as récité sont en premier ({} avec ce filtre)','{} بطاقة للآية {} · تأتي أولًا البطاقات المتعلقة بما تلوته ({} بهذه التصفية)'],
+['{} fiches pour le verset {} · celles qui touchent à ce que tu as récité sont en premier ({} avec ce filtre)','{} بطاقات للآية {} · تأتي أولًا البطاقات المتعلقة بما تلوته ({} بهذه التصفية)'],
+['{} fiche contiennent le verset {}','{} بطاقة تحتوي الآية {}'],['{} fiches contiennent le verset {}','{} بطاقات تحتوي الآية {}'],
+['{} fiche contiennent le verset {} ({} avec ce filtre)','{} بطاقة تحتوي الآية {} ({} بهذه التصفية)'],['{} fiches contiennent le verset {} ({} avec ce filtre)','{} بطاقات تحتوي الآية {} ({} بهذه التصفية)'],
+['Page {} : {} fiche','الصفحة {} : {} بطاقة'],['Page {} : {} fiches','الصفحة {} : {} بطاقات'],
+['Rien à afficher avec ce filtre. Appuie sur le marque-page dans une fiche pour la retrouver ici.','لا شيء للعرض بهذه التصفية. اضغط على علامة القراءة في بطاقة لتجدها هنا.'],
+['Rien à afficher avec ce filtre.','لا شيء للعرض بهذه التصفية.'],
+['Le micro n’est pas disponible dans ce navigateur.','الميكروفون غير متاح في هذا المتصفح.'],
+['Sur téléphone, touche le micro du clavier arabe dans la barre de recherche : c’est gratuit et ça marche pareil.','على الهاتف، المس ميكروفون لوحة المفاتيح العربية في شريط البحث: فهو مجاني ويعمل بالطريقة نفسها.'],
+['Autorise-le dans le navigateur, ou utilise le micro du clavier arabe de ton téléphone. Dans certaines fenêtres intégrées, il ne marche que sur la version hébergée de la page.','اسمح به في المتصفح، أو استعمل ميكروفون لوحة المفاتيح العربية في هاتفك. وفي بعض النوافذ المدمجة لا يعمل إلا في النسخة المستضافة من الصفحة.'],
+['Je n’ai rien entendu. Rapproche-toi du micro et réessaie.','لم أسمع شيئًا. اقترب من الميكروفون وأعد المحاولة.'],
+['Le micro a besoin d’une connexion internet.','يحتاج الميكروفون إلى اتصال بالإنترنت.'],
+['Le micro a eu un souci ({}). Tu peux taper le verset à la place.','حدثت مشكلة في الميكروفون ({}). يمكنك كتابة الآية بدلًا من ذلك.'],
+['Le micro a eu un souci','حدثت مشكلة في الميكروفون'],
+['{} s','{} ث'],['‹ Coran','› القرآن'],['‹ Retour','› رجوع'],
+['Juzz \'Amma','جزء عمّ'],
+[FP+'Ces fiches montrent les expressions de 6 mots et plus qui se retrouvent À LA FOIS dans Al Baqara et dans Al Imran, jamais les répétitions internes à une seule des deux sourates.','نص القرآن (الرسم العثماني): The Noble Qur’an Encyclopedia، عبر حزمة quran-json (CC BY-SA 4.0)، وهو المصدر نفسه لسورة البقرة. الصفحات والأجزاء: quran-meta، مصحف المدينة (رواية حفص). تعرض هذه البطاقات العبارات المكوّنة من 6 كلمات فأكثر التي تتكرر في البقرة وآل عمران معًا، لا التكرارات الداخلية في إحدى السورتين وحدها.'],
+[FP+'Les fiches de {} sont repérées automatiquement (expressions de 4 mots et plus, entre versets de {} uniquement) ; le tajwid en couleur n’est pas disponible dans cette section.','نص القرآن (الرسم العثماني): The Noble Qur’an Encyclopedia، عبر حزمة quran-json (CC BY-SA 4.0)، وهو المصدر نفسه لسورة البقرة. الصفحات والأجزاء: quran-meta، مصحف المدينة (رواية حفص). بطاقات {} مستخرَجة تلقائيًا (عبارات من 4 كلمات فأكثر، بين آيات {} فقط)؛ والتجويد الملوّن غير متاح في هذا القسم.'],
+[FP+'Les fiches d’Al Imran sont repérées automatiquement (expressions de 6 mots et plus, entre versets d’Al Imran uniquement) ; le tajwid en couleur n’est pas disponible dans cette section.','نص القرآن (الرسم العثماني): The Noble Qur’an Encyclopedia، عبر حزمة quran-json (CC BY-SA 4.0)، وهو المصدر نفسه لسورة البقرة. الصفحات والأجزاء: quran-meta، مصحف المدينة (رواية حفص). بطاقات آل عمران مستخرَجة تلقائيًا (عبارات من 6 كلمات فأكثر، بين آيات آل عمران فقط)؛ والتجويد الملوّن غير متاح في هذا القسم.'],
+['Texte coranique (rasm ‘uthmani) : The Noble Qur’an Encyclopedia, via le paquet quran-json (CC BY-SA 4.0), recoupé verset par verset avec le texte du projet Tanzil. Pages et juzz : quran-meta, mushaf de Médine (riwaya Hafs).','نص القرآن (الرسم العثماني): The Noble Qur’an Encyclopedia، عبر حزمة quran-json (CC BY-SA 4.0)، ومطابَق آيةً آية مع نص مشروع تنزيل. الصفحات والأجزاء: quran-meta، مصحف المدينة (رواية حفص).'],
+/* — écran d'accueil, profils — */
+['Enfant','طفل'],['Ajouter un profil','إضافة ملف'],['Ajouter un profil enfant','إضافة ملف طفل'],['Logo','الشعار'],
+['Crée un profil pour suivre ta mémorisation et ta révision, et celles de tes enfants.','أنشئ ملفًا لمتابعة حفظك ومراجعتك، وحفظ أبنائك ومراجعتهم.'],
+['Nouveau profil','ملف جديد'],['Nouveau profil enfant','ملف طفل جديد'],['Ton prénom','اسمك'],['Prénom de l’enfant','اسم الطفل'],['Prénom','الاسم'],
+['Choisis un avatar','اختر صورة'],['Avatar','الصورة'],['L’avatar ne pourra plus être changé ensuite.','لا يمكن تغيير الصورة بعد ذلك.'],
+['Le profil démarre avec Al Fatiha et le Juzz Amma. Tu ajoutes ensuite les autres sourates quand tu veux.','يبدأ الملف بسورة الفاتحة وجزء عمّ. ثم تضيف بقية السور متى شئت.'],
+['Créer le profil','إنشاء الملف'],['Écris un prénom.','اكتب اسمًا.'],
+/* — barre du bas, menu Coran — */
+['Suivi','المتابعة'],['Mouraja’a','المراجعة'],['Coran','القرآن'],['Test','اختبار'],
+['Lire le Coran','قراءة القرآن'],['Depuis le début','من البداية'],['Écouter','استماع'],['Réciter et répéter','التلاوة والتكرار'],
+['Mutashabihat','المتشابهات'],['Les versets qui se ressemblent','الآيات المتشابهة'],
+['Réciter, répéter, mémoriser','التلاوة والتكرار والحفظ'],['604 pages · 114 sourates','٦٠٤ صفحة · ١١٤ سورة'],
+['{} · page {}','{} · صفحة {}'],
+/* — états des pages — */
+['Acquis','محفوظ'],['Fragile','ضعيف'],['Nouveau','جديد'],['Pas appris','غير محفوظ'],
+['Page {}, {}','صفحة {}، {}'],['Page {}','صفحة {}'],['Pages {} à {}','الصفحات {} إلى {}'],
+['{} pages sur {}','{} صفحة من {}'],['{} sourates sur {}','{} سورة من {}'],['{} page sur {}','{} صفحة من {}'],
+['Retirer cette sourate ?','إزالة هذه السورة؟'],['Retirer cette sourate','إزالة هذه السورة'],['Retirer ce juzz ?','إزالة هذا الجزء؟'],['Retirer ce juzz','إزالة هذا الجزء'],
+['Oui','نعم'],['Non','لا'],['Annuler','إلغاء'],['Fermer','إغلاق'],['‹ Fermer','› إغلاق'],['Retour','رجوع'],
+['Appliquer la couleur à tout le juzz','تطبيق اللون على الجزء كله'],
+['Sourate {} · page {}','سورة {} · صفحة {}'],['{} p. {}','{} ص {}'],
+['Touche une page pour la colorer. Pour une sourate entière, choisis une couleur puis touche-la.','المس صفحة لتلوينها. ولسورة كاملة، اختر لونًا ثم المس السورة.'],
+['Choisis une couleur, puis touche une sourate.','اختر لونًا، ثم المس سورة.'],
+['Couleur à appliquer','اللون المراد تطبيقه'],
+['+ Ajouter une sourate ou un juzz','+ إضافة سورة أو جزء'],['Ajouter une sourate ou un juzz','إضافة سورة أو جزء'],
+['Autres sourates','سور أخرى'],['moins d’une page','أقل من صفحة'],['environ {} pages','نحو {} صفحات'],['environ {} page','نحو {} صفحة'],
+['Chercher par nom ou par numéro','ابحث بالاسم أو بالرقم'],['Chercher une sourate','ابحث عن سورة'],
+['Aucune sourate ne correspond.','لا توجد سورة مطابقة.'],['Juzz entiers','أجزاء كاملة'],['Sourates','السور'],
+['{} sourates · pages {} · sourate par sourate','{} سورة · الصفحات {} · سورة بسورة'],
+['Ces pages avaient déjà cette couleur.','هذه الصفحات لها هذا اللون من قبل.'],
+['« {} » est ajoutée à ton suivi.','أُضيفت «{}» إلى متابعتك.'],['« {} » est ajouté à ton suivi.','أُضيف «{}» إلى متابعتك.'],
+['« {} » est retiré de ton suivi.','أُزيل «{}» من متابعتك.'],['« {} » est retirée de ton suivi.','أُزيلت «{}» من متابعتك.'],
+/* — mouraja’a (plan) — */
+['Page {} · {} pages · suivie page par page','صفحة {} · {} صفحة · تُتابَع صفحةً صفحة'],['Page {} · {} pages · sourate entière','صفحة {} · {} صفحة · سورة كاملة'],['Page {} · 1 page · sourate entière','صفحة {} · صفحة واحدة · سورة كاملة'],
+['{} sourates','{} سورة'],['{} sourate','{} سورة'],['{} sur {}','{} من {}'],['Warch','ورش'],['Hafs · Tajwîd','حفص · تجويد'],
+['{} jour fait sur {}','{} يوم منجز من {}'],['{} jours faits sur {}','{} أيام منجزة من {}'],['{} jours ·','{} أيام ·'],
+['Ma boucle de révision','دورة مراجعتي'],['Régler','ضبط'],['{} jours · {}','{} أيام · {}'],['jour {} sur {}','اليوم {} من {}'],
+['Semaine du {}','أسبوع {}'],['Jours de la semaine','أيام الأسبوع'],['Aujourd’hui','اليوم'],
+['Aucune page ni sourate n’est encore colorée.','لم تُلوَّن أي صفحة أو سورة بعد.'],
+['Marque ce qui est appris pour que le plan se construise.','علّم ما حفظته ليُبنى البرنامج.'],['Aller au suivi','الذهاب إلى المتابعة'],
+['Révision qadima','مراجعة قديمة'],['Révision jadida','مراجعة جديدة'],['Pages fragiles','الصفحات الضعيفة'],
+['Mouraja’a terminée','تمّت المراجعة'],['J’ai terminé ma mouraja’a','أنهيت مراجعتي'],
+['Touche chaque rond quand la partie est faite : le bouton s’allume tout seul.','المس كل دائرة عند إنهاء الجزء: يضيء الزر وحده.'],
+['Revue chaque jour.','تُراجَع كل يوم.'],
+/* — notices, sauvegarde, installation — */
+['Pense à sauvegarder ton suivi.','لا تنسَ حفظ نسخة احتياطية من متابعتك.'],
+['La dernière sauvegarde date de plus de {} jours.','آخر نسخة احتياطية مرّ عليها أكثر من {} يومًا.'],
+['Sauvegarder maintenant','احفظ نسخة الآن'],
+['Ajoute l’appli à ton écran d’accueil pour l’ouvrir en un geste.','أضف التطبيق إلى شاشتك الرئيسية لفتحه بلمسة واحدة.'],
+['Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.','تبقى متابعتك محفوظة في المتصفح: لا تنسَ نسخها احتياطيًا من حين لآخر.'],
+['Comment faire ?','كيف أفعل ذلك؟'],['C’est fait','تمّ'],
+['iPhone (Safari) :','آيفون (سفاري):'],
+['ouvre la page dans Safari, touche le bouton Partager (le carré avec la flèche), puis « Sur l’écran d’accueil ».','افتح الصفحة في سفاري، وانقر زر المشاركة (المربع الذي فيه سهم)، ثم «إضافة إلى الشاشة الرئيسية».'],
+['Désactive « Ouvrir en tant qu’app web »','عطّل خيار «فتح كتطبيق ويب»'],
+['si tu vois cette option, puis touche « Ajouter ». L’icône ouvrira le site dans Safari : le micro fonctionnera.','إن ظهر لك هذا الخيار، ثم انقر «إضافة». ستفتح الأيقونة الموقع في سفاري، وسيعمل الميكروفون.'],
+['Android (Chrome) :','أندرويد (كروم):'],
+['touche les trois points en haut, puis « Ajouter à l’écran d’accueil ». Si Chrome te le propose, choisis « Raccourci ».','انقر النقاط الثلاث في الأعلى، ثم «إضافة إلى الشاشة الرئيسية». وإن عرض عليك كروم ذلك فاختر «اختصار».'],
+['Garde toujours la même façon de l’ouvrir : ton suivi n’est pas partagé entre le navigateur et une app web.','افتح التطبيق دائمًا بالطريقة نفسها: فمتابعتك غير مشتركة بين المتصفح وتطبيق الويب.'],
+['Ce fichier ou ce code n’est pas valide.','هذا الملف أو هذا الرمز غير صالح.'],
+['Code sélectionné : copie-le avec ton clavier.','تم تحديد الرمز: انسخه بلوحة المفاتيح.'],['Code copié.','تم نسخ الرمز.'],
+['Fichier enregistré dans tes téléchargements.','حُفظ الملف في التنزيلات.'],['Impossible de créer le fichier.','تعذّر إنشاء الملف.'],
+['Sauvegarde envoyée.','أُرسلت النسخة الاحتياطية.'],['Impossible de lire ce fichier.','تعذّرت قراءة هذا الملف.'],
+/* — réglages — */
+['Réglages','الإعدادات'],['Réglages · {}','الإعدادات · {}'],['Ma boucle · {}','دورتي · {}'],['Retour au suivi','العودة إلى المتابعة'],['Retour à la mouraja’a','العودة إلى المراجعة'],['Retour aux profils','العودة إلى الملفات'],['Retour au choix','العودة إلى الاختيار'],
+['Langue','اللغة'],['Langue / اللغة','اللغة'],
+['Sauvegarde','النسخ الاحتياطي'],
+['Tes données sont enregistrées sur ce téléphone, dans ce navigateur. Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.','بياناتك محفوظة على هذا الهاتف، في هذا المتصفح. احفظ نسخة احتياطية من حين لآخر: إن فقدت هاتفك أو مُسح المتصفح، فستستعيد كل شيء.'],
+['Tes données sont enregistrées sur ce téléphone et aussi en ligne, liées à ton compte Claude.','بياناتك محفوظة على هذا الهاتف وعلى الإنترنت أيضًا، مرتبطة بحسابك في Claude.'],
+['Tes données sont enregistrées sur ce téléphone, dans ce navigateur.','بياناتك محفوظة على هذا الهاتف، في هذا المتصفح.'],
+['Fais une sauvegarde de temps en temps : si tu perds ton téléphone ou si le navigateur est vidé, tu pourras tout retrouver.','احفظ نسخة احتياطية من حين لآخر: إن فقدت هاتفك أو مُسح المتصفح، فستستعيد كل شيء.'],
+['Sauvegarder (envoyer un fichier)','حفظ نسخة (إرسال ملف)'],['Restaurer depuis un fichier','استعادة من ملف'],
+['Dernière sauvegarde : {}','آخر نسخة احتياطية: {}'],
+['Ajouter à l’écran d’accueil','إضافة إلى الشاشة الرئيسية'],
+['Ton suivi est enregistré dans le navigateur de ce téléphone. Un raccourci sur l’écran d’accueil permet de l’ouvrir en un geste ; pense à sauvegarder ton suivi de temps en temps.','متابعتك محفوظة في متصفح هذا الهاتف. يتيح لك اختصار على الشاشة الرئيسية فتحها بلمسة واحدة؛ ولا تنسَ نسخها احتياطيًا من حين لآخر.'],
+['Nom du profil','اسم الملف'],['Enregistrer','حفظ'],
+['Remettre {} à zéro','تصفير ملف {}'],['Efface toutes les couleurs, les révisions cochées et les sourates ajoutées de ce profil.','يمحو كل الألوان والمراجعات المؤشَّر عليها والسور المضافة في هذا الملف.'],
+['Oui, tout effacer','نعم، امحُ كل شيء'],['Remettre à zéro','تصفير'],
+['Supprimer le profil de {}','حذف ملف {}'],['Supprime ce profil et tout son suivi, sans retour possible.','يحذف هذا الملف وكل متابعته، ولا يمكن التراجع.'],
+['Oui, supprimer','نعم، احذف'],['Supprimer ce profil','حذف هذا الملف'],
+['Version {}','الإصدار {}'],['Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur','أنشأت التطبيق حبيبة أمّ إلياس — شكرًا لإبلاغي عن أي خطأ'],
+/* — boucle — */
+['Exclu','مستثنى'],['Moins souvent','أقل تكرارًا'],['Plus souvent','أكثر تكرارًا'],['Moins','أقل'],['Plus','أكثر'],['Moins pour {}','أقل لـ {}'],['Plus pour {}','أكثر لـ {}'],
+['toutes les {} sem.','كل {} أسابيع'],['toutes les {} boucles','كل {} دورات'],['par semaine','في الأسبوع'],['par boucle','في الدورة'],['/ sem.','/ أسبوع'],
+['{}× par semaine','{}× في الأسبوع'],['{}× par boucle','{}× في الدورة'],
+['{} / sem.','{} / أسبوع'],
+['réglages différents','إعدادات مختلفة'],
+['Avec {} jours, tu révises {} par jour','في {} أيام، تراجع {} كل يوم'],
+[', plus tes pages fragiles.',' ، إضافةً إلى صفحاتك الضعيفة.'],
+['C’est beaucoup : tu peux allonger la boucle ou espacer certaines sourates.','هذا كثير: يمكنك إطالة الدورة أو مباعدة بعض السور.'],
+['Pages à revoir plus souvent','صفحات تُراجَع أكثر'],
+['C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, va dans « Ma boucle », « Fréquence de chaque sourate », et utilise la ligne « Pages fragiles » de cette sourate : le réglage de la sourate elle-même ne change pas.','هذا هو التكرار الأساسي لكل صفحاتك الضعيفة. ولكي تُراجَع سورة بعينها (مثل البقرة) أكثر، اذهب إلى «دورتي» ثم «تكرار كل سورة» واستعمل سطر «الصفحات الضعيفة» لتلك السورة: فإعداد السورة نفسها لا يتغير.'],
+['Plus d’information','مزيد من المعلومات'],
+['Combien de fois par semaine une page fragile revient-elle ?','كم مرة في الأسبوع تعود الصفحة الضعيفة؟'],['fois / semaine','مرات / أسبوع'],['jours','أيام'],['jour','يوم'],
+['Au bout de combien de temps passe-t-elle en révision qadima (vert) ?','بعد كم من الوقت تنتقل إلى المراجعة القديمة (الأخضر)؟'],
+['Réglages principaux','الإعدادات الأساسية'],['Durée de la boucle','مدة الدورة'],['Tout ce que tu as appris est révisé dans ce délai.','كل ما حفظته يُراجَع خلال هذه المدة.'],
+['Aujourd’hui, c’est le jour {} de ta boucle de {} jours.','اليوم هو اليوم {} من دورتك البالغة {} أيام.'],['Changer','تغيير'],
+['Aujourd’hui, c’est le jour','اليوم هو اليوم'],['Pour recommencer ta boucle, choisis le jour 1.','لإعادة بدء دورتك، اختر اليوم 1.'],['de ma boucle','من دورتي'],
+['Une page jadida reste bleue pendant :','تبقى الصفحة الجديدة زرقاء لمدة:'],['Une page fragile revient…','تعود الصفحة الضعيفة…'],
+['C’est la fréquence de base de toutes tes pages fragiles. Pour qu’une sourate en particulier (par exemple Al Baqara) ait plus de passages, utilise la ligne « Pages fragiles » de cette sourate, plus bas dans « Affiner sourate par sourate ».','هذا هو التكرار الأساسي لكل صفحاتك الضعيفة. ولكي تُراجَع سورة بعينها (مثل البقرة) أكثر، استعمل سطر «الصفحات الضعيفة» لتلك السورة، في الأسفل ضمن «الضبط سورة بسورة».'],
+['Affiner sourate par sourate','الضبط سورة بسورة'],['Règle ici la fréquence de certaines sourates ou de leurs pages fragiles.','اضبط هنا تكرار بعض السور أو صفحاتها الضعيفة.'],
+['Tout le juzz d’un coup','الجزء كله دفعة واحدة'],
+['Enregistre ici la durée de la boucle et le jour. Les autres réglages s’enregistrent tout seuls.','احفظ هنا مدة الدورة واليوم. أما بقية الإعدادات فتُحفظ تلقائيًا.'],
+['Choisis un nombre de jours entre 3 et 40.','اختر عددًا من الأيام بين 3 و40.'],['La boucle dure au moins 3 jours.','تستمر الدورة 3 أيام على الأقل.'],
+['Enregistré : boucle de {} jours. Aujourd’hui est le jour {}.','تم الحفظ: دورة من {} أيام. اليوم هو اليوم {}.'],
+['Pages à marquer comme fragiles ?','صفحات تُعلَّم ضعيفة؟'],['Page à marquer comme fragile ?','صفحة تُعلَّم ضعيفة؟'],
+['Marquer fragile','تعليم كضعيفة'],['Ignorer','تجاهل'],['{} · {} fois faux','{} · {} مرات خطأ'],
+['Aucune sourate','لا توجد سورة'],
+/* — Test — */
+['Je te donne un verset, tu récites la suite.','أعطيك آية وتتلو أنت ما بعدها.'],['Que veux-tu réviser ?','ماذا تريد أن تراجع؟'],
+['Une sourate','سورة'],['Un juzz','جزء'],['Des pages','صفحات'],['De la page… à la page… (pages {} à {})','من الصفحة… إلى الصفحة… (الصفحات {} إلى {})'],
+['Commencer','ابدأ'],['■ Arrêter','■ إيقاف'],['Préparation…','جارٍ التحضير…'],['Analyse…','جارٍ التحليل…'],['Réciter','تلاوة'],
+['Autre verset','آية أخرى'],['La suite','التتمّة'],['Bon ✓','صحيح ✓'],['À revoir ↻','للمراجعة ↻'],
+['Voir la page {} dans le mushaf','عرض الصفحة {} في المصحف'],['Mots en plus compris par le micro : {}','كلمات زائدة التقطها الميكروفون: {}'],
+['jusqu’à la fin de la page {}','إلى نهاية الصفحة {}'],['jusqu’à la fin de la sourate','إلى نهاية السورة'],
+['Aucun verset ne convient dans ce choix. Élargis-le.','لا توجد آية مناسبة في هذا الاختيار. وسّعه.'],
+['{} · verset {}','{} · الآية {}'],['Mettre en pause','إيقاف مؤقت'],['Écouter le verset','استماع إلى الآية'],
+['Le micro est bloqué. Ouvre l’appli dans Safari (pas dans une fenêtre intégrée) et autorise le micro.','الميكروفون محظور. افتح التطبيق في سفاري (وليس في نافذة مدمجة) واسمح بالميكروفون.'],
+['Préparation du modèle de reconnaissance (19 Mo, une seule fois)…','جارٍ تحضير نموذج التعرّف (19 ميغابايت، مرة واحدة فقط)…'],
+['Le modèle n’a pas pu être chargé : {}. Vérifie ta connexion.','تعذّر تحميل النموذج: {}. تحقّق من اتصالك.'],
+['Analyse de ta récitation…','جارٍ تحليل تلاوتك…'],['Analyse impossible : {}','تعذّر التحليل: {}'],
+['Récite la suite du verset, puis touche « Arrêter ».','اتلُ تتمّة الآية، ثم المس «إيقاف».'],
+['L’audio n’a pas pu être chargé. Vérifie ta connexion puis réessaie.','تعذّر تحميل الصوت. تحقّق من اتصالك ثم أعد المحاولة.'],
+['Téléchargement impossible ({})','تعذّر التنزيل ({})'],
+/* — Coran : lecture — */
+['Sourates','السور'],['Aller à la page','الذهاب إلى صفحة'],['Ouvrir','فتح'],['1 à 604','من 1 إلى 604'],
+['Version du mushaf','نسخة المصحف'],['Liste des sourates et aller à une page','قائمة السور والذهاب إلى صفحة'],
+['Marque-page','علامة القراءة'],['Mon marque-page','علامة قراءتي'],['Revenir','العودة إليها'],['Le marque-page est sur cette page.','علامة القراءة في هذه الصفحة.'],
+['Déplacer ici · page {}','نقل إلى هنا · صفحة {}'],['Poser ici · page {}','وضع هنا · صفحة {}'],['Retirer le marque-page','إزالة علامة القراءة'],
+['Impossible de charger la page. Vérifie ta connexion.','تعذّر تحميل الصفحة. تحقّق من اتصالك.'],
+['{} · verset {}','{} · الآية {}'],
+['Texte du Coran : The Noble Qur’an Encyclopedia (quranenc.com), via quran-json, licence CC BY-SA 4.0. Pagination : quran-meta, licence MIT. Mise en page du mushaf de Médine et texte QPC Hafs : Complexe du Roi Fahd, via Quranic Universal Library (Tarteel). Noms de sourates en calligraphie : Naveed Ahmad et Muath Ahmed Ibn-Hassan (QUL), CC BY 4.0. Images des pages : dépôts QuranHub/quran-pages-images (Hafs, Warch ; domaine public) et abarizqon/quran-pages-images (tajwid, édition Dar Al-Ma’rifah) ; pages Hafs et Warch du Complexe du Roi Fahd.','نص القرآن: The Noble Qur’an Encyclopedia (quranenc.com)، عبر quran-json، رخصة CC BY-SA 4.0. ترقيم الصفحات: quran-meta، رخصة MIT. تخطيط مصحف المدينة ونص QPC حفص: مجمّع الملك فهد، عبر Quranic Universal Library (ترتيل). أسماء السور بالخط: نويد أحمد ومعاذ أحمد ابن حسن (QUL)، CC BY 4.0. صور الصفحات: مستودعا QuranHub/quran-pages-images (حفص، ورش؛ ملكية عامة) وabarizqon/quran-pages-images (التجويد، طبعة دار المعرفة)؛ وصفحات حفص وورش من مجمّع الملك فهد.'],
+/* — Écouter — */
+['RÉCITATEUR','القارئ'],['Récitateur','القارئ'],['Warsh : le découpage des versets peut différer un peu du texte affiché.','ورش: قد يختلف تقسيم الآيات قليلًا عن النص المعروض.'],
+['SOURATE · {} VERSETS','السورة · {} آية'],['Sourate','السورة'],['DU VERSET','من الآية'],['AU VERSET','إلى الآية'],['DE LA PAGE','من الصفحة'],['À LA PAGE','إلى الصفحة'],
+['Du verset','من الآية'],['Au verset','إلى الآية'],['De la page','من الصفحة'],['À la page','إلى الصفحة'],
+['Chaque verset','كل آية'],['Toute la plage','المقطع كله'],['Pause entre deux','الاستراحة بين مرّتين'],['Vitesse','السرعة'],
+['Sourate suivante','السورة التالية'],['Pas disponible avec les pages.','غير متاح مع الصفحات.'],['Quand tous les tours sont finis.','عند انتهاء كل الدورات.'],['Choisis un nombre de tours, pas ∞.','اختر عددًا للدورات، وليس ∞.'],
+['Passer à la sourate suivante','الانتقال إلى السورة التالية'],['▶ Lancer l’écoute','▶ بدء الاستماع'],['Lancer l’écoute, {}','بدء الاستماع، {}'],
+['Verset précédent','الآية السابقة'],['Verset suivant','الآية التالية'],['Pause','إيقاف مؤقت'],['Lecture','تشغيل'],
+['Terminé. Touche ▶ pour recommencer.','انتهى. المس ▶ للإعادة.'],['Verset {} · tour {} · répétition {}','الآية {} · الدورة {} · التكرار {}'],
+['Impossible de charger l’audio. Vérifie ta connexion.','تعذّر تحميل الصوت. تحقّق من اتصالك.'],
+['page {}','صفحة {}'],['pages {} à {}','الصفحات {} إلى {}'],['verset {}','الآية {}'],['versets {} à {}','الآيات {} إلى {}'],
+/* — Mutashabihat — */
+['Mutashabihat Al Baqara','متشابهات سورة البقرة'],['Mutashabihat Al Imran','متشابهات سورة آل عمران'],['Mutashabihat entre Al Baqara et Al Imran','المتشابهات بين البقرة وآل عمران'],
+['Al Baqara','البقرة'],['Al Imran','آل عمران'],['Al Baqara ↔ Al Imran','البقرة ↔ آل عمران'],['Juzz Amma','جزء عمّ'],['Juzz Tabarak','جزء تبارك'],['Juzz Qad Sami’a','جزء قد سمع'],['Juzz Qad Sami’','جزء قد سمع'],
+['Choisir la section','اختيار القسم'],['Récite le verset à voix haute','اتلُ الآية بصوت مرتفع'],['Verset reconnu à l’oral','الآية المتعرَّف عليها شفهيًا'],['Réciter au micro','التلاوة عبر الميكروفون'],
+['verset similaire','آية مشابهة'],['différence','اختلاف'],['À revoir','للمراجعة'],['Tajwid','التجويد'],['Marquer à revoir','تعليم للمراجعة'],
+['verset entier','الآية كاملة'],['début commun','بداية مشتركة'],['au milieu du verset','وسط الآية'],['ma fiche','بطاقتي'],['verset reconnu','آية متعرَّف عليها'],
+['Astuce :','نصيحة:'],['Supprimer cette fiche','حذف هذه البطاقة'],['Appuie encore pour confirmer','اضغط مرة أخرى للتأكيد'],
+['Rien à afficher avec ce filtre.','لا شيء للعرض بهذا التصفية.'],['Appuie sur le marque-page dans une fiche pour la retrouver ici.','اضغط على علامة القراءة في بطاقة لتجدها هنا.'],
+['Aucune fiche sur la page {}.','لا توجد بطاقة في الصفحة {}.'],
+['Mutashabihat de ce que tu as récité','متشابهات ما تلوته'],['dans ce que tu as dit. Corrige le texte si un mot est faux.','فيما قلته. صحّح النص إن كانت كلمة خاطئة.'],
+['J’ai retrouvé','وجدتُ'],['{} mots sur {}','{} كلمة من {}'],
+['Voir les fiches d’un de ces versets','عرض بطاقات إحدى هذه الآيات'],['Voici ses autres mutashabihat.','هذه بقية متشابهاتها.'],
+['Tape ou récite au moins trois lettres.','اكتب أو اتلُ ثلاثة أحرف على الأقل.'],
+['Aucun verset ne ressemble à cette récitation. Essaie avec le début ou la fin du verset, ou corrige le texte reconnu.','لا توجد آية تشبه هذه التلاوة. جرّب بداية الآية أو نهايتها، أو صحّح النص المتعرَّف عليه.'],
+['Versets qui ressemblent à ce que tu as dit','آيات تشبه ما قلته'],
+['Le micro n’est pas disponible dans ce navigateur.','الميكروفون غير متاح في هذا المتصفح.'],['Le micro est bloqué ici.','الميكروفون محظور هنا.'],
+['Impossible de lancer le micro. Tape le verset à la place.','تعذّر تشغيل الميكروفون. اكتب الآية بدلًا من ذلك.'],
+['Écoute en cours. Récite quelques mots du verset.','جارٍ الاستماع. اتلُ بعض كلمات الآية.'],
+['Hafs · Tajwîd','حفص · تجويد'],['Hafs · Médine','حفص · المدينة'],['Warsh','ورش'],
+/* — récitateurs — */
+['Al-Husary','الحصري'],['Al-Hudhaify','الحذيفي'],['Al-Minshawi','المنشاوي'],['Abdul Basit','عبد الباسط عبد الصمد'],['Ibrahim Al-Akhdar','إبراهيم الأخضر'],
+['Ayman Suwaid','أيمن سويد'],['Abu Bakr Al-Shatri','أبو بكر الشاطري'],['Saad Al-Ghamdi','سعد الغامدي'],['Yasser Al-Dosari','ياسر الدوسري'],['Khalifa Al-Tunaiji','خليفة الطنيجي'],['Ibrahim Al-Dosari (Warsh)','إبراهيم الدوسري (ورش)'],
+['Suivi mouraja’a','متابعة المراجعة'],['Sauvegarde Suivi mouraja’a','نسخة احتياطية لمتابعة المراجعة'],
+['Sections','الأقسام'],['Fermer','إغلاق'],['Plus','أكثر'],
+];
+/* — moteur — */
+const nrm=s=>s.replace(/[’‘`]/g,"'").replace(/\s+/g,' ').trim();
+const EX=new Map(), RX=[];
+G.forEach(([f,a])=>{
+  const k=nrm(f);
+  if(k.indexOf('{}')<0){ if(!EX.has(k)) EX.set(k,a); return; }
+  const parts=k.split('{}').map(p=>p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  let n=0; const re=new RegExp('^'+parts.join('(.+?)')+'$');
+  RX.push([re,a,k.length]);
+});
+RX.sort((x,y)=>y[2]-x[2]);
+/* noms de sourates et de juzz */
+try{ SUR.forEach(s=>{ EX.set(nrm(s.fr),s.ar); EX.set(nrm(s.n+'. '+s.fr),s.n+'. '+s.ar); EX.set(nrm(s.n+' · '+s.fr),s.n+' · '+s.ar); });
+  JUZ.forEach(j=>{ EX.set(nrm(j.fr),'جزء '+j.ar); const nm=j.fr.replace(/^Juzz /,''); EX.set(nrm('Juzz '+j.num+' · '+nm),'الجزء '+j.num+' · '+j.ar); }); }catch(e){}
+for(let i=1;i<=30;i++) if(!EX.has('Juzz '+i)) EX.set('Juzz '+i,'الجزء '+i);
+/* version avec sous-traduction des morceaux variables (noms, nombres) */
+function trFull(raw){
+  const m0=raw.match(/^(\s*)([\s\S]*?)(\s*)$/); const core=m0[2]; if(!core) return raw;
+  const k=nrm(core);
+  const e=EX.get(k); if(e!==undefined) return m0[1]+e+m0[3];
+  for(let i=0;i<RX.length;i++){ const m=RX[i][0].exec(k); if(m){ let j=0; const out=RX[i][1].replace(/\{\}/g,()=>{ j++; const g=m[j]; const t=trFull(g); return t; }); return m0[1]+out+m0[3]; } }
+  return raw;
+}
+const skipTag={SCRIPT:1,STYLE:1,TEXTAREA:1,SVG:1,svg:1,PATH:1};
+function inArabic(el){ for(let e=el;e&&e.nodeType===1&&e!==document.documentElement;e=e.parentNode||e.host){ if(e.getAttribute&&e.getAttribute('lang')==='ar') return true; if(e.id==='qtext'||e.id==='ltext') return true; } return false; }
+function doText(n){
+  const p=n.parentNode; if(!p||skipTag[p.nodeName]) return;
+  const v=n.nodeValue; if(!v||!/[A-Za-zÀ-ÿ]/.test(v)) return;
+  if(p.nodeType===1&&inArabic(p)) return;
+  const t=trFull(v); if(t!==v) n.nodeValue=t;
+}
+const ATTR=['aria-label','placeholder','title','alt'];
+function doEl(el){
+  if(!el.getAttribute) return;
+  for(const a of ATTR){ const v=el.getAttribute(a); if(v&&/[A-Za-zÀ-ÿ]/.test(v)){ const t=trFull(v); if(t!==v) el.setAttribute(a,t); } }
+}
+function walk(root){
+  if(!root) return;
+  if(root.nodeType===3){ doText(root); return; }
+  if(root.nodeType!==1&&root.nodeType!==11) return;
+  if(root.nodeType===1){ if(skipTag[root.nodeName]) return; doEl(root); }
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT|NodeFilter.SHOW_ELEMENT,null);
+  let n; while((n=w.nextNode())){ if(n.nodeType===3) doText(n); else { if(skipTag[n.nodeName]) continue; doEl(n); } }
+}
+let busy=false;
+const mo=new MutationObserver(muts=>{
+  if(busy) return; busy=true;
+  try{ for(const m of muts){
+    if(m.type==='characterData') doText(m.target);
+    else if(m.type==='attributes') doEl(m.target);
+    else m.addedNodes.forEach(n=>walk(n));
+  } }finally{ busy=false; mo.takeRecords(); }
+});
+const OPT={childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR};
+window.__trRoot=function(root){ walk(root); try{ mo.observe(root,OPT); }catch(e){} };
+window.__trWalk=walk;
+window.__trUnmatched=function(root){ if(!root){ const sr=(document.getElementById('mutaHost')||{}).shadowRoot; const a=window.__trUnmatched(document.body); return sr?a.concat(window.__trUnmatched(sr)):a; }
+  const out=new Set(); const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT,null); let n;
+  while((n=w.nextNode())){ const v=n.nodeValue; if(/[A-Za-zÀ-ÿ]{3,}/.test(v)&&!(n.parentNode&&inArabic(n.parentNode))&&!skipTag[n.parentNode.nodeName]) out.add(nrm(v)); }
+  return [...out];
+};
+document.documentElement.setAttribute('dir','rtl'); document.documentElement.setAttribute('lang','ar');
+window.__trRoot(document.body);
+window.__trTr=trFull;
+})();
 
 try{ if(navigator.storage&&navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 render();
