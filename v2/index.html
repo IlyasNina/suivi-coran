@@ -383,16 +383,22 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 .flash{font-size:.88rem;font-weight:600;color:var(--accent)}
 .notice{margin-top:6px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px;font-size:.9rem}
 .notice p{margin:0}
-.notice.nx{padding:16px;border-radius:24px;background:linear-gradient(145deg,#fff,#F6F0E0);border:1.5px solid #E6DECB;box-shadow:6px 6px 14px rgba(160,140,100,.22),-4px -4px 10px rgba(255,255,255,.9);gap:14px}
-.nx .nh{display:flex;align-items:flex-start;gap:12px}
-.nx .ic{flex:none;width:44px;height:44px;border-radius:50%;background:#EFE8D6;display:flex;align-items:center;justify-content:center;box-shadow:inset 3px 3px 7px rgba(160,140,100,.38),inset -3px -3px 7px rgba(255,255,255,.95)}
-.nx .nh p{font-size:.95rem;line-height:1.4}.nx .nh p b{display:block;font-size:1.02rem;margin-bottom:2px}
-.nx .bkrow{min-height:60px}.nx .bkrow .tx{font-size:17px}
-.nx .pill{all:unset;cursor:pointer;box-sizing:border-box;align-self:flex-start;padding:0 22px;height:46px;line-height:46px;border-radius:999px;font-family:inherit;font-weight:700;font-size:15px;color:#14211D;background:linear-gradient(145deg,#fff,#F1EBDA);box-shadow:5px 5px 11px rgba(160,140,100,.32),-4px -4px 9px rgba(255,255,255,.95)}
-.nx .pill:active{box-shadow:inset 3px 3px 8px rgba(160,140,100,.35),inset -3px -3px 8px rgba(255,255,255,.9)}
-:root[data-theme="dark"] .notice.nx{background:linear-gradient(145deg,#1D2E28,#15211D);border-color:#263832;box-shadow:6px 6px 13px rgba(0,0,0,.5),-3px -3px 9px rgba(255,255,255,.04)}
-:root[data-theme="dark"] .nx .ic{background:#101B17;box-shadow:inset 3px 3px 7px rgba(0,0,0,.55),inset -2px -2px 6px rgba(255,255,255,.04)}
-:root[data-theme="dark"] .nx .pill{color:#E7EFEB;background:linear-gradient(145deg,#22352F,#1A2A25);box-shadow:5px 5px 11px rgba(0,0,0,.5),-2px -2px 6px rgba(255,255,255,.05)}
+.notice.nx{padding:16px 14px;border-radius:24px;text-align:center;border:0;background:#F4E6C8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 2px 8px rgba(60,66,76,.12);gap:0}
+.notice.nx.pearl{background:#E7EAEE}
+.nx .ic{width:46px;height:46px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#F8F9FA,#D7DADF);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 4px 10px rgba(60,66,76,.25);color:#2E333A}
+.nx .nt{font-size:1.02rem;font-weight:700;color:#1F2329}
+.nx .nd{font-size:.92rem;color:#555C66;margin:2px 0 12px;line-height:1.4}
+.nx .btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.nx .ti,.nx .ti2{all:unset;cursor:pointer;box-sizing:border-box;height:44px;line-height:44px;padding:0 20px;border-radius:999px;font-family:inherit;font-weight:700;font-size:15px;color:#1F2329;text-align:center}
+.nx .ti{background:linear-gradient(180deg,#F8F9FA,#D7DADF);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 6px 14px rgba(60,66,76,.28),0 1px 2px rgba(60,66,76,.3);line-height:42px}
+.nx .ti:active{box-shadow:inset 0 2px 5px rgba(60,66,76,.3)}
+.nx .ti2{border:1.5px solid rgba(60,66,76,.35);font-weight:600;line-height:41px}
+.nx .ti:focus-visible,.nx .ti2:focus-visible{outline:2px solid #3A3F47;outline-offset:2px}
+.nx .steps{text-align:left;margin-top:12px;font-size:.9rem}
+:root[data-theme="dark"] .notice.nx{background:#3A3322;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+:root[data-theme="dark"] .notice.nx.pearl{background:#2A3033}
+:root[data-theme="dark"] .nx .nt{color:#F1F3F5}:root[data-theme="dark"] .nx .nd{color:#B4BCC4}
+:root[data-theme="dark"] .nx .ti2{color:#E4E8EC;border-color:rgba(255,255,255,.3)}
 .setcard .meta{font-size:.85rem;color:var(--muted);margin:0}
 .steps{margin:8px 0 0;padding-left:18px;font-size:.88rem;color:var(--muted)}
 .steps li{margin-bottom:6px}
@@ -1169,6 +1175,8 @@ const BACKUP_DAYS=10;
 function isStandalone(){
   try{ return (window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true; }catch(e){ return false; }
 }
+let installOpen=false;
+function backupSnoozed(){ try{ return Date.now()-(+localStorage.getItem('suivi-backup-snooze')||0)<86400000; }catch(e){ return false; } }
 function installDismissed(){ try{ return !!localStorage.getItem('suivi-install-ok'); }catch(e){ return false; } }
 function backupDue(){
   if(sync==='online'||!hasData(state)) return false;
@@ -1182,11 +1190,8 @@ function installSteps(){
 }
 function noticesHTML(){
   let h='';
-  if(backupDue()) h+=`<div class="notice nx"><div class="nh"><span class="ic"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E6B5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><p><b>Pense à sauvegarder ton suivi.</b>La dernière sauvegarde date de plus de ${BACKUP_DAYS} jours.</p></div>
-    <button class="bkrow" data-act="backupfile"><span class="ic"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E6B5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></span><span class="tx">Sauvegarder maintenant</span><svg class="chev" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button></div>`;
-  if(sync!=='online'&&hasData(state)&&!isStandalone()&&!installDismissed()) h+=`<div class="notice nx"><div class="nh"><span class="ic"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0E6B5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><p><b>Ajoute l’appli à ton écran d’accueil</b>Pour l’ouvrir en un geste. Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.</p></div>
-    <details class="det"><summary>Comment faire ?</summary>${installSteps()}</details>
-    <button class="pill" data-act="installok">C’est fait</button></div>`;
+  if(backupDue()&&!backupSnoozed()) h+=`<div class="notice nx"><span class="ic"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><div class="nt">Pense à sauvegarder ton suivi.</div><div class="nd">La dernière sauvegarde date de plus de ${BACKUP_DAYS} jours.</div><div class="btns"><button class="ti" data-act="backupfile">Sauvegarder</button><button class="ti2" data-act="bksnooze">Plus tard</button></div></div>`;
+  if(sync!=='online'&&hasData(state)&&!isStandalone()&&!installDismissed()) h+=`<div class="notice nx pearl"><span class="ic"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg></span><div class="nt">Ajoute l’appli à ton écran d’accueil</div><div class="nd">Pour l’ouvrir en un geste.</div><div class="btns"><button class="ti" data-act="instog" aria-expanded="${installOpen}">Comment faire ?</button><button class="ti2" data-act="installok">C’est fait</button></div>${installOpen?installSteps():''}</div>`;
   return h;
 }
 function backupName(){ const d=new Date(); const z=n=>('0'+n).slice(-2); return 'suivi-coran-'+d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+'.json'; }
@@ -1318,7 +1323,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.7.0';
+const APP_VERSION='1.7.1';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
@@ -1573,6 +1578,8 @@ const handlers={
     doRestore(backupText);
   },
   restorepick(){ const f=document.getElementById('bkfile'); if(f) f.click(); },
+  instog(){ installOpen=!installOpen; render(); },
+  bksnooze(){ try{ localStorage.setItem('suivi-backup-snooze',String(Date.now())); }catch(e){} render(); },
   installok(){ try{ localStorage.setItem('suivi-install-ok','1'); }catch(e){} render(); },
   backupfile(){
     const text=exportText(), name=backupName();
@@ -2933,7 +2940,7 @@ const G=[
 ['Pense à sauvegarder ton suivi.','لا تنسَ حفظ نسخة احتياطية من متابعتك.'],
 ['La dernière sauvegarde date de plus de {} jours.','آخر نسخة احتياطية مرّ عليها أكثر من {} يومًا.'],
 ['Sauvegarder maintenant','احفظ نسخة الآن'],
-['Ajoute l’appli à ton écran d’accueil','أضف التطبيق إلى شاشتك الرئيسية'],['Pour l’ouvrir en un geste. Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.','لفتحه بلمسة واحدة. تبقى متابعتك محفوظة في المتصفح: لا تنسَ نسخها احتياطيًا من حين لآخر.'],
+['Plus tard','لاحقًا'],['Pour l’ouvrir en un geste.','لفتحه بلمسة واحدة.'],['Ajoute l’appli à ton écran d’accueil','أضف التطبيق إلى شاشتك الرئيسية'],['Pour l’ouvrir en un geste. Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.','لفتحه بلمسة واحدة. تبقى متابعتك محفوظة في المتصفح: لا تنسَ نسخها احتياطيًا من حين لآخر.'],
 ['Ajoute l’appli à ton écran d’accueil pour l’ouvrir en un geste.','أضف التطبيق إلى شاشتك الرئيسية لفتحه بلمسة واحدة.'],
 ['Ton suivi reste enregistré dans le navigateur : pense à le sauvegarder de temps en temps.','تبقى متابعتك محفوظة في المتصفح: لا تنسَ نسخها احتياطيًا من حين لآخر.'],
 ['Comment faire ?','كيف أفعل ذلك؟'],['C’est fait','تمّ'],
