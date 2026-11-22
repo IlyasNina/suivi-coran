@@ -383,22 +383,23 @@ textarea.field{width:100%;min-height:96px;font-family:ui-monospace,Menlo,Consola
 .flash{font-size:.88rem;font-weight:600;color:var(--accent)}
 .notice{margin-top:6px;padding:14px 16px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px;font-size:.9rem}
 .notice p{margin:0}
-.notice.nx{padding:16px 14px;border-radius:24px;text-align:center;border:0;background:#F4E6C8;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 2px 8px rgba(60,66,76,.12);gap:0}
-.notice.nx.pearl{background:#E7EAEE}
-.nx .ic{width:46px;height:46px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#F8F9FA,#D7DADF);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 4px 10px rgba(60,66,76,.25);color:#2E333A}
+.notice.nx{padding:16px 14px;border-radius:22px;text-align:center;border:0;background:#F3EBDA;box-shadow:none;gap:0}
+.notice.nx.pearl{background:#ECEDEE}
+.nx .ic{width:44px;height:44px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:#fff;color:#3A3F47;box-shadow:0 1px 3px rgba(40,40,40,.12)}
 .nx .nt{font-size:1.02rem;font-weight:700;color:#1F2329}
 .nx .nd{font-size:.92rem;color:#555C66;margin:2px 0 12px;line-height:1.4}
-.nx .btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.nx .ti,.nx .ti2{all:unset;cursor:pointer;box-sizing:border-box;height:44px;line-height:44px;padding:0 20px;border-radius:999px;font-family:inherit;font-weight:700;font-size:15px;color:#1F2329;text-align:center}
-.nx .ti{background:linear-gradient(180deg,#F8F9FA,#D7DADF);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 -1px 0 rgba(0,0,0,.12),0 6px 14px rgba(60,66,76,.28),0 1px 2px rgba(60,66,76,.3);line-height:42px}
-.nx .ti:active{box-shadow:inset 0 2px 5px rgba(60,66,76,.3)}
-.nx .ti2{border:1.5px solid rgba(60,66,76,.35);font-weight:600;line-height:41px}
-.nx .ti:focus-visible,.nx .ti2:focus-visible{outline:2px solid #3A3F47;outline-offset:2px}
+.nx .btns{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+.nx .ti,.nx .ti2{all:unset;cursor:pointer;box-sizing:border-box;font-family:inherit;text-align:center}
+.nx .ti{height:44px;line-height:44px;padding:0 22px;border-radius:999px;font-weight:700;font-size:15px;color:#25282C;background:#fff;box-shadow:0 1px 3px rgba(40,40,40,.14),0 4px 12px rgba(40,40,40,.08)}
+.nx .ti:active{box-shadow:inset 0 1px 4px rgba(40,40,40,.18)}
+.nx .ti2{min-height:44px;line-height:44px;padding:0 12px;font-weight:600;font-size:15px;color:#5A5F66;text-decoration:underline}
+.nx .ti:focus-visible,.nx .ti2:focus-visible{outline:2px solid #3A3F47;outline-offset:2px;border-radius:999px}
 .nx .steps{text-align:left;margin-top:12px;font-size:.9rem}
-:root[data-theme="dark"] .notice.nx{background:#3A3322;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
-:root[data-theme="dark"] .notice.nx.pearl{background:#2A3033}
+:root[data-theme="dark"] .notice.nx{background:#3A3526}
+:root[data-theme="dark"] .notice.nx.pearl{background:#2B3033}
+:root[data-theme="dark"] .nx .ic,:root[data-theme="dark"] .nx .ti{background:#4A4F55;color:#F1F3F5;box-shadow:none}
 :root[data-theme="dark"] .nx .nt{color:#F1F3F5}:root[data-theme="dark"] .nx .nd{color:#B4BCC4}
-:root[data-theme="dark"] .nx .ti2{color:#E4E8EC;border-color:rgba(255,255,255,.3)}
+:root[data-theme="dark"] .nx .ti2{color:#C9CFD5}
 .setcard .meta{font-size:.85rem;color:var(--muted);margin:0}
 .steps{margin:8px 0 0;padding-left:18px;font-size:.88rem;color:var(--muted)}
 .steps li{margin-bottom:6px}
@@ -1323,7 +1324,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.7.1';
+const APP_VERSION='1.7.2';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
