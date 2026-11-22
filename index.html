@@ -167,8 +167,10 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);height:var(--bar-h);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
 .back{border:0;background:none;min-width:44px;min-height:44px;font-size:1.6rem;line-height:1;margin-left:-10px;color:var(--accent)}
 .top h2{font-size:1.25rem;font-weight:700;letter-spacing:-.01em;flex:1;min-width:0}
-.gear{border:0;background:none;min-width:44px;min-height:44px;margin-right:-10px;color:var(--accent);display:inline-flex;align-items:center;justify-content:center}
-.gear svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.gear{border:0;width:46px;height:46px;min-width:46px;min-height:46px;margin-right:2px;border-radius:50%;cursor:pointer;color:var(--accent);background:linear-gradient(145deg,#fff,#F1EBDA);box-shadow:2px 2px 2px rgba(150,130,90,.55),-1px -1px 2px rgba(255,255,255,.95);display:inline-flex;align-items:center;justify-content:center}
+.gear:active{box-shadow:inset 2px 2px 3px rgba(150,130,90,.5),inset -1px -1px 2px rgba(255,255,255,.9)}
+.gear svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme="dark"] .gear{background:linear-gradient(145deg,#1D2E28,#15211D);color:#BFE3DD;box-shadow:2px 2px 2px rgba(0,0,0,.55),-1px -1px 2px rgba(255,255,255,.05)}
 .credit{margin:34px 0 0;font-size:min(.624rem,2.5vw);color:var(--muted)}
 .credit .cm{display:block;text-align:center}
 .credit .cv{display:block;text-align:center}
@@ -1119,7 +1121,7 @@ function perDay(P,N){
 }
 function loopBanner(P){
   const N=P.loop.n, sn=startNum(P), dn=dayNum(new Date()), k=Math.floor((dn-sn)/N), pos=dn-(sn+k*N)+1;
-  return `<button class="loopban" data-act="loop"><span class="lt"><b>Ma boucle de révision</b><span class="go">Régler</span></span>
+  return `<button class="loopban" data-act="loop"><span class="lt"><b>Ma boucle de révision</b><span class="go">Modifier</span></span>
     <span class="lm">${N} jours · <b>jour ${pos} sur ${N}</b></span></button>`;
 }
 function bulletLines(items){
@@ -1212,6 +1214,7 @@ function exportText(){
   const o={v:2,settings:state.settings,order:state.order,profiles:state.profiles};
   return JSON.stringify(o);
 }
+let shFlash='';
 function reglagesHTML(){
   const s=state.settings, name=pname(pk);
   const step=(key,label,cls,val,unit)=>`<div class="stepper"><span class="lab"><i class="dot ${cls}"></i>${label}</span>
@@ -1225,6 +1228,7 @@ function reglagesHTML(){
       ${flash&&tab==='reglages'?`<p class="flash">${esc(flash)}</p>`:''}
     </section>
     ${sync!=='online'&&!isStandalone()?`<section class="card setcard"><h4>Ajouter à l’écran d’accueil</h4><p>Ton suivi est enregistré dans le navigateur de ce téléphone. Un raccourci sur l’écran d’accueil permet de l’ouvrir en un geste ; pense à sauvegarder ton suivi de temps en temps.</p>${installSteps()}</section>`:''}
+    <section class="card setcard"><h4>Partager et signaler</h4><div class="bkrows"><button class="bkrow" data-act="shareapp"><span class="ic"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E6B5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 13v6h14v-6"/></svg></span><span class="tx">Partager l’appli</span><svg class="chev" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button><a class="bkrow" href="https://forms.gle/WvYzmxj1vst46FxMA" target="_blank" rel="noopener"><span class="ic"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0E6B5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4M6 4h11l-2 4 2 4H6"/></svg></span><span class="tx">Signaler une erreur</span><svg class="chev" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></a></div>${shFlash?`<p class="flash">${esc(shFlash)}</p>`:''}</section>
     <section class="card setcard"><h4>Nom du profil</h4>
       <div class="row2"><input id="rname" class="field" type="text" maxlength="24" value="${name}" aria-label="Prénom" autocomplete="off"><button class="btn" data-act="rename">Enregistrer</button></div>
     </section>
@@ -1324,7 +1328,7 @@ function profileHTML(){
   const gear=tab==='reglages'?'':`<button class="gear" data-act="tab" data-tab="reglages" aria-label="Réglages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${gear}</header>${body}`;
 }
-const APP_VERSION='1.7.4';
+const APP_VERSION='1.7.7';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
@@ -1346,7 +1350,7 @@ const APP_VERSION='1.7.4';
 })();
 /* Affiché seulement sur la page d'accueil et dans Réglages. */
 function creditText(){ return '<p class="credit"><span class="cm">Application créée par Habiba Umm Ilyas — Merci de me signaler toute erreur</span><span class="cv">Version '+APP_VERSION+'</span></p>'; }
-function creditHTML(){ return (main==='suivi'&&screen==='home')?creditText():''; }
+function creditHTML(){ return (main==='suivi'&&screen==='home')?'<p class="credit"><span class="cv">Version '+APP_VERSION+'</span></p>':''; }
 
 function render(){
   if(tAud&&(main!=='test'||TS.step!=='ask'||tAudFor!==TS.id)) tAudStop();
@@ -1582,6 +1586,19 @@ const handlers={
   instog(){ installOpen=!installOpen; render(); },
   bksnooze(){ try{ localStorage.setItem('suivi-backup-snooze',String(Date.now())); }catch(e){} render(); },
   installok(){ try{ localStorage.setItem('suivi-install-ok','1'); }catch(e){} render(); },
+  shareapp(){
+    const url='https://ilyasnina.github.io/suivi-coran/', text='السلام عليكم، je te conseille مراجعتنا, une appli gratuite pour suivre et réviser son Coran :';
+    const note=m=>{ shFlash=m; render(); setTimeout(()=>{ shFlash=''; if(tab==='reglages') render(); },2600); };
+    const copy=()=>{
+      const all=text+' '+url;
+      try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(all).then(()=>note('Lien copié.'),()=>note('Impossible de copier le lien.')); return; } }catch(e){}
+      try{ const t=document.createElement('textarea'); t.value=all; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); const ok=document.execCommand('copy'); t.remove(); note(ok?'Lien copié.':'Impossible de copier le lien.'); }catch(e){ note('Impossible de copier le lien.'); }
+    };
+    try{
+      if(navigator.share){ navigator.share({title:'مراجعتنا',text:text,url:url}).catch(err=>{ if(!err||err.name!=='AbortError') copy(); }); return; }
+    }catch(e){}
+    copy();
+  },
   backupfile(){
     const text=exportText(), name=backupName();
     const done=m=>{ markBackedUp(); flash=m; render(); };
@@ -2929,7 +2946,7 @@ const G=[
 ['Page {} · {} pages · suivie page par page','صفحة {} · {} صفحة · تُتابَع صفحةً صفحة'],['Page {} · {} pages · sourate entière','صفحة {} · {} صفحة · سورة كاملة'],['Page {} · 1 page · sourate entière','صفحة {} · صفحة واحدة · سورة كاملة'],
 ['{} sourates','{} سورة'],['{} sourate','{} سورة'],['{} sur {}','{} من {}'],['Warch','ورش'],['Hafs · Tajwîd','حفص · تجويد'],
 ['{} jour fait sur {}','{} يوم منجز من {}'],['{} jours faits sur {}','{} أيام منجزة من {}'],['{} jours ·','{} أيام ·'],
-['Ma boucle de révision','دورة مراجعتي'],['Régler','ضبط'],['{} jours · {}','{} أيام · {}'],['jour {} sur {}','اليوم {} من {}'],
+['Ma boucle de révision','دورة مراجعتي'],['Régler','ضبط'],['Modifier','تعديل'],['{} jours · {}','{} أيام · {}'],['jour {} sur {}','اليوم {} من {}'],
 ['Semaine du {}','أسبوع {}'],['Jours de la semaine','أيام الأسبوع'],['Aujourd’hui','اليوم'],
 ['Aucune page ni sourate n’est encore colorée.','لم تُلوَّن أي صفحة أو سورة بعد.'],
 ['Marque ce qui est appris pour que le plan se construise.','علّم ما حفظته ليُبنى البرنامج.'],['Aller au suivi','الذهاب إلى المتابعة'],
@@ -3059,6 +3076,8 @@ const G=[
 ['Al-Husary','الحصري'],['Al-Hudhaify','الحذيفي'],['Al-Minshawi','المنشاوي'],['Abdul Basit','عبد الباسط عبد الصمد'],['Ibrahim Al-Akhdar','إبراهيم الأخضر'],
 ['Ayman Suwaid','أيمن سويد'],['Abu Bakr Al-Shatri','أبو بكر الشاطري'],['Saad Al-Ghamdi','سعد الغامدي'],['Yasser Al-Dosari','ياسر الدوسري'],['Khalifa Al-Tunaiji','خليفة الطنيجي'],['Ibrahim Al-Dosari (Warsh)','إبراهيم الدوسري (ورش)'],
 ['Suivi mouraja’a','متابعة المراجعة'],['Sauvegarde Suivi mouraja’a','نسخة احتياطية لمتابعة المراجعة'],
+['Partager et signaler','مشاركة وإبلاغ'],['Partager l’appli','مشاركة التطبيق'],['Envoyer le lien à quelqu’un','أرسل الرابط إلى من تحب'],
+['Signaler une erreur','الإبلاغ عن خطأ'],['Ouvre un petit formulaire','يفتح نموذجًا صغيرًا'],['Lien copié.','تم نسخ الرابط.'],['Impossible de copier le lien.','تعذّر نسخ الرابط.'],
 ['Sections','الأقسام'],['Fermer','إغلاق'],['Plus','أكثر'],
 ];
 /* — moteur — */
