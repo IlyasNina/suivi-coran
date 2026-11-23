@@ -180,6 +180,17 @@ select.field{font:inherit;min-height:44px;padding:8px 10px;border:1.5px solid va
 .homebar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 18px}
 .homebar>.langsw{margin:0}
 .homebar .langsw button{min-width:44px;height:30px;line-height:30px;padding:0 10px;font-size:14px}
+.faq{margin-top:18px}
+.faq h4{font-size:1.05rem}
+.faqi{border-top:1px solid var(--line);padding:2px 0}
+.faqi:first-of-type{border-top:0}
+.faqi>summary{cursor:pointer;list-style:none;font-weight:700;min-height:44px;display:flex;align-items:center;gap:10px;padding:6px 0}
+.faqi>summary::-webkit-details-marker{display:none}
+.faqi>summary::after{content:"+";margin-left:auto;font-size:1.3rem;color:var(--accent);font-weight:600}
+[dir=rtl] .faqi>summary::after{margin-left:0;margin-right:auto}
+.faqi[open]>summary::after{content:"–"}
+.faqi p{margin:2px 0 10px;color:var(--muted);font-size:.92rem;line-height:1.5}
+.faqi .steps{margin:2px 0 10px}
 .helpvid{display:block;width:100%;max-width:360px;margin:14px auto 0;border-radius:16px;background:#14504A;aspect-ratio:9/16;max-height:78vh;object-fit:contain}
 .credit{margin:34px 0 0;font-size:min(.624rem,2.5vw);color:var(--muted)}
 .credit .cm{display:block;text-align:center}
@@ -1227,8 +1238,11 @@ function exportText(){
 let shFlash='';
 let helpOpen=false;
 const HELPIC='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.6 2.2c-.8.5-1.2 1-1.2 1.9M12 16.6v.01"/></svg>';
+function FAQHTML(){
+  return `<section class="card faq"><h4>Questions fréquentes</h4><details class="faqi"><summary>Comment mettre l’appli sur mon écran d’accueil ?</summary>${installSteps()}</details><details class="faqi"><summary>Est-ce une vraie application ou une appli web ?</summary><p>C’est une appli web : elle s’ouvre dans le navigateur de ton téléphone, sans passer par l’App Store ni Google Play. Elle est gratuite, sans compte, et l’icône sur l’écran d’accueil n’est qu’un raccourci.</p></details><details class="faqi"><summary>Puis-je synchroniser mon suivi entre plusieurs appareils ?</summary><p>Non. Comme c’est une appli web sans compte, le suivi reste enregistré uniquement sur l’appareil où tu l’as créé : il ne se met pas à jour tout seul sur un autre téléphone ou une autre tablette.</p></details><details class="faqi"><summary>J’ai plusieurs enfants et plusieurs tablettes : comment faire ?</summary><p>Le plus simple : un profil par enfant, sur la tablette de cet enfant. Tu peux aussi créer tous les profils sur un seul appareil. Pour déplacer un suivi vers un autre appareil, utilise « Sauvegarder » puis « Restaurer » dans les Réglages : la restauration remplace ce qui se trouve déjà sur l’appareil.</p></details><details class="faqi"><summary>Mes données risquent-elles d’être perdues ?</summary><p>Ton suivi est enregistré dans le navigateur de ton appareil. Si tu effaces les données du navigateur, si tu changes de téléphone ou si tu perds l’appareil, il peut disparaître. Fais une sauvegarde de temps en temps dans les Réglages.</p></details><details class="faqi"><summary>Faut-il une connexion internet ?</summary><p>Oui, prévois une connexion pour écouter les récitations et pour faire le test au micro.</p></details><details class="faqi"><summary>Le micro ne marche pas : que faire ?</summary><p>Sur iPhone, ouvre l’appli dans Safari (pas dans une fenêtre intégrée à une autre appli) et autorise le micro. Si tu l’ajoutes à l’écran d’accueil, désactive « Ouvrir en tant qu’app web ».</p></details><details class="faqi"><summary>L’appli ne se met pas à jour : que faire ?</summary><p>Ferme complètement l’appli puis rouvre-la, une ou deux fois. Le numéro de version s’affiche en bas de l’écran d’accueil.</p></details><details class="faqi"><summary>Comment signaler une erreur ou proposer une idée ?</summary><p>Dans les Réglages, touche « Signaler une erreur » : ça ouvre un petit formulaire.</p></details></section>`;
+}
 function helpHTML(){
-  return `<header class="top"><button class="back" data-act="back" aria-label="Retour">‹</button><h2>Aide</h2></header><video class="helpvid" src="aide.mp4" poster="aide-poster.jpg" controls playsinline preload="none"></video>`;
+  return `<header class="top"><button class="back" data-act="back" aria-label="Retour">‹</button><h2>Aide</h2></header><video class="helpvid" src="aide.mp4" poster="aide-poster.jpg" controls playsinline preload="none"></video>${FAQHTML()}`;
 }
 function reglagesHTML(){
   const s=state.settings, name=pname(pk);
@@ -1344,7 +1358,7 @@ function profileHTML(){
   const help=`<button class="helpbtn" data-act="help">${HELPIC}Aide</button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${help}${gear}</header>${body}`;
 }
-const APP_VERSION='1.7.8';
+const APP_VERSION='1.7.9';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
@@ -2964,7 +2978,7 @@ const G=[
 ['Page {} · {} pages · suivie page par page','صفحة {} · {} صفحة · تُتابَع صفحةً صفحة'],['Page {} · {} pages · sourate entière','صفحة {} · {} صفحة · سورة كاملة'],['Page {} · 1 page · sourate entière','صفحة {} · صفحة واحدة · سورة كاملة'],
 ['{} sourates','{} سورة'],['{} sourate','{} سورة'],['{} sur {}','{} من {}'],['Warch','ورش'],['Hafs · Tajwîd','حفص · تجويد'],
 ['{} jour fait sur {}','{} يوم منجز من {}'],['{} jours faits sur {}','{} أيام منجزة من {}'],['{} jours ·','{} أيام ·'],
-['Ma boucle de révision','دورة مراجعتي'],['Régler','ضبط'],['Modifier','تعديل'],['Aide','مساعدة'],['{} jours · {}','{} أيام · {}'],['jour {} sur {}','اليوم {} من {}'],
+['Ma boucle de révision','دورة مراجعتي'],['Régler','ضبط'],['Modifier','تعديل'],['Aide','مساعدة'],["Comment mettre l’appli sur mon écran d’accueil ?","كيف أضيف التطبيق إلى الشاشة الرئيسية؟"],["Est-ce une vraie application ou une appli web ?","هل هو تطبيق حقيقي أم تطبيق ويب؟"],["C’est une appli web : elle s’ouvre dans le navigateur de ton téléphone, sans passer par l’App Store ni Google Play. Elle est gratuite, sans compte, et l’icône sur l’écran d’accueil n’est qu’un raccourci.","هو تطبيق ويب: يُفتح في متصفح هاتفك دون المرور بـ App Store أو Google Play. وهو مجاني وبلا حساب، والأيقونة على الشاشة الرئيسية ليست سوى اختصار."],["Puis-je synchroniser mon suivi entre plusieurs appareils ?","هل يمكنني مزامنة متابعتي بين عدة أجهزة؟"],["Non. Comme c’est une appli web sans compte, le suivi reste enregistré uniquement sur l’appareil où tu l’as créé : il ne se met pas à jour tout seul sur un autre téléphone ou une autre tablette.","لا. بما أنه تطبيق ويب بلا حساب، تبقى المتابعة محفوظة على الجهاز الذي أنشأتها فيه فقط، ولا تتحدّث تلقائيًا على هاتف أو لوحة أخرى."],["J’ai plusieurs enfants et plusieurs tablettes : comment faire ?","لديّ عدة أطفال وعدة لوحات: كيف أفعل؟"],["Le plus simple : un profil par enfant, sur la tablette de cet enfant. Tu peux aussi créer tous les profils sur un seul appareil. Pour déplacer un suivi vers un autre appareil, utilise « Sauvegarder » puis « Restaurer » dans les Réglages : la restauration remplace ce qui se trouve déjà sur l’appareil.","الأسهل: ملف لكل طفل على لوحته. ويمكنك أيضًا إنشاء كل الملفات على جهاز واحد. ولنقل متابعة إلى جهاز آخر استعمل «حفظ نسخة» ثم «استعادة» في الإعدادات: الاستعادة تستبدل ما هو موجود أصلًا على الجهاز."],["Mes données risquent-elles d’être perdues ?","هل قد تضيع بياناتي؟"],["Ton suivi est enregistré dans le navigateur de ton appareil. Si tu effaces les données du navigateur, si tu changes de téléphone ou si tu perds l’appareil, il peut disparaître. Fais une sauvegarde de temps en temps dans les Réglages.","متابعتك محفوظة في متصفح جهازك. إذا مسحت بيانات المتصفح أو غيّرت الهاتف أو فقدت الجهاز فقد تختفي. احفظ نسخة احتياطية من حين لآخر من الإعدادات."],["Faut-il une connexion internet ?","هل أحتاج إلى اتصال بالإنترنت؟"],["Oui, prévois une connexion pour écouter les récitations et pour faire le test au micro.","نعم، تحتاج إلى اتصال للاستماع إلى التلاوات ولاختبار الميكروفون."],["Le micro ne marche pas : que faire ?","الميكروفون لا يعمل: ماذا أفعل؟"],["Sur iPhone, ouvre l’appli dans Safari (pas dans une fenêtre intégrée à une autre appli) et autorise le micro. Si tu l’ajoutes à l’écran d’accueil, désactive « Ouvrir en tant qu’app web ».","على الآيفون افتح التطبيق في سفاري (وليس في نافذة مدمجة داخل تطبيق آخر) واسمح باستعمال الميكروفون. وإن أضفته إلى الشاشة الرئيسية فعطّل «فتح كتطبيق ويب»."],["L’appli ne se met pas à jour : que faire ?","التطبيق لا يتحدّث: ماذا أفعل؟"],["Ferme complètement l’appli puis rouvre-la, une ou deux fois. Le numéro de version s’affiche en bas de l’écran d’accueil.","أغلق التطبيق تمامًا ثم أعد فتحه مرة أو مرتين. يظهر رقم الإصدار أسفل الشاشة الرئيسية."],["Comment signaler une erreur ou proposer une idée ?","كيف أبلغ عن خطأ أو أقترح فكرة؟"],["Dans les Réglages, touche « Signaler une erreur » : ça ouvre un petit formulaire.","في الإعدادات اضغط «الإبلاغ عن خطأ»: يفتح نموذجًا صغيرًا."],["Questions fréquentes","أسئلة شائعة"],['{} jours · {}','{} أيام · {}'],['jour {} sur {}','اليوم {} من {}'],
 ['Semaine du {}','أسبوع {}'],['Jours de la semaine','أيام الأسبوع'],['Aujourd’hui','اليوم'],
 ['Aucune page ni sourate n’est encore colorée.','لم تُلوَّن أي صفحة أو سورة بعد.'],
 ['Marque ce qui est appris pour que le plan se construise.','علّم ما حفظته ليُبنى البرنامج.'],['Aller au suivi','الذهاب إلى المتابعة'],
