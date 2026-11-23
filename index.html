@@ -1358,7 +1358,7 @@ function profileHTML(){
   const help=`<button class="helpbtn" data-act="help">${HELPIC}Aide</button>`;
   return `<header class="top"><button class="back" data-act="back" aria-label="${tab==='reglages'?'Retour au suivi':tab==='loop'?'Retour à la mouraja’a':'Retour aux profils'}">‹</button><h2>${tab==='reglages'?'Réglages · ':tab==='loop'?'Ma boucle · ':''}${pname(pk)}</h2>${help}${gear}</header>${body}`;
 }
-const APP_VERSION='1.7.9';
+const APP_VERSION='1.7.10';
 /* Mise à jour automatique : compare avec version.json (tout petit fichier) à l'ouverture et au retour au premier plan */
 (function(){
   let busy=false;
@@ -1619,15 +1619,15 @@ const handlers={
   bksnooze(){ try{ localStorage.setItem('suivi-backup-snooze',String(Date.now())); }catch(e){} render(); },
   installok(){ try{ localStorage.setItem('suivi-install-ok','1'); }catch(e){} render(); },
   shareapp(){
-    const url='https://ilyasnina.github.io/suivi-coran/', text='السلام عليكم، je te conseille مراجعتنا, une appli gratuite pour suivre et réviser son Coran :';
+    const url='https://ilyasnina.github.io/suivi-coran/', text="السلام عليكم ورحمة الله وبركاته\n\nJe te présente مراجعتنا, une appli web gratuite pour suivre ta révision du Coran et celle de tes enfants.\n\n🔁 Mouraja'a : l’appli te prépare ta révision du jour dans l’ordre du mushaf. Tu règles ta boucle (durée, sourates à revoir plus souvent, pages fragiles) et tu sais chaque jour quoi réviser.\n🎧 Écouter : plusieurs récitateurs, avec répétition de versets, choix de la vitesse, et le verset en cours surligné.\n🧠 Test : l’appli te donne un verset, tu récites la suite au micro et elle te corrige.\n📚 Lecture et mutashabihat : le mushaf page par page, et les versets qui se ressemblent pour ne plus les confondre.\n\nElle est disponible en français et en arabe.\n\n👉 "+url;
     const note=m=>{ shFlash=m; render(); setTimeout(()=>{ shFlash=''; if(tab==='reglages') render(); },2600); };
     const copy=()=>{
-      const all=text+' '+url;
+      const all=text;
       try{ if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(all).then(()=>note('Lien copié.'),()=>note('Impossible de copier le lien.')); return; } }catch(e){}
       try{ const t=document.createElement('textarea'); t.value=all; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); const ok=document.execCommand('copy'); t.remove(); note(ok?'Lien copié.':'Impossible de copier le lien.'); }catch(e){ note('Impossible de copier le lien.'); }
     };
     try{
-      if(navigator.share){ navigator.share({title:'مراجعتنا',text:text,url:url}).catch(err=>{ if(!err||err.name!=='AbortError') copy(); }); return; }
+      if(navigator.share){ navigator.share({title:'مراجعتنا',text:text}).catch(err=>{ if(!err||err.name!=='AbortError') copy(); }); return; }
     }catch(e){}
     copy();
   },
